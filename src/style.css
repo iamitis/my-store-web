@@ -4,6 +4,8 @@
     font-family: sans-serif;
     line-height: 1.5;
     font-weight: 400;
+
+    --header-height: 100px;
 }
 
 html, body {

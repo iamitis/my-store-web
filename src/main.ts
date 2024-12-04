@@ -2,13 +2,14 @@
 // 这个函数接收一个根组件作为参数，并返回一个可以链式调用的应用实例。
 // App是从./App.vue文件中导入的默认导出。在Vue中，.vue文件通常代表一个单文件组件。
 // 所以，App是你的应用的根组件。
-import {createApp} from 'vue'
+import {createApp, reactive, readonly} from 'vue'
 import {router} from './router'
 import App from './App.vue'
 import axios from 'axios'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import './style.css'
+import {User} from "./api/user.ts";
 
 
 //设置后端地址（本地或服务器），会将请求转发到后端端口
@@ -19,5 +20,19 @@ axios.defaults.timeout = 30000;
 const app = createApp(App)
 app.use(router)
 app.use(ElementPlus)
+
+const currUser: User = reactive({
+    userId: -1,
+    userName: '',
+    userAvatar: '',
+})
+
+export function updateUser(user: User) {
+    currUser.userId = user.userId
+    currUser.userName = user.userName
+    currUser.userAvatar = user.userAvatar
+}
+
+app.provide('currUser', readonly(currUser))
 
 app.mount('#app')

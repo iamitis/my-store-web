@@ -14,6 +14,21 @@ const router = createRouter({
             component: () => import('../views/Home.vue'),
         },
         {
+            path: '/category-detail/:categoryName',
+            name: 'CategoryDetail',
+            component: () => import('../views/CategoryDetail.vue'),
+        },
+        {
+            path: '/notification-page',
+            name: 'NotificationPage',
+            component: () => import('../views/NotificationPage.vue'),
+        },
+        {
+            path: '/user-page/:userId',
+            name: 'UserPage',
+            component: () => import('../views/UserPage.vue'),
+        },
+        {
             path: '/404',
             name: '404',
             component: () => import('../views/NotFound.vue'),

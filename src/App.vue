@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import Header from "./components/Header.vue";
 </script>
 
 <template>
-  <el-container direction="vertical">
+  <Header/>
+  <div class="home-body">
     <router-view/>
-  </el-container>
+  </div>
 </template>
 
 <style scoped>
+.home-body {
+  margin-top: var(--header-height);
+}
 </style>
