@@ -21,9 +21,13 @@ const {navTo} = initRouter()
 function navToCategoryDetail(categoryName: string) {
   navTo('CategoryDetail', {categoryName})
 }
+
+
 </script>
 
 <template>
+
+
   <div class="home-image-container">
     image
   </div>

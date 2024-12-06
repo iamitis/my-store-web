@@ -3,6 +3,8 @@
 import {useRoute} from "vue-router";
 
 const categoryName = useRoute().params.categoryName
+
+
 </script>
 
 <template>

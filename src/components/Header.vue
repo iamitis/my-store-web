@@ -4,6 +4,7 @@
 import {inject, ref} from "vue";
 import {initRouter} from "../router";
 import {User} from "../api/user.ts";
+import LogInDialog from "../views/LogInDialog.vue";
 
 const {navTo} = initRouter()
 const searchText = ref<string>('')
@@ -12,6 +13,20 @@ function clickSearch() {
   console.log("click search")
 }
 
+// 控制登录弹窗显示
+const showLogin = ref(false);
+// 登录成功处理
+const handleLoginSuccess = (userInfo: { username: string; password: string }) => {
+  console.log('登录成功:', userInfo);
+  // 可以在这里调用登录接口，或跳转到用户页面
+};
+
+// 登录取消处理
+const handleLoginCancel = () => {
+  console.log('用户取消了登录');
+};
+
+
 const currUser = inject('currUser') as User
 
 function clickNotification() {
@@ -19,7 +34,7 @@ function clickNotification() {
   if (currUser.userId === -1) {
     // 说明未登录
     ElMessage.info("请先登录")
-    // TODO: 打开登录页面
+    showLogin.value = true
   } else {
     navTo('Notification')
   }
@@ -29,14 +44,17 @@ function clickUser() {
   console.log("click user")
   if (currUser.userId === -1) {
     // 说明未登录
-    // TODO: 打开登录页面
+    showLogin.value = true
   } else {
     navTo('User', {userId: currUser.userId})
   }
 }
+
+
 </script>
 
 <template>
+  <LogInDialog v-model:visible="showLogin" @loginSuccess="handleLoginSuccess" @loginCancel="handleLoginCancel"/>
   <el-row class="header-container">
     <el-col :span="10"/>
     <el-col :span="4" class="header-item">

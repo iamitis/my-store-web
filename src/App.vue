@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import Header from "./components/Header.vue";
+
 </script>
 
 <template>
-  <Header/>
+  <Header ref =loginDialogRef />
+
   <div class="home-body">
     <router-view/>
   </div>
+
 </template>
 
 <style scoped>
