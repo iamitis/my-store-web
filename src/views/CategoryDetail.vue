@@ -1,42 +1,20 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRoute } from "vue-router";
+import {ref} from "vue";
+import {useRoute} from "vue-router";
+import {categoryNameMap, mockProductList, productAttributes} from "../api/product.ts";
+import ProductItem from "../components/ProductItem.vue";
 
 const route = useRoute();
 
 // 确保 `backEndName` 有默认值
-const backEndName = route.params.backEndName
-
-const categoryNameMap = new Map<string, string>([
-  ["FOOD", "食品"],
-  ["APPAREL", "服装"],
-  ["ELECTRONICS", "电子产品"],
-  ["PET_SUPPLIES", "宠物用品"],
-  ["HEALTH_PRODUCTS", "保健品"],
-  ["BATH_PRODUCTS", "洗浴用品"],
-]);
-
-const categoryName = categoryNameMap.get(backEndName) || "未知分类";
-
-// 分类属性
-const productAttribute: string[] = [
-  "品牌",
-  "产地",
-  "规格",
-  "颜色",
-  "价格",
-  "用途",
-  "价格",
-  "品牌",
-];
-
-
+const backEndName = String(route.params.backEndName)
+const categoryName = categoryNameMap.get(backEndName) || backEndName;
 
 // 排序选项
 const sortOptions = [
-  { label: "销量从高到低", value: "bestSeller" },
-  { label: "价格从高到低", value: "price_desc" },
-  { label: "价格从低到高", value: "price_asc" },
+  {label: "销量从高到低", value: "bestSeller"},
+  {label: "价格从高到低", value: "price_desc"},
+  {label: "价格从低到高", value: "price_asc"},
 ];
 
 // 初始化 `selectedSort`
@@ -48,7 +26,7 @@ const selectedSort = ref(sortOptions[0].value);
   <h1 class="title">{{ categoryName }}</h1>
   <el-row type="flex" justify="start" align="middle" class="attribute-container">
     <el-col
-        v-for="(attribute, index) in productAttribute"
+        v-for="(attribute, index) in productAttributes"
         :key="index"
         :span="4"
         class="attribute-col"
@@ -58,6 +36,7 @@ const selectedSort = ref(sortOptions[0].value);
   </el-row>
 
   <!-- 添加右下角的 Sort By 组件 -->
+  <!-- el-row外的el-col似乎没有意义，可以设置换成div，宽度设成100% -->
   <el-col :span="24" class="sort-container">
     <div class="sort-wrapper">
       <span class="sort-label">Sorted by:</span>
@@ -71,6 +50,13 @@ const selectedSort = ref(sortOptions[0].value);
       </el-select>
     </div>
   </el-col>
+
+  <el-row class="product-list-container">
+    <!-- 按照原型的话是四等分，所以这里设置span为6，可修改 -->
+    <el-col :span="6" v-for="product in mockProductList" style="margin-top: 30px">
+      <product-item :product="product"/>
+    </el-col>
+  </el-row>
 </template>
 
 <style scoped>
@@ -80,7 +66,7 @@ const selectedSort = ref(sortOptions[0].value);
   align-items: center;
   justify-content: center;
   color: #696969;
-  height: 100px;
+  height: 60px;
 }
 
 .attribute-card {
@@ -94,6 +80,7 @@ const selectedSort = ref(sortOptions[0].value);
   transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
+
 .attribute-card:hover {
   transform: scale(1.05);
   background-color: #eaeaea;
@@ -132,5 +119,9 @@ const selectedSort = ref(sortOptions[0].value);
 
 .sort-select {
   min-width: 150px; /* 确保选择框足够宽，显示完整选项 */
+}
+
+.product-list-container {
+  margin-top: 50px;
 }
 </style>
