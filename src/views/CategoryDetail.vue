@@ -22,41 +22,44 @@ const selectedSort = ref(sortOptions[0].value);
 </script>
 
 <template>
-  <h1 class="title">{{ backEndName }}</h1>
-  <h1 class="title">{{ categoryName }}</h1>
-  <el-row type="flex" justify="start" align="middle" class="attribute-container">
-    <el-col
-        v-for="(attribute, index) in productAttributes"
-        :key="index"
-        :span="4"
-        class="attribute-col"
-    >
-      <div class="attribute-card">{{ attribute }}</div>
-    </el-col>
-  </el-row>
+    <h1 class="title">{{ backEndName }}</h1>
+    <h1 class="title">{{ categoryName }}</h1>
+    <el-row>
+      <el-col :span="16" style="height: 100%">
+        <el-row type="flex" justify="start" align="middle" class="attribute-container">
+          <el-col
+              v-for="(attribute, index) in productAttributes"
+              :key="index"
+              :span="4"
+              class="attribute-col"
+          >
+            <div class="attribute-card">{{ attribute }}</div>
+          </el-col>
+        </el-row>
+      </el-col>
 
-  <!-- 添加右下角的 Sort By 组件 -->
-  <!-- el-row外的el-col似乎没有意义，可以设置换成div，宽度设成100% -->
-  <el-col :span="24" class="sort-container">
-    <div class="sort-wrapper">
-      <span class="sort-label">Sorted by:</span>
-      <el-select v-model="selectedSort" placeholder="Select" class="sort-select">
-        <el-option
-            v-for="(option, index) in sortOptions"
-            :key="index"
-            :label="option.label"
-            :value="option.value"
-        ></el-option>
-      </el-select>
-    </div>
-  </el-col>
+      <!-- 添加右下角的 Sort By 组件 -->
+      <el-col :span="8" class="sort-container">
+        <div class="sort-wrapper">
+          <span class="sort-label">Sorted by:</span>
+          <el-select v-model="selectedSort" placeholder="Select" class="sort-select">
+            <el-option
+                v-for="(option, index) in sortOptions"
+                :key="index"
+                :label="option.label"
+                :value="option.value"
+            ></el-option>
+          </el-select>
+        </div>
+      </el-col>
+    </el-row>
 
-  <el-row class="product-list-container">
-    <!-- 按照原型的话是四等分，所以这里设置span为6，可修改 -->
-    <el-col :span="6" v-for="product in mockProductList" style="margin-top: 30px">
-      <product-item :product="product"/>
-    </el-col>
-  </el-row>
+    <el-row class="product-list-container">
+      <!-- 按照原型的话是四等分，所以这里设置span为6，可修改 -->
+      <el-col :span="6" v-for="product in mockProductList" style="margin-top: 30px">
+        <product-item :product="product"/>
+      </el-col>
+    </el-row>
 </template>
 
 <style scoped>
@@ -94,21 +97,22 @@ const selectedSort = ref(sortOptions[0].value);
 }
 
 .attribute-container {
-  width: 70%; /* 让内容只占据屏幕的左侧 50% */
+  /* width: 70%; /* 让内容只占据屏幕的左侧 50% */
   margin-left: 0; /* 确保靠左对齐 */
 }
 
 .sort-container {
   display: flex;
-  justify-content: flex-end; /* 靠右对齐 */
-  align-items: center;
+  justify-content: center;
+  align-items: end;
   margin-top: 20px; /* 与分类按钮间距 */
-  margin-right: 5%; /* 与屏幕右侧的距离 */
+  /* margin-right: 5%; /* 与屏幕右侧的距离 */
 }
 
 .sort-wrapper {
   display: flex;
   align-items: center;
+  margin-left: 200px;
 }
 
 .sort-label {

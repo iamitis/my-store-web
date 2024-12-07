@@ -1,7 +1,7 @@
 <!-- TODO: 消息红点 -->
 
 <script setup lang="ts">
-import {inject, ref} from "vue";
+import {inject, onMounted, onUnmounted, ref} from "vue";
 import {initRouter} from "../router";
 import {User} from "../api/user.ts";
 import LogInDialog from "../views/LogInDialog.vue";
@@ -50,12 +50,32 @@ function clickUser() {
   }
 }
 
+const isHeaderVisible = ref(true)
+let lastScrollTop = 0;
 
+function handleScroll() {
+  console.log("scroll")
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  if (scrollTop > lastScrollTop) {
+    isHeaderVisible.value = false; // Scrolling down
+  } else {
+    isHeaderVisible.value = true; // Scrolling up
+  }
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+})
 </script>
 
 <template>
   <LogInDialog v-model:visible="showLogin" @loginSuccess="handleLoginSuccess" @loginCancel="handleLoginCancel"/>
-  <el-row class="header-container">
+  <el-row class="header-container" :class="{'hidden': !isHeaderVisible}">
     <el-col :span="10"/>
     <el-col :span="4" class="header-item">
       <el-avatar @click="navTo('Home')" title="返回首页"
@@ -106,6 +126,12 @@ function clickUser() {
   width: 100%;
   position: fixed;
   top: 0;
+  transition: top 0.3s;
+  background-color: gray;
+  z-index: 200; /* 保证在最上层 */
+}
+.header-container.hidden {
+  top: calc(-1 * var(--header-height));
 }
 
 .header-item {
