@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {getProductById, mockProductList, Product} from "../api/product.ts";
+import {getProductById, mockProduct, Product} from "../api/product.ts";
 
 const productData = ref<Product>()
 
@@ -15,7 +15,7 @@ const productData = ref<Product>()
 //   }
 // })
 
-productData.value = mockProductList[0]
+productData.value = mockProduct
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {useRoute} from "vue-router";
-import {categoryNameMap, mockProductList, productAttributes} from "../api/product.ts";
+import {categoryNameMap, mockProduct, productAttributes} from "../api/product.ts";
 import ProductItem from "../components/ProductItem.vue";
 
 const route = useRoute();
@@ -9,6 +9,8 @@ const route = useRoute();
 // 确保 `backEndName` 有默认值
 const backEndName = String(route.params.backEndName)
 const categoryName = categoryNameMap.get(backEndName) || backEndName;
+
+const mockProductList = new Array(10).fill(mockProduct);
 
 // 排序选项
 const sortOptions = [

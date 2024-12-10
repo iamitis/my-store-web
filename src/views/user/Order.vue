@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>UserPage</h1>
+  <h1>Order</h1>
 </template>
 
 <style scoped>

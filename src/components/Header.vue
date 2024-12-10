@@ -1,10 +1,12 @@
 <!-- TODO: 消息红点 -->
 
 <script setup lang="ts">
-import {inject, onMounted, onUnmounted, ref} from "vue";
+import {inject, onMounted, onUnmounted, Ref, ref} from "vue";
 import {initRouter} from "../router";
 import {User} from "../api/user.ts";
-import LogInDialog from "../views/LogInDialog.vue";
+import LogInDialog from "./LogInDialog.vue";
+import {updateHeaderVisible} from "../main.ts";
+import {UserFilled, Message, Search} from "@element-plus/icons-vue";
 
 const {navTo} = initRouter()
 const searchText = ref<string>('')
@@ -46,20 +48,21 @@ function clickUser() {
     // 说明未登录
     showLogin.value = true
   } else {
-    navTo('User', {userId: currUser.userId})
+    navTo('UserPage', {userId: currUser.userId})
   }
 }
 
-const isHeaderVisible = ref(true)
+// Header向上滚动时显示，向下滚动时隐藏
 let lastScrollTop = 0;
+const isHeaderVisible = inject('isHeaderVisible') as Ref<boolean>;
 
 function handleScroll() {
   console.log("scroll")
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   if (scrollTop > lastScrollTop) {
-    isHeaderVisible.value = false; // Scrolling down
+    updateHeaderVisible(false); // Scrolling down
   } else {
-    isHeaderVisible.value = true; // Scrolling up
+    updateHeaderVisible(true); // Scrolling up
   }
   lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
 }
@@ -67,7 +70,6 @@ function handleScroll() {
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
 })
-
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
 })
@@ -79,41 +81,49 @@ onUnmounted(() => {
     <el-col :span="10"/>
     <el-col :span="4" class="header-item">
       <el-avatar @click="navTo('Home')" title="返回首页"
-                 style="cursor: pointer; height: 70px; width: 70px"/>
+                 style="background-color: #a1ccbf; cursor: pointer; height: 80px; width: 80px"/>
     </el-col>
     <el-col :span="5" class="header-item">
       <div class="header-input-container">
         <input v-model="searchText" placeholder="搜索想要的商品"
                class="header-input"/>
-        <img @click="clickSearch" title="点击搜索"
-             src="../assets/search.svg" alt="search" style="cursor: pointer"/>
+        <el-icon @click="clickSearch" title="点击搜索"
+                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
+          <search style="width: 80%; height: 80%"/>
+        </el-icon>
       </div>
     </el-col>
     <el-col :span="1" :offset="1" class="header-item" style="margin-top: 10px">
-      <img @click="clickNotification" title="查看消息"
-           src="../assets/notification.svg" alt="notification"
-           style="cursor: pointer; width: 40px; height: 40px"/>
-      <el-text style="font-size: 18px">消息</el-text>
+      <el-icon @click="clickNotification" title="查看个人主页"
+               style="cursor: pointer; background-color: white; color: #7fad9f;
+               width: 50px; height: 50px; border-radius: 50%">
+        <message style="width: 70%; height: 70%"/>
+      </el-icon>
+      <el-text style="font-size: 18px; margin-top: 5px">消息</el-text>
     </el-col>
     <el-col :span="2" class="header-item" style="margin-top: 10px;">
       <!-- 未登录状态： -->
-      <img v-if="currUser.userId === -1"
-           @click="clickUser" title="点击登录"
-           src="../assets/user.svg" alt="user"
-           style="cursor: pointer; width: 40px; height: 40px"/>
+      <el-icon v-if="currUser.userId === -1"
+               @click="clickUser" title="查看个人主页"
+               style="cursor: pointer; background-color: white; color: #72a294;
+               width: 50px; height: 50px; border-radius: 50%">
+        <user-filled style="width: 70%; height: 70%"/>
+      </el-icon>
       <el-text v-if="currUser.userId === -1"
                @click="clickUser" title="点击登录"
                style="font-size: 18px">
         登录
       </el-text>
       <!-- 已登录状态： -->
-      <img v-if="currUser.userId !== -1"
-           @click="clickUser" title="查看个人主页"
-           :src="currUser.userAvatar" alt="user"
-           style="cursor: pointer; width: 40px; height: 40px"/>
+      <el-icon v-if="currUser.userId !== -1"
+               @click="clickUser" title="查看个人主页"
+               style="cursor: pointer; background-color: white; color: #76a899;
+               width: 50px; height: 50px; border-radius: 50%">
+        <user-filled style="width: 70%; height: 70%"/>
+      </el-icon>
       <el-text v-if="currUser.userId !== -1"
                @click="clickUser" title="查看个人主页"
-               style="font-size: 18px">
+               style="font-size: 18px; margin-top: 5px">
         个人主页
       </el-text>
     </el-col>
@@ -127,9 +137,12 @@ onUnmounted(() => {
   position: fixed;
   top: 0;
   transition: top 0.3s;
-  background-color: gray;
   z-index: 200; /* 保证在最上层 */
+
+  background-color: #ecebeb;
+  border-bottom: 1px dashed #d2d1d1;
 }
+
 .header-container.hidden {
   top: calc(-1 * var(--header-height));
 }
@@ -146,8 +159,8 @@ onUnmounted(() => {
   height: 50px;
   width: 100%;
   border-radius: 25px;
-  border: solid;
   background-color: white;
+  border: solid #a1ccbf;
 
   display: flex;
   align-items: center;
@@ -160,6 +173,7 @@ onUnmounted(() => {
   margin-left: 16px;
   font-size: 20px;
 }
+
 .header-input:focus {
   outline: none;
 }

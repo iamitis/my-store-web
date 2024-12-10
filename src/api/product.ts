@@ -24,18 +24,22 @@ export const filterProducts = (category: string, filters: Record<string, string>
         })
 }
 
-export const mockProductList: Product[] = new Array(10).fill({
-    productId: 1,
-    productName: 'Apple MacBook Pro',
-    productPrice: 1299,
-    productCover: 'https://bpic.588ku.com/element_origin_min_pic/19/04/09/01ef1cda82f8366435db20bd4e7b7acc.jpg',
-})
-
 // 可以使用async/await
 // 假如后端返回的数据类型是Product
 // 这里的返回类型就可以写成Promise<AxiosResponseData<Product>>
 export async function getProductById(productId: number): Promise<AxiosResponseData<Product>> {
     return await axios.get(`${NEWPRODUCT_MODULE}/getProductById/${productId}`)
+}
+
+export function formatPrice(price: number) {
+    return "￥" + price.toFixed(2)
+}
+
+export const mockProduct: Product = {
+    productId: 1,
+    productName: 'Apple MacBook Pro',
+    productPrice: 1299,
+    productCover: 'src/assets/iphoeAndEarpod.jpg',
 }
 
 export const categoryNameMap: Map<string, string> = new Map()

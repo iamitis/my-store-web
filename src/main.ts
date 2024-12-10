@@ -2,7 +2,7 @@
 // 这个函数接收一个根组件作为参数，并返回一个可以链式调用的应用实例。
 // App是从./App.vue文件中导入的默认导出。在Vue中，.vue文件通常代表一个单文件组件。
 // 所以，App是你的应用的根组件。
-import {createApp, reactive, readonly} from 'vue'
+import {createApp, reactive, readonly, ref} from 'vue'
 import {router} from './router'
 import App from './App.vue'
 import axios from 'axios'
@@ -22,17 +22,21 @@ app.use(router)
 app.use(ElementPlus)
 
 const currUser: User = reactive({
-    userId: -1,
+    userId: 0,
     userName: '',
-    userAvatar: '',
 })
 
 export function updateUser(user: User) {
     currUser.userId = user.userId
     currUser.userName = user.userName
-    currUser.userAvatar = user.userAvatar
 }
 
 app.provide('currUser', readonly(currUser))
+
+const isHeaderVisible = ref(true)
+export function updateHeaderVisible(visible: boolean) {
+    isHeaderVisible.value = visible
+}
+app.provide('isHeaderVisible', readonly(isHeaderVisible))
 
 app.mount('#app')

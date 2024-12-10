@@ -26,12 +26,37 @@ const router = createRouter({
         {
             path: '/notification-page',
             name: 'NotificationPage',
-            component: () => import('../views/NotificationPage.vue'),
+            component: () => import('../views/user/Notification.vue'),
         },
         {
             path: '/user-page/:userId',
             name: 'UserPage',
-            component: () => import('../views/UserPage.vue'),
+            redirect(to) {
+                return {name: 'Overview', params: to.params}
+            },
+            component: () => import('../views/user/UserPage.vue'),
+            children: [
+                {
+                    path: '/overview',
+                    name: 'Overview',
+                    component: () => import('../views/user/Overview.vue'),
+                },
+                {
+                    path: '/order',
+                    name: 'Order',
+                    component: () => import('../views/user/Order.vue'),
+                },
+                {
+                    path: '/shopping-cart',
+                    name: 'ShoppingCart',
+                    component: () => import('../views/user/ShoppingCart.vue'),
+                },
+                {
+                    path: '/notification',
+                    name: 'Notification',
+                    component: () => import('../views/user/Notification.vue'),
+                },
+            ],
         },
         {
             path: '/404',
