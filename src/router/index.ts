@@ -21,7 +21,7 @@ const router = createRouter({
         {
             path: '/product-detail/:productId',
             name: 'ProductDetail',
-            component: () => import('../views/ProductDetail.vue'),
+            component: () => import('../views/product/ProductDetail.vue'),
         },
         {
             path: '/notification-page',

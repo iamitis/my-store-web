@@ -1,11 +1,17 @@
 import {axios, AxiosResponseData} from '../utils/request'
 import {NEWPRODUCT_MODULE} from './_prefix'
+import {Comment} from "./comment.ts";
 
 export interface Product {
-    productId: number
-    productName: string
-    productPrice: number
-    productCover: string
+    productId?: number
+    productName?: string
+    productOriginalPrice?: number
+    productNowPrice?: number
+    productCover?: string
+    productDescription?: string
+    productScore?: number
+    productScoreCount?: number // 评分人数
+    productCommentList?: Comment[],
 }
 
 export const getAttributesByCategory = (category: string) => {
@@ -38,8 +44,14 @@ export function formatPrice(price: number) {
 export const mockProduct: Product = {
     productId: 1,
     productName: 'Apple MacBook Pro',
-    productPrice: 1299,
+    productOriginalPrice: 1299,
+    productNowPrice: 1099,
     productCover: 'src/assets/iphoeAndEarpod.jpg',
+    productDescription: 'Apple M1芯片，8核CPU，8核GPU，16核神经引擎，8GB内存，' +
+        '256GB固态硬盘，13.3英寸Retina显示屏，背光Magic Keyboard，触控栏，触控ID，' +
+        '四个雷电3端口，最长',
+    productScore: 4.4,
+    productScoreCount: 157
 }
 
 export const categoryNameMap: Map<string, string> = new Map()

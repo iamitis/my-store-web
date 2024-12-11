@@ -33,14 +33,14 @@ function handleRemove() {
 <template>
   <el-row class="cart-row">
     <el-col :span="4" class="cart-row-item" style="justify-content: center">
-      <img :src="props.cartItem.product.productCover" alt="商品图片"
+      <img :src="props.cartItem.product!.productCover!" alt="商品图片"
            title="查看商品详情" @click="navToDetail"
            class="cart-product-cover">
     </el-col>
     <el-col :span="11" class="cart-row-item"
             style="align-items: start;">
       <p class="cart-product-name" title="查看商品详情" @click="navToDetail">
-        {{ props.cartItem.product.productName }}
+        {{ props.cartItem.product!.productName! }}
       </p>
     </el-col>
     <el-col :span="3" class="cart-row-item">
@@ -51,7 +51,7 @@ function handleRemove() {
     </el-col>
     <el-col :span="4" class="cart-row-item">
       <p style="margin-top: 20px; font-size: 25px; color: #414040;">
-        {{ formatPrice(props.cartItem.product.productPrice) }}
+        {{ formatPrice(props.cartItem.product!.productNowPrice!) }}
       </p>
     </el-col>
     <el-col :span="2" class="cart-row-item">

@@ -15,7 +15,7 @@ const {navTo} = initRouter()
     <img :src="props.product.productCover" alt="product image" style="width: 300px; height: 300px; border-radius: 10%">
     <div>
       <p style="font-weight: bold; font-size: 20px">{{ props.product.productName }}</p>
-      <p style="font-size: 18px">{{ props.product.productPrice }}</p>
+      <p style="font-size: 18px">{{ props.product.productNowPrice }}</p>
     </div>
   </div>
 </template>
