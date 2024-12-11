@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import {ref,  defineEmits} from 'vue';
+import SignUpDialog from "./SignUpDialog.vue";
+
+
+const showSignUp = ref(false);
 
 // 取消按钮
 const handleCancel = () => {
@@ -32,7 +36,7 @@ const loginRules = {
 };
 
 // Emits：通知父组件
-const emit = defineEmits(['update:visible', 'loginSuccess', 'loginCancel']);
+const emit = defineEmits(['update:visible', 'loginSuccess', 'loginCancel','signUpSuccess','signUpCancel']);
 
 // 表单引用（用于校验）
 const loginFormRef = ref();
@@ -56,12 +60,29 @@ function handleClose() {
   emit('update:visible', false);
 }
 
+function handleSignUp() {
+  emit('update:visible', false);
+  showSignUp.value = true;
+}
+
+function handleSignUpSuccess(){
+  emit('update:visible', true);
+  emit('signUpSuccess');
+}
+
+function handleSignUpCancel(){
+  emit('update:visible', true);
+  emit('signUpCancel');
+}
+
+
 
 </script>
 
 <template>
+  <SignUpDialog v-model:visible="showSignUp" @signUpSuccess = "handleSignUpSuccess" @signUpCancel = "handleSignUpCancel"/>
   <el-dialog
-      title="用户登录"
+      title="注册账号"
       v-model="visible"
       width="30%"
       @close="handleClose"
@@ -76,6 +97,10 @@ function handleClose() {
     <el-form-item label="密码" prop="password">
       <el-input v-model="loginForm.password" type="password" placeholder="请输入密码"></el-input>
     </el-form-item>
+
+    <div style="text-align: left;">
+      <el-button type="text" @click="handleSignUp">注册账号</el-button>
+    </div>
 
     <!-- 按钮 -->
     <div style="text-align: right;">

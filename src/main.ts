@@ -22,7 +22,7 @@ app.use(router)
 app.use(ElementPlus)
 
 const currUser: User = reactive({
-    userId: 0,
+    userId: -1,
     userName: '',
 })
 
