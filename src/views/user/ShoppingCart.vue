@@ -31,12 +31,12 @@ function removeCartItem(cartItemId: number) {
 
 <template>
   <div class="cart-list-container">
-    <el-row style="border-bottom: 1px dashed #b4b4b4">
+    <el-row style="border-bottom: 1px dashed #c9c8c8; margin-bottom: 5px">
       <el-col :span="4">
         <p style="font-size: 24px; color: #333232;">商品</p>
       </el-col>
       <el-col :span="3" :offset="11">
-        <p style="font-size: 24px; color: #343434; display: flex; justify-content: center">数量</p>
+        <p style="font-size: 24px; color: #343434; margin-left: 10px">数量</p>
       </el-col>
       <el-col :span="4" style="display: flex; color: #333232; justify-content: center">
         <p style="font-size: 24px">价格</p>

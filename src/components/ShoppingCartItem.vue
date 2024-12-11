@@ -55,8 +55,7 @@ function handleRemove() {
       </p>
     </el-col>
     <el-col :span="2" class="cart-row-item">
-      <el-button circle @click="handleRemove"
-                 style="width: 50px; height: 50px; margin-top: 15px">
+      <el-button circle @click="handleRemove" class="cart-remove-button">
         <el-icon style="width: 100%; height: 100%">
           <Delete style="width: 80%; height: 80%"/>
         </el-icon>
@@ -70,6 +69,11 @@ function handleRemove() {
   height: 200px;
   display: flex;
   align-items: center;
+  border-radius: 10px;
+}
+
+.cart-row:hover {
+  background-color: #f0f0f0;
 }
 
 .cart-row-item {
@@ -128,5 +132,17 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   padding: 10px;
   height: 20px;
+}
+
+.cart-remove-button {
+  width: 50px;
+  height: 50px;
+  margin-top: 15px
+}
+
+.cart-remove-button:hover {
+  border-color: #8abdab;
+  background-color: #d8e8e3;
+  color: #87b9a8;
 }
 </style>
