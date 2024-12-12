@@ -3,8 +3,10 @@ import {inject, onMounted, ref} from "vue";
 import {formatPrice, getProductById, mockProduct, Product} from "../../api/product.ts";
 import {useRoute} from "vue-router";
 import {addToShoppingCart, User} from "../../api/user.ts";
+import {initRouter} from "../../router";
 
 const currUser = inject('currUser') as User
+const {navTo} = initRouter()
 const productData = ref<Product>()
 const productId = Number(useRoute().params.productId)
 
@@ -75,6 +77,13 @@ function handleBuy() {
   }
 
   ElMessage.info('立即购买: ' + productData.value?.productName + '没写接口');
+
+  sessionStorage.setItem('productList',
+      JSON.stringify([{
+        product: productData.value!,
+        quantity: quantity.value
+      }]))
+  navTo('CreateOrder')
 }
 
 </script>

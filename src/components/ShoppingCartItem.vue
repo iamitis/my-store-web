@@ -14,11 +14,11 @@ const {navTo} = initRouter()
 const quantity = ref(1)
 
 onMounted(() => {
-  quantity.value = props.cartItem.quantity
+  quantity.value = props.cartItem.quantity!
 })
 
 function navToDetail() {
-  navTo('ProductDetail', {productId: props.cartItem.product.productId})
+  navTo('ProductDetail', {productId: props.cartItem.product!.productId})
 }
 
 function handleQuantityChange() {

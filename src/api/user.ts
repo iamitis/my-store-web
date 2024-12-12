@@ -69,13 +69,13 @@ export async function register(registerInfo:RegisterInfo): Promise<AxiosResponse
 }
 
 export async function addToShoppingCart(userId: number, product: Product, quantity: number): Promise<AxiosResponseData<CartItem>> {
-    const data: CartItem = {
+    const cartItem: CartItem = {
         userId: userId,
         product: product,
         quantity: quantity,
         date: new Date()
     }
-    return await userService.post(`/addToShoppingCart`, data)
+    return await userService.post(`/addToShoppingCart`, cartItem)
 }
 
 export const mockCartItem: CartItem = {
