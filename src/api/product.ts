@@ -1,6 +1,8 @@
-import {axios, AxiosResponseData} from '../utils/request'
+import { AxiosResponseData} from '../utils/request'
 import {NEWPRODUCT_MODULE} from './_prefix'
 import {Comment} from "./comment.ts";
+import axios from "axios";
+
 
 export interface Product {
     productId?: number
@@ -14,21 +16,33 @@ export interface Product {
     productCommentList?: Comment[],
 }
 
-export const getAttributesByCategory = (category: string) => {
-    return axios.get(`${NEWPRODUCT_MODULE}/getAttributesByCategory/${category}`)
-        .then(res => {
+export interface ProductAttribute {
+    productAttributeId?: number;
+    productAttributeName?: string; // 属性名，如食品的口味 flavor，服饰的季节 season
+    displayName?: string; // 显示名，如"口味", "季节"
+    productCategory?: string; // 所属类别, 属于食品还是服饰
+}
+
+export const productService = axios.create({
+    baseURL: 'http://localhost:8080/api/newProducts',
+    timeout: 30000,
+});
+
+export async function getAttributesByCategory(category: string): Promise<AxiosResponseData<ProductAttribute[]>>{
+    return await productService.get(`/getAttributesByCategory/${category}`)
+        .then(res=>{
+            return res.data.result
+        })
+}
+
+export async function filterProducts(category: string, filters: Record<string, string>) : Promise<AxiosResponseData<Product>>{
+    const queryString = new URLSearchParams(filters).toString();
+    return await productService.get(`/filterProducts/${category}?${queryString}`)
+        .then(res=>{
             return res.data.result;
         })
 }
 
-export const filterProducts = (category: string, filters: Record<string, string>) => {
-    //不一定对！！！！！！！！！
-    const queryString = new URLSearchParams(filters).toString(); // 将 filters 转换为查询字符串
-    return axios.get(`${NEWPRODUCT_MODULE}/filterProducts/${category}?${queryString}`)
-        .then(res => {
-            return res.data.result; // 返回结果中的 `result` 字段
-        })
-}
 
 // 可以使用async/await
 // 假如后端返回的数据类型是Product

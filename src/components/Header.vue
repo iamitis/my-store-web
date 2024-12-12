@@ -4,7 +4,7 @@
 import {inject, onMounted, onUnmounted, Ref, ref} from "vue";
 import {initRouter} from "../router";
 import {User} from "../api/user.ts";
-import LogInDialog from "./LogInDialog.vue";
+import LogInDialog from "./LogIn.vue";
 import {updateHeaderVisible} from "../main.ts";
 import {UserFilled, Message, Search} from "@element-plus/icons-vue";
 
@@ -33,7 +33,7 @@ const currUser = inject('currUser') as User
 
 function clickNotification() {
   console.log("click notification")
-  if (currUser.userId === -1) {
+  if (currUser.id === -1) {
     // 说明未登录
     ElMessage.info("请先登录")
     showLogin.value = true
@@ -44,11 +44,11 @@ function clickNotification() {
 
 function clickUser() {
   console.log("click user")
-  if (currUser.userId === -1) {
+  if (currUser.id === -1) {
     // 说明未登录
     showLogin.value = true
   } else {
-    navTo('UserPage', {userId: currUser.userId})
+    navTo('UserPage', {userId: currUser.id})
   }
 }
 
@@ -103,25 +103,25 @@ onUnmounted(() => {
     </el-col>
     <el-col :span="2" class="header-item" style="margin-top: 10px;">
       <!-- 未登录状态： -->
-      <el-icon v-if="currUser.userId === -1"
+      <el-icon v-if="currUser.id === -1"
                @click="clickUser" title="查看个人主页"
                style="cursor: pointer; background-color: white; color: #72a294;
                width: 50px; height: 50px; border-radius: 50%">
         <user-filled style="width: 70%; height: 70%"/>
       </el-icon>
-      <el-text v-if="currUser.userId === -1"
+      <el-text v-if="currUser.id === -1"
                @click="clickUser" title="点击登录"
                style="font-size: 18px">
         登录
       </el-text>
       <!-- 已登录状态： -->
-      <el-icon v-if="currUser.userId !== -1"
+      <el-icon v-if="currUser.id !== -1"
                @click="clickUser" title="查看个人主页"
                style="cursor: pointer; background-color: white; color: #76a899;
                width: 50px; height: 50px; border-radius: 50%">
         <user-filled style="width: 70%; height: 70%"/>
       </el-icon>
-      <el-text v-if="currUser.userId !== -1"
+      <el-text v-if="currUser.id !== -1"
                @click="clickUser" title="查看个人主页"
                style="font-size: 18px; margin-top: 5px">
         个人主页

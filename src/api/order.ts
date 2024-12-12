@@ -1,5 +1,4 @@
 import {mockProduct, Product} from "./product.ts";
-import {AxiosResponseData} from "../utils/request.ts";
 import axios from "axios";
 
 export interface Order {
@@ -10,7 +9,7 @@ export interface Order {
 }
 
 export const orderService = axios.create({
-    baseURL: 'http://localhost:8080/orders',
+    baseURL: 'http://localhost:8080/api/orders',
     timeout: 30000,
 });
 

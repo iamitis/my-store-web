@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import {ref,  defineEmits} from 'vue';
+import {register} from "../api/user.ts";
 
 const emit = defineEmits(['update:visible', 'signUpCancel', 'signUpSuccess']);
 
 const signUpForm = ref({
-  username: '',
+  phone: '',
   password: '',
   confirmPassword: '',
 });
 
 const signUpRule = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  phone: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
   confirmPassword: [{ required: true, message: '请再次输入密码', trigger: 'blur' }],
 };
@@ -29,6 +30,32 @@ const handleCancel = () => {
 };
 
 const submitSignUpForm = () => {
+  if(signUpForm.value.password != signUpForm.value.confirmPassword){
+    console.log('密码与验证密码不一致');
+    ElMessage.info("密码与验证密码不一致")
+    return;
+  }
+
+  register({
+    phone: signUpForm.value.phone,
+    password: signUpForm.value.password,
+  })
+      .then(res=>{
+        const code = res.data.code
+        if(code=='000'){
+          ElMessage({
+            message: "注册成功！请登录账号",
+            type: 'success',
+            center: true,
+          })
+          console.log('注册成功:', signUpForm.value);
+          // 触发成功事件
+          emit('signUpSuccess', signUpForm.value);
+          emit('update:visible', false); // 关闭弹窗
+        }else{
+
+        }
+      })
   if(signUpForm.value.password == signUpForm.value.confirmPassword){
     console.log('注册成功:', signUpForm.value);
     // 触发成功事件
@@ -57,8 +84,8 @@ const visible = defineModel('visible', {
   >
     <el-form :model="signUpForm" :rules="signUpRule" ref="loginFormRef" label-width="80px">
       <!-- 用户名 -->
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="signUpForm.username" placeholder="请输入用户名"></el-input>
+      <el-form-item label="用户名" prop="phone">
+        <el-input v-model="signUpForm.phone" placeholder="请输入用户名"></el-input>
       </el-form-item>
 
       <!-- 密码 -->

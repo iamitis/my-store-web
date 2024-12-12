@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {ref,  defineEmits} from 'vue';
-import SignUpDialog from "./SignUpDialog.vue";
+import SignUpDialog from "./SignUp.vue";
+import {login} from "../api/user.ts";
+import {updateUser} from "../main.ts";
 
 
 const showSignUp = ref(false);
@@ -22,14 +24,14 @@ const visible = defineModel('visible', {
 
 // 表单数据
 const loginForm = ref({
-  username: '',
+  phone: '',
   password: '',
 });
 
 
 // 表单验证规则
 const loginRules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  phone: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' }
   ],
@@ -43,16 +45,37 @@ const loginFormRef = ref();
 
 // 提交登录表单
 const submitLoginForm = () => {
-  loginFormRef.value.validate((valid: boolean) => {
-    if (valid) {
-      console.log('登录成功:', loginForm.value);
-      // 触发成功事件
-      emit('loginSuccess', loginForm.value);
-      emit('update:visible', false); // 关闭弹窗
-    } else {
-      console.log('验证失败');
-    }
-  });
+  login({
+    phone: loginForm.value.phone,
+    password: loginForm.value.password
+  })
+      .then(res=>{
+        const code = res.data.code
+        const id = res.data.result;
+        if(code == '000'){
+          console.log('登录成功:', loginForm.value);
+          ElMessage({
+            message: "登录成功！",
+            type: 'success',
+            center: true,
+          })
+          updateUser({
+            id:id,
+            phone:loginForm.value.phone
+          })
+          emit('loginSuccess', loginForm.value);
+          emit('update:visible', false); // 关闭弹窗
+        }else{
+          console.log('验证失败');
+          ElMessage({
+            message: res.data.msg,
+            type: 'error',
+            center: true,
+          })
+          loginForm.value.password = '';
+        }
+
+      });
 };
 
 function handleClose() {
@@ -89,8 +112,8 @@ function handleSignUpCancel(){
   >
   <el-form :model="loginForm" :rules="loginRules" ref="loginFormRef" label-width="80px">
     <!-- 用户名 -->
-    <el-form-item label="用户名" prop="username">
-      <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
+    <el-form-item label="用户名" prop="phone">
+      <el-input v-model="loginForm.phone" placeholder="请输入用户名"></el-input>
     </el-form-item>
 
     <!-- 密码 -->

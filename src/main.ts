@@ -22,13 +22,13 @@ app.use(router)
 app.use(ElementPlus)
 
 const currUser: User = reactive({
-    userId: -1,
-    userName: '',
+    id: -1,
+    phone: '',
 })
 
 export function updateUser(user: User) {
-    currUser.userId = user.userId
-    currUser.userName = user.userName
+    currUser.id = user.id
+    currUser.phone = user.phone
 }
 
 app.provide('currUser', readonly(currUser))
