@@ -21,22 +21,25 @@ const app = createApp(App)
 app.use(router)
 app.use(ElementPlus)
 
+// 存储当前用户
 const currUser: User = reactive({
-    userId: -1,
+    userId: 0,
     userName: '',
 })
+
+// 存储 Header 显示状态
+const isHeaderVisible = ref(true)
 
 export function updateUser(user: User) {
     currUser.userId = user.userId
     currUser.userName = user.userName
 }
 
-app.provide('currUser', readonly(currUser))
-
-const isHeaderVisible = ref(true)
 export function updateHeaderVisible(visible: boolean) {
     isHeaderVisible.value = visible
 }
+
+app.provide('currUser', readonly(currUser))
 app.provide('isHeaderVisible', readonly(isHeaderVisible))
 
 app.mount('#app')

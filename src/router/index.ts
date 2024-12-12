@@ -29,6 +29,11 @@ const router = createRouter({
             component: () => import('../views/user/Notification.vue'),
         },
         {
+            path: '/create-order',
+            name: 'CreateOrder',
+            component: () => import('../views/CreateOrder.vue'),
+        },
+        {
             path: '/user-page/:userId',
             name: 'UserPage',
             redirect(to) {
