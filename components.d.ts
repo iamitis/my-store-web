@@ -16,33 +16,15 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
-    ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
-<<<<<<< HEAD
-    ElOption: typeof import('element-plus/es')['ElOption']
-    ElRate: typeof import('element-plus/es')['ElRate']
-=======
-    ElLink: typeof import('element-plus/es')['ElLink']
-    ElMain: typeof import('element-plus/es')['ElMain']
-    ElOption: typeof import('element-plus/es')['ElOption']
-    ElRate: typeof import('element-plus/es')['ElRate']
-    ElResult: typeof import('element-plus/es')['ElResult']
->>>>>>> cbf9f08c53ba7d02de3846ff0fb7631632b19bdf
     ElRow: typeof import('element-plus/es')['ElRow']
-    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElText: typeof import('element-plus/es')['ElText']
     Header: typeof import('./src/components/Header.vue')['default']
-<<<<<<< HEAD
     LogIn: typeof import('./src/components/LogIn.vue')['default']
-    LogInDialog: typeof import('./src/components/LogIn.vue')['default']
-=======
-    LogInDialog: typeof import('./src/components/LogInDialog.vue')['default']
     OrderItem: typeof import('./src/components/OrderItem.vue')['default']
->>>>>>> cbf9f08c53ba7d02de3846ff0fb7631632b19bdf
     ProductItem: typeof import('./src/components/ProductItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShoppingCartItem: typeof import('./src/components/ShoppingCartItem.vue')['default']
     SignUp: typeof import('./src/components/SignUp.vue')['default']
-    SignUpDialog: typeof import('./src/components/SignUp.vue')['default']
   }
 }

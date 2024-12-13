@@ -9,7 +9,7 @@ import axios from 'axios'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import './style.css'
-import {User} from "./api/user.ts";
+import {User, UserRole} from "./api/user.ts";
 
 
 //设置后端地址（本地或服务器），会将请求转发到后端端口
@@ -22,13 +22,17 @@ app.use(router)
 app.use(ElementPlus)
 
 const currUser: User = reactive({
+    role:UserRole.PARENT,
     id: -1,
     phone: '',
+    password: ''
 })
 
 export function updateUser(user: User) {
     currUser.id = user.id
     currUser.phone = user.phone
+    currUser.password = user.password
+    currUser.role = user.role
 }
 
 app.provide('currUser', readonly(currUser))
