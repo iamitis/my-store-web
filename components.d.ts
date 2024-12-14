@@ -36,6 +36,5 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ShoppingCartItem: typeof import('./src/components/ShoppingCartItem.vue')['default']
     SignUp: typeof import('./src/components/SignUp.vue')['default']
-    SignUpDialog: typeof import('./src/components/SignUp.vue')['default']
   }
 }

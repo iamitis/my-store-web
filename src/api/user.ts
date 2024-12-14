@@ -1,18 +1,16 @@
 import {mockProduct, Product} from "./product.ts";
 import {AxiosResponseData} from "../utils/request.ts";
 import axios from "axios";
-import {Md5} from "ts-md5";
-const md5 = new Md5()
 
 export interface User {
     id?: number,
     phone?: string,
-    userIdentity?: UserIdentity,
+    role?: UserRole,
     password?: string,
 }
 
 
-export enum UserIdentity {
+export enum UserRole {
     PARENT = 'PARENT',
     CHILD = 'CHILD',
 }
@@ -52,7 +50,6 @@ export async function getShoppingCart(userId: number): Promise<AxiosResponseData
 }
 
 export async function login(loginInfo : LoginInfo): Promise<AxiosResponseData<number>> {
-    loginInfo.password =md5.start().appendStr(loginInfo.password).end() as string;
     return await userService.post('/login',loginInfo,
         {headers: {'Content-Type': 'application/json'}})
         .then(res=>{
@@ -61,7 +58,6 @@ export async function login(loginInfo : LoginInfo): Promise<AxiosResponseData<nu
 }
 
 export async function register(registerInfo:RegisterInfo): Promise<AxiosResponseData<boolean>> {
-    registerInfo.password = md5.start().appendStr(registerInfo.password).end() as string;
     return await userService.post('/register',registerInfo,
         {headers: {'Content-Type': 'application/json'}})
         .then(res=>{
