@@ -31,6 +31,10 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', updateSummaryBoxPosition);
 });
+
+function navBack() {
+  history.back()
+}
 </script>
 
 <template>
@@ -70,13 +74,13 @@ onUnmounted(() => {
           付款详情
         </p>
         <p class="summary-line" style="margin-top: 40px">
-          商品件数:
+          商品件数
           <span class="summary-digit">
             {{ totalQuantity }}
           </span>
         </p>
         <p class="summary-line">
-          &emsp;&emsp;总计:
+          总&emsp;&emsp;计
           <span class="summary-digit">
             {{ formatPrice(totalPrice) }}
           </span>
@@ -84,7 +88,7 @@ onUnmounted(() => {
 
         <!-- 提交按钮 -->
         <div class="summary-button-group">
-          <el-button class="back-button">返回</el-button>
+          <el-button @click="navBack" class="back-button">返回</el-button>
           <el-button class="submit-button">提交订单</el-button>
         </div>
       </div>
@@ -114,7 +118,6 @@ onUnmounted(() => {
   border: 1px solid #a2a1a1;
   border-radius: 20px;
   padding: 10px 15px;
-  height: 400px;
   margin-top: 20px;
 }
 
@@ -170,7 +173,7 @@ onUnmounted(() => {
 .summary-button-group {
   display: flex;
   justify-content: end;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 .back-button {

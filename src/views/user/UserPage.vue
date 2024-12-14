@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";
+import {computed, inject, onMounted, onUnmounted, provide, Ref, ref} from "vue";
 import {initRouter} from "../../router";
 import {userPageTitleMap} from "../../api/user.ts";
 
@@ -16,15 +16,24 @@ const currTitle = computed(() => {
 // 处理 user-nav-box 的位置，使其在滚动时固定在页面顶部，但不遮挡header
 const isHeaderVisible = inject('isHeaderVisible') as Ref<boolean>;
 const userNavBoxTop = ref('60px');
+const userNavBoxBottom = ref(0); // 提供给子页面使用
 function updateUserNavBoxPosition() {
   userNavBoxTop.value = isHeaderVisible.value ? 'calc(var(--header-height) + 60px)' : '60px';
+  const userNavBox = document.querySelector('.user-nav-box');
+  if (userNavBox) {
+    userNavBoxBottom.value = userNavBox.getBoundingClientRect().bottom;
+  }
 }
+
 onMounted(() => {
   window.addEventListener('scroll', updateUserNavBoxPosition);
+  updateUserNavBoxPosition()
 });
 onUnmounted(() => {
   window.removeEventListener('scroll', updateUserNavBoxPosition);
 });
+
+provide('userNavBoxBottom', userNavBoxBottom);
 </script>
 
 <template>
@@ -40,6 +49,7 @@ onUnmounted(() => {
         <span class="user-nav-text" @click="navTo('Overview')">总览</span>
         <span class="user-nav-text" @click="navTo('Order')">我的订单</span>
         <span class="user-nav-text" @click="navTo('ShoppingCart')">我的购物车</span>
+        <span class="user-nav-text" @click="navTo('AddressBook')">管理收货地址</span>
         <span class="user-nav-text" @click="navTo('Notification')">我的消息</span>
       </div>
     </el-col>
@@ -98,6 +108,7 @@ onUnmounted(() => {
   margin: 10px;
   cursor: pointer;
 }
+
 .user-nav-text:hover {
   color: #84b9a8;
   text-decoration-line: underline;

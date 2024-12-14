@@ -54,7 +54,7 @@ function closeModal() {
 
 const quantity = ref(1) // 购买数量
 async function handleAddCart() {
-  if (currUser.userId === -1) {
+  if (currUser.id === -1) {
     ElMessage.info('请先登录');
     return;
   }
@@ -71,7 +71,7 @@ async function handleAddCart() {
 }
 
 function handleBuy() {
-  if (currUser.userId === -1) {
+  if (currUser.id === -1) {
     ElMessage.info('请先登录');
     return;
   }
