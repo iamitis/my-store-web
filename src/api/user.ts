@@ -82,6 +82,13 @@ export async function updateCartItem(cartItem: CartItem): Promise<AxiosResponseD
     return await userService.post(`/updateCartItem`, cartItem)
 }
 
+/**
+ * 删除购物车项
+ */
+export async function deleteCartItem(cartItemId: number): Promise<AxiosResponseData<boolean>> {
+    return await userService.delete(`/deleteCartItem/${cartItemId}`)
+}
+
 export interface AddressInfo {
     addressInfoId?: number,
     userId: number,

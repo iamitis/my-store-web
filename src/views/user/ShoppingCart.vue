@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {formatPrice, Product} from "../../api/product.ts";
 import {inject, onMounted, onUnmounted, Ref, ref, watch} from "vue";
-import {CartItem, getShoppingCart, mockCartItem, User} from "../../api/user.ts";
+import {CartItem, deleteCartItem, getShoppingCart, mockCartItem, User} from "../../api/user.ts";
 import ShoppingCartItem from "../../components/ShoppingCartItem.vue";
 import {initRouter} from "../../router";
 
@@ -11,17 +11,21 @@ const totalPrice = ref(0);
 const currUser = inject("currUser") as User;
 const {navTo} = initRouter()
 
+async function _getShoppingCart() {
+  const response = await getShoppingCart(currUser.id!);
+  if (response.data.code !== '200') {
+    ElMessage.error('获取用户购物车列表失败' + response.data.msg);
+  } else {
+    shoppingCart.value = response.data.result
+        .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime());
+    totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0);
+    totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0);
+  }
+}
+
 onMounted(async () => {
   // // 获取用户购物车列表
-  // const response = await getShoppingCart(currUser.id!);
-  // if (response.data.code !== '200') {
-  //   ElMessage.error('获取用户购物车列表失败' + response.data.msg);
-  // } else {
-  //   shoppingCart.value = response.data.result
-  //       .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime());
-  //   totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0);
-  //   totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0);
-  // }
+  // await _getShoppingCart();
 
   // TODO: change to above
   shoppingCart.value = new Array(10)
@@ -31,8 +35,23 @@ onMounted(async () => {
   totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
 })
 
-function removeCartItem(cartItemId: number) {
+function updateQuantity() {
+  totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0)
+  totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
+}
+
+async function removeCartItem(cartItemId: number) {
   ElMessage.info('remove item: ' + cartItemId + " 没写接口")
+
+  // TODO: change to below
+  // const response = await deleteCartItem(cartItemId)
+  // if (response.data.code !== '200') {
+  //   ElMessage.error('删除购物车商品失败' + response.data.msg)
+  // } else {
+    shoppingCart.value = shoppingCart.value.filter(item => item.cartItemId !== cartItemId)
+    totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0)
+    totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
+  // }
 }
 
 function handleSubmit() {
@@ -71,8 +90,9 @@ function updateSummaryBoxPosition() {
       </el-col>
     </el-row>
 
-    <shopping-cart-item v-for="item in shoppingCart"
-                        :cart-item="item"
+    <shopping-cart-item v-for="(item, index) in shoppingCart"
+                        v-model:cart-item="shoppingCart[index]"
+                        v-on:update-quantity="updateQuantity"
                         v-on:remove-cart-item="removeCartItem"/>
   </div>
 
