@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import AddressItem from "../../components/AddressItem.vue";
 import {inject, onMounted, ref} from "vue";
-import {AddressInfo, deleteAddressInfo, getAllAddressInfo, mockAddressInfo, User} from "../../api/user.ts";
+import {
+  AddressInfo, copyAddressInfo,
+  deleteAddressInfo,
+  emptyAddressInfo,
+  getAllAddressInfo,
+  mockAddressInfo, updateAddressInfo,
+  User
+} from "../../api/user.ts";
+import AddressDialog from "../../components/AddressDialog.vue";
 
 const currUser = inject('currUser') as User
 const addressList = ref<AddressInfo[]>([])
+const originalAddressInfo = ref<AddressInfo>()
 
 onMounted(async () => {
   // // 获取用户收货地址
@@ -38,10 +47,46 @@ async function handleRemove(index: number) {
 
 function handleEdit(index: number) {
   ElMessage.info('编辑地址' + index)
+
+  originalAddressInfo.value = copyAddressInfo(addressList.value[index])
+  addressDialogVisible.value = true
 }
 
 function handleSetDefault(index: number) {
   ElMessage.info('设为默认地址' + index)
+}
+
+const addressDialogVisible = ref(false)
+
+function handleAdd() {
+  ElMessage.info('添加地址')
+
+  originalAddressInfo.value = emptyAddressInfo
+  addressDialogVisible.value = true
+}
+
+async function emitEdit() {
+  ElMessage.info('emitEdit')
+
+  // TODO: change to below
+  // const response = await updateAddressInfo(originalAddressInfo.value!)
+  // if (response.data.code !== '000') {
+  //   ElMessage.error('更新地址失败' + response.data.msg)
+  // } else {
+  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  // }
+}
+
+async function emitAdd() {
+  ElMessage.info('emitAdd')
+
+  // TODO: change to below
+  // const response = await updateAddressInfo(originalAddressInfo.value!)
+  // if (response.data.code !== '000') {
+  //   ElMessage.error('添加地址失败' + response.data.msg)
+  // } else {
+  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  // }
 }
 </script>
 
@@ -71,8 +116,14 @@ function handleSetDefault(index: number) {
                   v-on:remove="handleRemove"/>
 
     <!-- 添加地址按钮 -->
-    <el-button class="a-b-add-button">添加地址</el-button>
+    <el-button @click="handleAdd" class="a-b-add-button">添加地址</el-button>
   </div>
+
+  <!-- 添加地址对话框 -->
+  <address-dialog v-model:dialogVisible="addressDialogVisible"
+                  v-model:address-info="originalAddressInfo"
+                  v-on:add="emitAdd"
+                  v-on:edit="emitEdit"/>
 </template>
 
 <style scoped>

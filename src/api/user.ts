@@ -92,7 +92,8 @@ export async function deleteCartItem(cartItemId: number): Promise<AxiosResponseD
 export interface AddressInfo {
     addressInfoId?: number,
     userId: number,
-    address: string,
+    areaAddress: Array<string>, // 省市区
+    detailAddress: string, // 详细地址
     phone: string,
     receiver: string, // 收件人
     isDefault: boolean, // 是否为默认地址
@@ -138,11 +139,38 @@ export const mockCartItem: CartItem = {
 }
 
 export const mockAddressInfo: AddressInfo = {
+    addressInfoId: 1,
     userId: 0,
-    address: '南京市汉口路22号南京大学鼓楼校区南园',
+    areaAddress: ['江苏省', '南京市', '鼓楼区'],
+    detailAddress: '汉口路22号南京大学鼓楼校区南园',
     phone: '12345678901',
     receiver: '小南',
     isDefault: false,
+}
+
+export const emptyAddressInfo: AddressInfo = {
+    userId: 0,
+    areaAddress: [],
+    detailAddress: '',
+    phone: '',
+    receiver: '',
+    isDefault: false,
+}
+
+export function addressToString(addressInfo: AddressInfo): string {
+    return addressInfo.areaAddress.join('') + addressInfo.detailAddress
+}
+
+export function copyAddressInfo(addressInfo: AddressInfo): AddressInfo {
+    return {
+        addressInfoId: addressInfo.addressInfoId,
+        userId: addressInfo.userId,
+        areaAddress: [...addressInfo.areaAddress],
+        detailAddress: addressInfo.detailAddress,
+        phone: addressInfo.phone,
+        receiver: addressInfo.receiver,
+        isDefault: addressInfo.isDefault,
+    }
 }
 
 
