@@ -119,7 +119,7 @@ async function emitAdd() {
     <el-button @click="handleAdd" class="a-b-add-button">添加地址</el-button>
   </div>
 
-  <!-- 添加地址对话框 -->
+  <!-- 地址对话框 -->
   <address-dialog v-model:dialogVisible="addressDialogVisible"
                   v-model:address-info="originalAddressInfo"
                   v-on:add="emitAdd"

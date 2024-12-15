@@ -1,10 +1,80 @@
 <!-- 下单页 -->
 
 <script setup lang="ts">
-import {CartItem} from "../api/user.ts";
-import {inject, onMounted, onUnmounted, Ref, ref} from "vue";
+import {
+  AddressInfo,
+  CartItem,
+  copyAddressInfo,
+  emptyAddressInfo,
+  getAllAddressInfo,
+  mockAddressInfo,
+  User
+} from "../api/user.ts";
+import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";
 import CreateOrderItem from "../components/CreateOrderItem.vue";
 import {formatPrice} from "../api/product.ts";
+import AddressBox from "../components/AddressBox.vue";
+import AddressDialog from "../components/AddressDialog.vue";
+
+// 地址
+const currUser = inject('currUser') as User
+const addressList = ref<AddressInfo[]>([])
+const selectIdx = ref(0)
+const addressDialogVisible = ref(false)
+const originalAddressInfo = ref<AddressInfo>()
+
+onMounted(async () => {
+  // const response = await getAllAddressInfo(currUser.id!)
+  // if (response.data.code !== '000') {
+  //   ElMessage.error('获取用户收货地址失败' + response.data.msg)
+  // } else {
+  //   addressList.value = response.data.result
+  // }
+
+  // TODO: change to above
+  addressList.value = new Array(3).fill(mockAddressInfo)
+  addressList.value.unshift({...mockAddressInfo, isDefault: true})
+})
+
+function handleAdd() {
+  originalAddressInfo.value = emptyAddressInfo
+  addressDialogVisible.value = true
+}
+
+function handleEdit(index: number) {
+  ElMessage.info('编辑地址' + index)
+
+  originalAddressInfo.value = copyAddressInfo(addressList.value[index])
+  addressDialogVisible.value = true
+}
+
+function handleSelect(index: number) {
+  selectIdx.value = index
+}
+
+async function emitEdit() {
+  ElMessage.info('emitEdit')
+
+  // TODO: change to below
+  // const response = await updateAddressInfo(originalAddressInfo.value!)
+  // if (response.data.code !== '000') {
+  //   ElMessage.error('更新地址失败' + response.data.msg)
+  // } else {
+  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  // }
+}
+
+async function emitAdd() {
+  ElMessage.info('emitAdd')
+
+  // TODO: change to below
+  // const response = await updateAddressInfo(originalAddressInfo.value!)
+  // if (response.data.code !== '000') {
+  //   ElMessage.error('添加地址失败' + response.data.msg)
+  // } else {
+  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  // }
+}
 
 const productList = ref<CartItem[]>([])
 const totalQuantity = ref(0)
@@ -42,14 +112,26 @@ function navBack() {
     <el-col :span="18" class="c-o-operation-col">
       <!-- 收货地址 -->
       <div class="c-o-addr-container">
-        <p style="font-size: 24px; color: #111111; margin: 0">
+        <p style="font-size: 24px; font-weight: bold; color: #111111; margin: 0">
           确认收货信息
         </p>
+        <el-row>
+          <el-col :span="8" v-if="addressList.length > 0" v-for="(addr, index) in addressList">
+            <address-box :addressInfo="addr" :index="index" :selected-idx="selectIdx"
+            v-on:edit="handleEdit" v-on:select="handleSelect"/>
+          </el-col>
+        </el-row>
+        <!-- 空状态 -->
+        <div v-if="addressList.length === 0"
+             style="font-size: 20px; color: #727171; padding-top: 20px">
+          暂无收货地址
+        </div>
+        <el-button @click="handleAdd" class="c-o-add-button">添加地址</el-button>
       </div>
 
       <!-- 商品列表 -->
       <div class="c-o-product-container">
-        <p style="font-size: 24px; color: #111111; margin: 0">
+        <p style="font-size: 24px; font-weight: bold; color: #111111; margin: 0">
           确认订单信息
         </p>
 
@@ -70,7 +152,7 @@ function navBack() {
     <el-col :span="6" class="summary-col">
       <!-- 付款详情，悬浮于右上角 -->
       <div class="summary-box" :style="{ top: summaryBoxTop }">
-        <p style="font-size: 24px; color: #111111; margin: 0;">
+        <p style="font-size: 24px; font-weight: bold; color: #111111; margin: 0;">
           付款详情
         </p>
         <p class="summary-line" style="margin-top: 40px">
@@ -94,13 +176,22 @@ function navBack() {
       </div>
     </el-col>
   </el-row>
+
+  <div style="height: 250px; background-color: #ecebeb"/>
+
+  <!-- 地址对话框 -->
+  <address-dialog v-model:dialogVisible="addressDialogVisible"
+                  v-model:address-info="originalAddressInfo"
+                  v-on:add="emitAdd"
+                  v-on:edit="emitEdit"/>
 </template>
 
 <style scoped>
 .c-o-container {
-  width: 90%;
+  width: 100%;
+  padding: 0 5%;
   justify-self: center;
-  height: calc(100vh - var(--header-height));
+  background-color: #ecebeb;
 }
 
 .c-o-operation-col {
@@ -108,17 +199,30 @@ function navBack() {
 }
 
 .c-o-addr-container {
-  border: 1px solid #a2a1a1;
   border-radius: 20px;
-  height: 190px;
-  padding: 10px 15px;
+  padding: 20px 25px;
+  background-color: white;
+}
+
+.c-o-add-button {
+  width: 100px;
+  height: 40px;
+  margin-top: 20px;
+  font-size: 20px;
+  background-color: #95cbba;
+  color: white;
+}
+
+.c-o-add-button:hover {
+  background-color: #8ac0af;
+  border: none;
 }
 
 .c-o-product-container {
-  border: 1px solid #a2a1a1;
   border-radius: 20px;
-  padding: 10px 15px;
+  padding: 20px 25px;
   margin-top: 20px;
+  background-color: white;
 }
 
 .c-o-product-title {

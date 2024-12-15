@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddressBox: typeof import('./src/components/AddressBox.vue')['default']
     AddressDialog: typeof import('./src/components/AddressDialog.vue')['default']
     AddressItem: typeof import('./src/components/AddressItem.vue')['default']
     CreateOrderItem: typeof import('./src/components/CreateOrderItem.vue')['default']

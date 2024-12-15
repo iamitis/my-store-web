@@ -1,14 +1,14 @@
 <!-- TODO: 消息红点 -->
 
 <script setup lang="ts">
-import {inject, onMounted, onUnmounted, Ref, ref} from "vue";
+import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";
 import {initRouter} from "../router";
 import {User} from "../api/user.ts";
 import LogInDialog from "./LogIn.vue";
 import {updateHeaderVisible} from "../main.ts";
 import {UserFilled, Message, Search} from "@element-plus/icons-vue";
 
-const {navTo} = initRouter()
+const {currRouteName, navTo} = initRouter()
 const searchText = ref<string>('')
 
 function clickSearch() {
@@ -73,6 +73,13 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
 })
+
+// 在某些页面只显示 Logo，不显示其他
+const isLogoOnly = computed(() => {
+  return somePage.includes(String(currRouteName.value))
+})
+
+const somePage = ['CreateOrder']
 </script>
 
 <template>
@@ -84,7 +91,7 @@ onUnmounted(() => {
                  style="background-color: #a1ccbf; cursor: pointer; height: 80px; width: 80px"/>
     </el-col>
     <el-col :span="5" class="header-item">
-      <div class="header-input-container">
+      <div class="header-input-container" v-if="!isLogoOnly">
         <input v-model="searchText" placeholder="搜索想要的商品"
                class="header-input"/>
         <el-icon @click="clickSearch" title="点击搜索"
@@ -94,17 +101,17 @@ onUnmounted(() => {
       </div>
     </el-col>
     <el-col :span="1" :offset="1" class="header-item" style="margin-top: 10px">
-      <el-icon @click="clickNotification" title="查看个人主页"
+      <el-icon @click="clickNotification" title="查看消息" v-if="!isLogoOnly"
                style="cursor: pointer; background-color: white; color: #7fad9f;
                width: 50px; height: 50px; border-radius: 50%">
         <message style="width: 70%; height: 70%"/>
       </el-icon>
-      <el-text style="font-size: 18px; margin-top: 5px">消息</el-text>
+      <el-text v-if="!isLogoOnly" style="font-size: 18px; margin-top: 5px">消息</el-text>
     </el-col>
-    <el-col :span="2" class="header-item" style="margin-top: 10px;">
+    <el-col :span="2" class="header-item" style="margin-top: 10px;" v-if="!isLogoOnly">
       <!-- 未登录状态： -->
       <el-icon v-if="currUser.id === -1"
-               @click="clickUser" title="查看个人主页"
+               @click="clickUser" title="点击登录"
                style="cursor: pointer; background-color: white; color: #72a294;
                width: 50px; height: 50px; border-radius: 50%">
         <user-filled style="width: 70%; height: 70%"/>

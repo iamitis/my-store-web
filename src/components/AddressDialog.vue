@@ -81,8 +81,10 @@ function handleSubmit() {
 
 <template>
   <el-dialog v-model="dialogVisible" width="30%"
-             :title="title"
              v-if="addressInfo" class="a-d-dialog">
+    <template #header>
+      <span class="a-d-title">{{ title }}</span>
+    </template>
     <el-form>
       <div class="a-d-container">
         <el-row>
@@ -126,8 +128,8 @@ function handleSubmit() {
           <el-checkbox v-model="addressInfo.isDefault">设为默认地址</el-checkbox>
         </el-row>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleSubmit">确 定</el-button>
+          <el-button @click="dialogVisible = false" style="font-size: 18px">取 消</el-button>
+          <el-button @click="handleSubmit" class="a-d-confirm">确 定</el-button>
         </span>
       </div>
     </el-form>
@@ -141,8 +143,8 @@ function handleSubmit() {
   gap: 10px;
 }
 
-:deep(.a-d-dialog .el-dialog__title) {
-  --el-dialog-title-font-size: 20px;
+.a-d-title {
+  font-size: 20px;
   font-weight: bold;
 }
 
@@ -151,5 +153,16 @@ function handleSubmit() {
   color: #3f3e3e;
   text-align: justify;
   text-align-last: justify;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: end;
+}
+
+.a-d-confirm {
+  background-color: #95cbba;
+  color: white;
+  font-size: 18px;
 }
 </style>
