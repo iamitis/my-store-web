@@ -1,57 +1,64 @@
 <script setup lang="ts">
-import {CartItem} from "../api/user.ts";
-import {onMounted, ref} from "vue";
+import {CartItem, updateCartItem} from "../api/user.ts";
+import {onMounted, PropType, ref} from "vue";
 import {formatPrice} from "../api/product.ts";
 import {initRouter} from "../router";
 import {Delete} from "@element-plus/icons-vue";
 
-const props = defineProps<{
-  cartItem: CartItem
-}>()
-const emit = defineEmits(['removeCartItem'])
-
+const cartItem = defineModel(
+    'cartItem',
+    {
+      type: Object as PropType<CartItem>,
+      required: true
+    }
+)
+const emit = defineEmits(['removeCartItem', 'updateQuantity'])
 const {navTo} = initRouter()
-const quantity = ref(1)
-
-onMounted(() => {
-  quantity.value = props.cartItem.quantity!
-})
 
 function navToDetail() {
-  navTo('ProductDetail', {productId: props.cartItem.product!.productId})
+  navTo('ProductDetail', {productId: cartItem.value.product!.productId})
 }
 
-function handleQuantityChange() {
-  ElMessage.info('quantity changed to: ' + quantity.value + " 没写接口")
+async function handleQuantityChange() {
+  ElMessage.info('quantity changed to: ' + cartItem.value.quantity + " 没写接口")
+
+  // TODO: change to below
+  // const newCartItem = {...props.cartItem, quantity: quantity.value}
+  // const response = await updateCartItem(newCartItem)
+  // if (response.data.code !== '200') {
+  //   ElMessage.error('更新购物车商品数量失败' + response.data.msg)
+  // } else {
+  emit('updateQuantity')
+  // }
 }
 
 function handleRemove() {
-  emit('removeCartItem', props.cartItem.cartItemId)
+  emit('removeCartItem', cartItem.value.cartItemId)
 }
 </script>
 
 <template>
   <el-row class="cart-row">
     <el-col :span="4" class="cart-row-item" style="justify-content: center">
-      <img :src="props.cartItem.product!.productCover!" alt="商品图片"
+      <img :src="cartItem.product!.productCover!" alt="商品图片"
            title="查看商品详情" @click="navToDetail"
            class="cart-product-cover">
     </el-col>
     <el-col :span="11" class="cart-row-item"
             style="align-items: start;">
       <p class="cart-product-name" title="查看商品详情" @click="navToDetail">
-        {{ props.cartItem.product!.productName! }}
+        {{ cartItem.product!.productName! }}
       </p>
     </el-col>
     <el-col :span="3" class="cart-row-item">
-      <input v-model="quantity" type="number"
+      <input v-model="cartItem.quantity" type="number"
              :min="1" title="修改商品数量"
              @change="handleQuantityChange"
              class="cart-product-quantity"/>
     </el-col>
     <el-col :span="4" class="cart-row-item">
       <p style="margin-top: 20px; font-size: 25px; color: #414040;">
-        {{ formatPrice(props.cartItem.product!.productNowPrice!) }}
+        {{ formatPrice(cartItem.product!.productNowPrice!) }}
       </p>
     </el-col>
     <el-col :span="2" class="cart-row-item">

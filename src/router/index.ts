@@ -57,6 +57,11 @@ const router = createRouter({
                     component: () => import('../views/user/ShoppingCart.vue'),
                 },
                 {
+                    path: '/address-book',
+                    name: 'AddressBook',
+                    component: () => import('../views/user/AddressBook.vue'),
+                },
+                {
                     path: '/notification',
                     name: 'Notification',
                     component: () => import('../views/user/Notification.vue'),
