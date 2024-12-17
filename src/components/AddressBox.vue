@@ -55,6 +55,9 @@ const borderColor = computed(() => {
   gap: 10px;
   cursor: pointer;
 }
+.a-box-container:hover {
+  background-color: #f0f0f0;
+}
 
 .a-box-area {
   margin: 15px 15px 0 15px;

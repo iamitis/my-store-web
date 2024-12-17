@@ -87,6 +87,11 @@ onMounted(() => {
   totalPrice.value = productList.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
 })
 
+function updateQuantity() {
+  totalQuantity.value = productList.value.reduce((acc, item) => acc + item.quantity!, 0)
+  totalPrice.value = productList.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
+}
+
 // 处理 summary-box 的位置，使其在滚动时固定在页面顶部，但不遮挡header
 const isHeaderVisible = inject('isHeaderVisible') as Ref<boolean>;
 const summaryBoxTop = ref('60px');
@@ -118,7 +123,7 @@ function navBack() {
         <el-row>
           <el-col :span="8" v-if="addressList.length > 0" v-for="(addr, index) in addressList">
             <address-box :addressInfo="addr" :index="index" :selected-idx="selectIdx"
-            v-on:edit="handleEdit" v-on:select="handleSelect"/>
+                         v-on:edit="handleEdit" v-on:select="handleSelect"/>
           </el-col>
         </el-row>
         <!-- 空状态 -->
@@ -138,14 +143,17 @@ function navBack() {
         <!-- 标题列 -->
         <el-row class="c-o-product-title">
           <el-col :span="2">商品</el-col>
-          <el-col :span="2" :offset="8">属性</el-col>
-          <el-col :span="2" :offset="4">价格</el-col>
+          <el-col :span="2" :offset="6" style="text-align: start">属性</el-col>
+          <el-col :span="2" :offset="6">单价</el-col>
           <el-col :span="2" :offset="1">数量</el-col>
           <el-col :span="2" :offset="1">小计</el-col>
         </el-row>
 
         <!-- 商品列表 -->
-        <create-order-item v-for="item in productList" :item="item" style="margin-top: 10px"/>
+        <create-order-item v-for="(item, index) in productList"
+                           v-model:item="productList[index]"
+                           v-on:update-quantity="updateQuantity"
+                           style="margin-top: 10px"/>
       </div>
     </el-col>
 

@@ -1,4 +1,4 @@
-import {mockProduct, Product} from "./product.ts";
+import {mockOptionValue1, mockOptionValue4, mockProduct, Product, ProductOptionValue} from "./product.ts";
 import {AxiosResponseData} from "../utils/request.ts";
 import axios from "axios";
 
@@ -41,8 +41,9 @@ export interface CartItem {
     cartItemId?: number,
     userId?: number,
     product?: Product,
+    productOptionValues?: ProductOptionValue[],
     quantity?: number,
-    date?: Date,
+    cartItemDate?: Date,
 }
 
 export async function getShoppingCart(userId: number): Promise<AxiosResponseData<CartItem[]>> {
@@ -65,13 +66,7 @@ export async function register(registerInfo:RegisterInfo): Promise<AxiosResponse
         })
 }
 
-export async function addToShoppingCart(userId: number, product: Product, quantity: number): Promise<AxiosResponseData<CartItem>> {
-    const cartItem: CartItem = {
-        userId: userId,
-        product: product,
-        quantity: quantity,
-        date: new Date()
-    }
+export async function addToShoppingCart(cartItem: CartItem): Promise<AxiosResponseData<CartItem>> {
     return await userService.post(`/addToShoppingCart`, cartItem)
 }
 
@@ -134,8 +129,9 @@ export const mockCartItem: CartItem = {
     cartItemId: 1,
     userId: 1,
     product: mockProduct,
+    productOptionValues: [mockOptionValue1, mockOptionValue4],
     quantity: 1,
-    date: new Date()
+    cartItemDate: new Date(),
 }
 
 export const mockAddressInfo: AddressInfo = {

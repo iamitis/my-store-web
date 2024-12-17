@@ -57,6 +57,9 @@ let lastScrollTop = 0;
 const isHeaderVisible = inject('isHeaderVisible') as Ref<boolean>;
 
 function handleScroll() {
+  if (isLogoOnly) {
+    return
+  }
   console.log("scroll")
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   if (scrollTop > lastScrollTop) {
