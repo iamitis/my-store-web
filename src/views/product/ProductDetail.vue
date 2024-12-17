@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import {inject, onMounted, ref} from "vue";
-import {formatPrice, getProductById, mockProduct, Product} from "../../api/product.ts";
+import {
+  formatPrice,
+  getProductById, getProductOptions, getProductOptionValues, mockOptionColor, mockOptionMap, mockOptionSize,
+  mockOptionValue1, mockOptionValue4,
+  mockProduct,
+  Product,
+  ProductOption, ProductOptionValue
+} from "../../api/product.ts";
 import {useRoute} from "vue-router";
 import {addToShoppingCart, User} from "../../api/user.ts";
 import {initRouter} from "../../router";
+import OptionItem from "../../components/OptionItem.vue";
 
 const currUser = inject('currUser') as User
 const {navTo} = initRouter()
@@ -52,6 +60,37 @@ function closeModal() {
   showModal.value = false;
 }
 
+const productOptionList = ref<ProductOption[]>([])
+const optionMap = ref<Map<string, ProductOptionValue[]>>(new Map())
+onMounted(async () => {
+      // // 获取商品的选项类
+      // const response = await getProductOptions(productId)
+      // if (response.data.code !== '000') {
+      //   ElMessage.error("获取商品选项失败 " + response.data.msg)
+      // } else {
+      //   productOptionList.value = response.data.result
+      //   // 获取商品的所有选项值
+      //   const optionValueResponse = await getProductOptionValues(productId)
+      //   if (optionValueResponse.data.code !== '000') {
+      //     ElMessage.error("获取商品选项值失败 " + optionValueResponse.data.msg)
+      //   } else {
+      //     // 将选项值按选项名存入map
+      //     for (const value of optionValueResponse.data.result) {
+      //       if (!optionMap.value.has(value.productOptionName!)) {
+      //         optionMap.value.set(value.productOptionName!, [])
+      //       }
+      //       optionMap.value.get(value.productOptionName!)!.push(value)
+      //     }
+      //   }
+      //
+      // }
+
+      // TODO: change to above
+      productOptionList.value = [mockOptionColor, mockOptionSize]
+      optionMap.value = mockOptionMap
+    }
+)
+
 const quantity = ref(1) // 购买数量
 async function handleAddCart() {
   if (currUser.id === -1) {
@@ -63,7 +102,7 @@ async function handleAddCart() {
 
   // TODO: change to below
   // const response = await addToShoppingCart(currUser.userId!, productData.value!, quantity.value)
-  // if (response.data.code !== '200') {
+  // if (response.data.code !== '000') {
   //   ElMessage.error("加入购物车失败 " + response.data.msg)
   // } else {
   //   ElMessage.success("加入购物车成功")
@@ -81,6 +120,7 @@ function handleBuy() {
   sessionStorage.setItem('productList',
       JSON.stringify([{
         product: productData.value!,
+        productOptionValues: [mockOptionValue1, mockOptionValue4],
         quantity: quantity.value
       }]))
   navTo('CreateOrder')
@@ -131,9 +171,10 @@ function handleBuy() {
 
       <!-- 用户操作区 -->
       <div class="product-detail-operation-box">
-        <el-row style="font-size: 18px">
-          类型:
-          <!-- TODO: 选择样式 -->
+        <el-row v-for="option in productOptionList" style="font-size: 18px">
+          {{ option.productOptionName }}
+          <option-item v-for="item in optionMap.get(option.productOptionName!)"
+                       :optionValue="item"/>
         </el-row>
         <el-row style="font-size: 18px">
           数量:

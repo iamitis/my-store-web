@@ -35,6 +35,7 @@ declare module 'vue' {
     Header: typeof import('./src/components/Header.vue')['default']
     LogIn: typeof import('./src/components/LogIn.vue')['default']
     LogInDialog: typeof import('./src/components/LogInDialog.vue')['default']
+    OptionItem: typeof import('./src/components/OptionItem.vue')['default']
     OrderItem: typeof import('./src/components/OrderItem.vue')['default']
     ProductItem: typeof import('./src/components/ProductItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

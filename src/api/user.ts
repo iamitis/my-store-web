@@ -1,4 +1,4 @@
-import {mockProduct, Product} from "./product.ts";
+import {mockOptionValue1, mockOptionValue4, mockProduct, Product, ProductOptionValue} from "./product.ts";
 import {AxiosResponseData} from "../utils/request.ts";
 import axios from "axios";
 
@@ -41,6 +41,7 @@ export interface CartItem {
     cartItemId?: number,
     userId?: number,
     product?: Product,
+    productOptionValues?: ProductOptionValue[],
     quantity?: number,
     date?: Date,
 }
@@ -134,6 +135,7 @@ export const mockCartItem: CartItem = {
     cartItemId: 1,
     userId: 1,
     product: mockProduct,
+    productOptionValues: [mockOptionValue1, mockOptionValue4],
     quantity: 1,
     date: new Date()
 }

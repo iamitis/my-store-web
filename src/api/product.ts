@@ -1,4 +1,4 @@
-import { AxiosResponseData} from '../utils/request'
+import {AxiosResponseData} from '../utils/request'
 import {NEWPRODUCT_MODULE} from './_prefix'
 import {Comment} from "./comment.ts";
 import axios from "axios";
@@ -28,17 +28,17 @@ export const productService = axios.create({
     timeout: 30000,
 });
 
-export async function getAttributesByCategory(category: string): Promise<AxiosResponseData<ProductAttribute[]>>{
+export async function getAttributesByCategory(category: string): Promise<AxiosResponseData<ProductAttribute[]>> {
     return await productService.get(`/getAttributesByCategory/${category}`)
-        .then(res=>{
+        .then(res => {
             return res.data.result
         })
 }
 
-export async function filterProducts(category: string, filters: Record<string, string>) : Promise<AxiosResponseData<Product>>{
+export async function filterProducts(category: string, filters: Record<string, string>): Promise<AxiosResponseData<Product>> {
     const queryString = new URLSearchParams(filters).toString();
     return await productService.get(`/filterProducts/${category}?${queryString}`)
-        .then(res=>{
+        .then(res => {
             return res.data.result;
         })
 }
@@ -49,6 +49,27 @@ export async function filterProducts(category: string, filters: Record<string, s
 // 这里的返回类型就可以写成Promise<AxiosResponseData<Product>>
 export async function getProductById(productId: number): Promise<AxiosResponseData<Product>> {
     return await axios.get(`${NEWPRODUCT_MODULE}/getProductById/${productId}`)
+}
+
+export interface ProductOption {
+    productOptionId?: number;
+    productId?: number;
+    productOptionName?: string; // 选项名，如"颜色"
+}
+
+export interface ProductOptionValue {
+    productOptionValueId?: number;
+    productId?: number;
+    productOptionName?: string;
+    value?: string; // 选项值，如"银色"
+}
+
+export async function getProductOptions(productId: number): Promise<AxiosResponseData<ProductOption[]>> {
+    return await productService.get(`/getProductOptions/${productId}`)
+}
+
+export async function getProductOptionValues(productId: number): Promise<AxiosResponseData<ProductOptionValue[]>> {
+    return await productService.get(`/getProductOptionValues/${productId}`)
 }
 
 export function formatPrice(price: number) {
@@ -67,6 +88,42 @@ export const mockProduct: Product = {
     productScore: 4.4,
     productScoreCount: 157
 }
+export const mockOptionColor: ProductOption = {
+    productOptionName: '颜色',
+}
+
+export const mockOptionSize: ProductOption = {
+    productOptionName: '规格',
+}
+
+export const mockOptionValue1: ProductOptionValue = {
+    productOptionName: '颜色',
+    value: '银色',
+}
+
+export const mockOptionValue2: ProductOptionValue = {
+    productOptionName: '颜色',
+    value: '黑色',
+}
+
+export const mockOptionValue3: ProductOptionValue = {
+    productOptionName: '颜色',
+    value: '金色',
+}
+
+export const mockOptionValue4: ProductOptionValue = {
+    productOptionName: '规格',
+    value: '内存8G 硬盘256G',
+}
+
+export const mockOptionValue5: ProductOptionValue = {
+    productOptionName: '规格',
+    value: '内存16G 硬盘512G',
+}
+
+export const mockOptionMap: Map<string, ProductOptionValue[]> = new Map()
+mockOptionMap.set("颜色", [mockOptionValue1, mockOptionValue2, mockOptionValue3])
+mockOptionMap.set("规格", [mockOptionValue4, mockOptionValue5])
 
 export const categoryNameMap: Map<string, string> = new Map()
 categoryNameMap.set("FOOD", "食品")
