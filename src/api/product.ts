@@ -64,10 +64,12 @@ export interface ProductOptionValue {
     value?: string; // 选项值，如"银色"
 }
 
+// 获取某商品的所有选项类
 export async function getProductOptions(productId: number): Promise<AxiosResponseData<ProductOption[]>> {
     return await productService.get(`/getProductOptions/${productId}`)
 }
 
+// 获取某商品的所有选项值
 export async function getProductOptionValues(productId: number): Promise<AxiosResponseData<ProductOptionValue[]>> {
     return await productService.get(`/getProductOptionValues/${productId}`)
 }
@@ -121,9 +123,14 @@ export const mockOptionValue5: ProductOptionValue = {
     value: '内存16G 硬盘512G',
 }
 
+export const mockOptionValue6: ProductOptionValue = {
+    productOptionName: '规格',
+    value: '内存16G 硬盘1T',
+}
+
 export const mockOptionMap: Map<string, ProductOptionValue[]> = new Map()
 mockOptionMap.set("颜色", [mockOptionValue1, mockOptionValue2, mockOptionValue3])
-mockOptionMap.set("规格", [mockOptionValue4, mockOptionValue5])
+mockOptionMap.set("规格", [mockOptionValue4, mockOptionValue5, mockOptionValue6])
 
 export const categoryNameMap: Map<string, string> = new Map()
 categoryNameMap.set("FOOD", "食品")
