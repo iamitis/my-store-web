@@ -50,7 +50,7 @@ const submitLoginForm = () => {
     password: loginForm.value.password
   })
       .then(res=>{
-        const code = res.data.code
+        const code = res.data.code;
         const id = res.data.result;
         if(code == '000'){
           console.log('登录成功:', loginForm.value);

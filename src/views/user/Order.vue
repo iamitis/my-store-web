@@ -10,14 +10,16 @@ const orders = ref<Order[]>([]);
 const currUser = inject("currUser") as User;
 const {navTo} = initRouter()
 
-async function _getOrder() {
-  const response = await getAllOrders(currUser.id!);
-  if (response.data.status !== 200) {
-    ElMessage.error('获取用户订单失败' + response.data.msg);
-  } else {
-    orders.value = response.data.result
-        .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime());
-  }
+async function getOrder() {
+  getAllOrders(currUser.id!)
+      .then(res=>{
+        if (res.data.code !== '000') {
+          ElMessage.error('获取用户订单失败' + res.data.msg);
+        } else {
+          orders.value = res.data.result
+              .sort((a, b) => new Date(b.createDate!).getTime() - new Date(a.createDate!).getTime());
+        }
+      })
 }
 
 onMounted(async () => {
@@ -25,9 +27,10 @@ onMounted(async () => {
   // await _getShoppingCart();
 
   // TODO: change to above
-  orders.value = new Array(10)
-      .fill(mockOrder)
-      .sort((a, b) => b.date - a.date)
+  await getOrder();
+  // orders.value = new Array(10)
+  //     .fill(mockOrder)
+  //     .sort((a, b) => b.date - a.date)
 })
 
 async function removeOrder(cartItemId: number) {

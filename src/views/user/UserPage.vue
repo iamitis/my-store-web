@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import {computed, inject, onMounted, onUnmounted, provide, Ref, ref} from "vue";
 import {initRouter} from "../../router";
-import {userPageTitleMap} from "../../api/user.ts";
+import {userPageTitleMap, UserRole} from "../../api/user.ts";
+import {curUser_role} from "../../main.ts";
 
 const {currRouteName, navTo} = initRouter()
 const currTitle = computed(() => {
@@ -51,6 +52,7 @@ provide('userNavBoxBottom', userNavBoxBottom);
         <span class="user-nav-text" @click="navTo('ShoppingCart')">我的购物车</span>
         <span class="user-nav-text" @click="navTo('AddressBook')">管理收货地址</span>
         <span class="user-nav-text" @click="navTo('Notification')">我的消息</span>
+        <span class="user-nav-text" @click="navTo('ParentOrder')" v-if="curUser_role()=== UserRole.CHILD">父母订单</span>
       </div>
     </el-col>
 

@@ -26,7 +26,7 @@ export const orderService = axios.create({
 });
 
 
-export async function getAllOrders(userId: number):Promise<AxiosResponseData<Order>[]> {
+export async function getAllOrders(userId: number):Promise<AxiosResponseData<Order[]>> {
     return await userService.get(`/getAllOrders/${userId}`);
 }
 

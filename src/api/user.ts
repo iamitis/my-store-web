@@ -7,6 +7,7 @@ export interface User {
     phone?: string,
     role?: UserRole,
     password?: string,
+    related_id?: number,
 }
 
 
@@ -36,6 +37,7 @@ userPageTitleMap.set('Order', '我的订单')
 userPageTitleMap.set('ShoppingCart', '我的购物车')
 userPageTitleMap.set('AddressBook', '我的收货地址')
 userPageTitleMap.set('Notification', '我的消息')
+userPageTitleMap.set('ParentOrder', '父母订单')
 
 export interface CartItem {
     cartItemId?: number,
@@ -123,6 +125,15 @@ export async function updateAddressInfo(addressInfo: AddressInfo): Promise<Axios
 
 export async function deleteAddressInfo(addressInfoId: number): Promise<AxiosResponseData<boolean>> {
     return await userService.delete(`/deleteAddressInfo/${addressInfoId}`)
+}
+
+
+/**
+ * 返回当前用户的关联id，如果当前用户是CHILD,则返回其PARENT的id,如果当前用户是PARENT,则返回其CHILD的id
+ * @return 当前用户关联的id
+ */
+export async function getRelatedId(userId: number): Promise<AxiosResponseData<number>> {
+    return await userService.get(`/getRelatedId/${userId}`)
 }
 
 export const mockCartItem: CartItem = {
