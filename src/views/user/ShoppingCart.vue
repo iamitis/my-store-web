@@ -82,7 +82,10 @@ function updateSummaryBoxPosition() {
       <el-col :span="4">
         <p style="font-size: 24px; color: #333232;">商品</p>
       </el-col>
-      <el-col :span="3" :offset="11">
+      <el-col :span="6" :offset="5">
+        <p style="font-size: 24px; color: #333232;">属性</p>
+      </el-col>
+      <el-col :span="3">
         <p style="font-size: 24px; color: #343434; margin-left: 10px">数量</p>
       </el-col>
       <el-col :span="4" style="display: flex; color: #333232; justify-content: center">

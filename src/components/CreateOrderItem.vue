@@ -29,6 +29,7 @@ onMounted(async () => {
 })
 
 function handleChangeOption() {
+  console.log(item)
 }
 
 const emit = defineEmits(['updateQuantity'])

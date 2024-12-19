@@ -57,7 +57,7 @@ let lastScrollTop = 0;
 const isHeaderVisible = inject('isHeaderVisible') as Ref<boolean>;
 
 function handleScroll() {
-  if (isLogoOnly) {
+  if (isLogoOnly.value) {
     return
   }
   console.log("scroll")
