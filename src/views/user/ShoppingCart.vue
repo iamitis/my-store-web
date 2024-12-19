@@ -17,7 +17,7 @@ async function _getShoppingCart() {
     ElMessage.error('获取用户购物车列表失败' + response.data.msg);
   } else {
     shoppingCart.value = response.data.result
-        .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime());
+        .sort((a, b) => new Date(b.cartItemDate!).getTime() - new Date(a.cartItemDate!).getTime());
     totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0);
     totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0);
   }
@@ -82,7 +82,10 @@ function updateSummaryBoxPosition() {
       <el-col :span="4">
         <p style="font-size: 24px; color: #333232;">商品</p>
       </el-col>
-      <el-col :span="3" :offset="11">
+      <el-col :span="6" :offset="5">
+        <p style="font-size: 24px; color: #333232;">属性</p>
+      </el-col>
+      <el-col :span="3">
         <p style="font-size: 24px; color: #343434; margin-left: 10px">数量</p>
       </el-col>
       <el-col :span="4" style="display: flex; color: #333232; justify-content: center">

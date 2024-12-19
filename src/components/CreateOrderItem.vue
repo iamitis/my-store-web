@@ -29,6 +29,7 @@ onMounted(async () => {
 })
 
 function handleChangeOption() {
+  console.log(item)
 }
 
 const emit = defineEmits(['updateQuantity'])
@@ -41,7 +42,7 @@ function handleQuantityChange() {
 <template>
   <el-row v-if="item.product" class="c-o-i-container">
     <el-col :span="2" class="c-o-i-col">
-      <img :src="item.product.productCover" alt="商品图片"
+      <img :src="item.product.productImages![0]" alt="商品图片"
            style="width: 100px; height: 100px; object-fit: cover; margin-left: 10px; border-radius: 10px">
     </el-col>
     <el-col :span="6" class="c-o-i-col" style="align-items: start">

@@ -5,7 +5,7 @@ import {AxiosResponseData} from "../utils/request.ts";
 export interface Order {
     orderId?: number,
     userId?: number,
-    productList?: CartItem[],
+    products?: CartItem[],
     addressInfoId?: number,
     orderStatus?: OrderStatus,
     totalPrice?: number,
@@ -26,14 +26,14 @@ export const orderService = axios.create({
 });
 
 
-export async function getAllOrders(userId: number):Promise<AxiosResponseData<Order>[]> {
+export async function getAllOrders(userId: number):Promise<AxiosResponseData<Order[]>> {
     return await userService.get(`/getAllOrders/${userId}`);
 }
 
 export async function createOrder(userId: number, productList: CartItem[], addressInfoId: number):Promise<AxiosResponseData<boolean>> {
     const order : Order = {
         userId: userId,
-        productList: productList,
+        products: productList,
         addressInfoId: addressInfoId,
         orderStatus: OrderStatus.UNSEND,
         createDate : new Date()
@@ -44,7 +44,7 @@ export async function createOrder(userId: number, productList: CartItem[], addre
 export const mockOrder: Order = {
     orderId: 1,
     userId: 1,
-    productList: [mockCartItem, mockCartItem],
+    products: [mockCartItem, mockCartItem],
     addressInfoId: 1,
     orderStatus: OrderStatus.UNSEND,
     totalPrice: 100000,
