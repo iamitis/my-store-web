@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {inject, onMounted, ref} from "vue";
+import {computed, inject, onMounted, ref} from "vue";
 import {
   formatPrice,
   getProductById, getProductOptions, getProductOptionValues, mockOptionColor, mockOptionMap, mockOptionSize,
@@ -177,17 +177,29 @@ function handleBuy() {
   navTo('CreateOrder')
 }
 
+const imgCount = computed(() => productData.value?.productImages?.length)
+const imgListWidth = computed(() => imgCount.value! * 130 + 'px')
+
+const currImgIndex = ref(0)
 </script>
 
 <template>
   <el-row v-if="productData">
     <!-- 商品图片 -->
     <el-col :span="13">
-      <div class="product-detail-img-container"
-           @click="openModal(productData.productCover!)"
-           @mousemove="handleMouseMove">
-        <img :src="productData.productCover" alt="商品图片"
-             style="object-fit: cover; width: 100%; height: 100%; border-radius: inherit">
+      <div class="imgs-container">
+        <div class="product-detail-img-container"
+             @click="openModal(productData.productImages![currImgIndex])"
+             @mousemove="handleMouseMove">
+          <img :src="productData.productImages![currImgIndex]" alt="商品图片"
+               style="object-fit: cover; width: 100%; height: 100%; border-radius: inherit">
+        </div>
+        <div class="product-detail-img-list-container">
+          <img v-for="(img, index) in productData.productImages"
+               :src="img" alt="商品图片"
+                @click="currImgIndex = index"
+               class="p-d-img-list">
+        </div>
       </div>
     </el-col>
 
@@ -281,14 +293,22 @@ function handleBuy() {
 </template>
 
 <style scoped>
-.product-detail-img-container {
-  height: 760px;
-  width: 760px;
+.imgs-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 730px;
   margin: 30px 0 auto auto;
+}
+
+.product-detail-img-container {
+  height: 730px;
+  width: 730px;
   border-radius: 20px;
   overflow: hidden;
   position: relative;
   cursor: zoom-in;
+  z-index: 1;
 }
 
 .product-detail-img-container img {
@@ -297,6 +317,30 @@ function handleBuy() {
 
 .product-detail-img-container:hover img {
   transform: scale(1.5); /* 放大1.5倍 */
+}
+
+.product-detail-img-list-container {
+  width: v-bind(imgListWidth);
+  padding: 8px 15px;
+  margin: -20px 80px auto auto;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  z-index: 2;
+}
+
+.p-d-img-list {
+  width: 120px;
+  height: 120px;
+  margin: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.p-d-img-list:hover {
+  /* 背景变暗 */
+  filter: brightness(0.8);
 }
 
 .modal {
