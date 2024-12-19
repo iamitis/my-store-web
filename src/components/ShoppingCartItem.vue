@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {CartItem, updateCartItem} from "../api/user.ts";
-import {onMounted, PropType, ref} from "vue";
-import {formatPrice} from "../api/product.ts";
+import {computed, onMounted, PropType, ref} from "vue";
+import {formatPrice, getProductOptionValues, mockOptionMap, ProductOptionValue} from "../api/product.ts";
 import {initRouter} from "../router";
 import {Delete} from "@element-plus/icons-vue";
 
@@ -19,13 +19,42 @@ function navToDetail() {
   navTo('ProductDetail', {productId: cartItem.value.product!.productId})
 }
 
+const optionMap = ref<Map<string, ProductOptionValue[]>>(new Map)
+onMounted(async () => {
+  // // 获取商品选项，用于重选
+  // const response = await getProductOptionValues(cartItem.value.product!.productId!)
+  // if (response.data.code !== '000') {
+  //   ElMessage.error('获取商品选项失败' + response.data.msg)
+  // } else {
+  //   const optionValues = response.data.result
+  //   for (const optionValue of optionValues) {
+  //     if (!optionMap.value.has(optionValue.productOptionName!)) {
+  //       optionMap.value.set(optionValue.productOptionName!, [])
+  //     }
+  //     optionMap.value.get(optionValue.productOptionName!)!.push(optionValue)
+  //   }
+  // }
+
+  // TODO: change to above
+  optionMap.value = mockOptionMap
+})
+
+async function handleChangeOption() {
+  // TODO: change to below
+  // const response = await updateCartItem(cartItem.value)
+  // if (response.data.code !== '000') {
+  //   ElMessage.error('更新购物车商品选项失败' + response.data.msg)
+  // } else {
+  //   ElMessage.success('更新购物车商品选项成功')
+  // }
+}
+
 async function handleQuantityChange() {
   ElMessage.info('quantity changed to: ' + cartItem.value.quantity + " 没写接口")
 
-  // TODO: change to below
-  // const newCartItem = {...props.cartItem, quantity: quantity.value}
-  // const response = await updateCartItem(newCartItem)
-  // if (response.data.code !== '200') {
+  // // TODO: change to below
+  // const response = await updateCartItem(cartItem.value)
+  // if (response.data.code !== '000') {
   //   ElMessage.error('更新购物车商品数量失败' + response.data.msg)
   // } else {
   emit('updateQuantity')
@@ -44,11 +73,28 @@ function handleRemove() {
            title="查看商品详情" @click="navToDetail"
            class="cart-product-cover">
     </el-col>
-    <el-col :span="11" class="cart-row-item"
-            style="align-items: start;">
+    <el-col :span="5" class="cart-row-item"
+            style="align-items: start; padding: 0 8px">
       <p class="cart-product-name" title="查看商品详情" @click="navToDetail">
         {{ cartItem.product!.productName! }}
       </p>
+    </el-col>
+    <el-col :span="6" class="cart-row-item" style="align-items: start; padding: 24px 0; gap: 5px">
+      <span v-for="option in cartItem.productOptionValues" style="display: flex;">
+        <span style="font-size: 17px; color: #676666; width: 100%">{{ option.productOptionName }}</span>
+        <!--        <span class="c-o-i-option" title="更改" @click="handleChangeOption">-->
+        <!--          {{ option.value }} ▼-->
+        <!--        </span>-->
+        <span class="cart-select-container">
+        <select v-model="option.value" class="cart-select"
+                @change="handleChangeOption">
+          <option v-for="value in optionMap.get(option.productOptionName!)!"
+                  :value="value.value" class="cart-option">
+            {{ value.value }}
+          </option>
+        </select>
+        </span>
+      </span>
     </el-col>
     <el-col :span="3" class="cart-row-item">
       <input v-model="cartItem.quantity" type="number"
@@ -104,15 +150,50 @@ function handleRemove() {
 }
 
 .cart-product-name {
-  font-size: 25px;
+  font-size: 22px;
   color: #414040;
-  margin-left: 20px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cart-product-name:hover {
   cursor: pointer;
   color: #84b9a8;
   text-decoration: underline;
+}
+
+.cart-select-container {
+  width: 100%;
+}
+
+.cart-select {
+  padding: 3px;
+  margin-left: 10px;
+  border: 1px solid #84b9a8;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #84b9a8;
+  cursor: pointer;
+  outline: none;
+  /* 若选项长度过长，不换行，显示省略号 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.cart-select:hover, .cart-select:focus {
+  color: white;
+  background-color: #84b9a8;
+}
+
+.cart-option {
+  color: #84b9a8;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: white;
 }
 
 .cart-product-quantity {
