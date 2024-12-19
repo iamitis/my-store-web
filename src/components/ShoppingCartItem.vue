@@ -69,7 +69,7 @@ function handleRemove() {
 <template>
   <el-row class="cart-row">
     <el-col :span="4" class="cart-row-item" style="justify-content: center">
-      <img :src="cartItem.product!.productCover!" alt="商品图片"
+      <img :src="cartItem.product!.productImages![0]" alt="商品图片"
            title="查看商品详情" @click="navToDetail"
            class="cart-product-cover">
     </el-col>

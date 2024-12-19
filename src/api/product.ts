@@ -9,7 +9,8 @@ export interface Product {
     productName?: string
     productOriginalPrice?: number
     productNowPrice?: number
-    productCover?: string
+    productImages?: string[]
+    productCategory?: string
     productDescription?: string
     productScore?: number
     productScoreCount?: number // 评分人数
@@ -83,7 +84,10 @@ export const mockProduct: Product = {
     productName: 'Apple MacBook Pro',
     productOriginalPrice: 1299,
     productNowPrice: 1099,
-    productCover: 'src/assets/iphoeAndEarpod.jpg',
+    productImages: ['https://www.my1styears.com/media/mf_webp/jpg/media/catalog/product/cache/d8e9c4df3ed3fb9e8c3721796f593e45/s/e/se_30110277penguin-robe-model.webp',
+        'https://www.my1styears.com/media/mf_webp/jpg/media/catalog/product/cache/d8e9c4df3ed3fb9e8c3721796f593e45/s/e/se_30110277penguin-robe-c.webp',
+        'https://www.my1styears.com/media/mf_webp/jpg/media/catalog/product/cache/d8e9c4df3ed3fb9e8c3721796f593e45/s/e/se_30110277penguin-robe-a_2.webp',
+        'https://www.my1styears.com/media/mf_webp/jpg/media/catalog/product/cache/d8e9c4df3ed3fb9e8c3721796f593e45/s/e/se_30110277penguin-robe-b.webp'],
     productDescription: 'Apple M1芯片，8核CPU，8核GPU，16核神经引擎，8GB内存，' +
         '256GB固态硬盘，13.3英寸Retina显示屏，背光Magic Keyboard，触控栏，触控ID，' +
         '四个雷电3端口，最长',

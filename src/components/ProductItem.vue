@@ -12,7 +12,7 @@ const {navTo} = initRouter()
 <template>
   <div @click="navTo('ProductDetail', {productId: 1})"
        class="product-item" style="text-align: center; cursor: pointer">
-    <img :src="props.product.productCover" alt="product image" style="width: 300px; height: 300px; border-radius: 10%">
+    <img :src="props.product.productImages![0]" alt="product image" style="width: 300px; height: 300px; border-radius: 10%">
     <div>
       <p style="font-weight: bold; font-size: 20px">{{ props.product.productName }}</p>
       <p style="font-size: 18px">{{ props.product.productNowPrice }}</p>
