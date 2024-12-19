@@ -17,7 +17,7 @@ async function _getShoppingCart() {
     ElMessage.error('获取用户购物车列表失败' + response.data.msg);
   } else {
     shoppingCart.value = response.data.result
-        .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime());
+        .sort((a, b) => new Date(b.cartItemDate!).getTime() - new Date(a.cartItemDate!).getTime());
     totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0);
     totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0);
   }

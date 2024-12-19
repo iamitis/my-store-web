@@ -12,22 +12,23 @@ const {navTo} = initRouter()
 
 async function _getOrder() {
   const response = await getAllOrders(currUser.id!);
-  if (response.data.status !== 200) {
+  if (response.data.code !== '000') {
     ElMessage.error('获取用户订单失败' + response.data.msg);
   } else {
+    console.log(response.data.result)
     orders.value = response.data.result
-        .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime());
+        .sort((a, b) => new Date(b.createDate!).getTime() - new Date(a.createDate!).getTime());
   }
 }
 
 onMounted(async () => {
   // // 获取用户购物车列表
-  // await _getShoppingCart();
+  await _getOrder();
 
   // TODO: change to above
-  orders.value = new Array(10)
-      .fill(mockOrder)
-      .sort((a, b) => b.date - a.date)
+  // orders.value = new Array(10)
+  //     .fill(mockOrder)
+  //     .sort((a, b) => b.date - a.date)
 })
 
 async function removeOrder(cartItemId: number) {
