@@ -33,6 +33,7 @@ const router = createRouter({
             name: 'CreateOrder',
             component: () => import('../views/CreateOrder.vue'),
         },
+
         {
             path: '/user-page/:userId',
             name: 'UserPage',
@@ -65,6 +66,11 @@ const router = createRouter({
                     path: '/notification',
                     name: 'Notification',
                     component: () => import('../views/user/Notification.vue'),
+                },
+                {
+                    path:'/parent-order',
+                    name:'ParentOrder',
+                    component:()=>import('../views/user/ParentOrder.vue'),
                 },
             ],
         },

@@ -10,25 +10,29 @@ const orders = ref<Order[]>([]);
 const currUser = inject("currUser") as User;
 const {navTo} = initRouter()
 
-async function _getOrder() {
-  const response = await getAllOrders(currUser.id!);
-  if (response.data.code !== '000') {
-    ElMessage.error('获取用户订单失败' + response.data.msg);
-  } else {
-    console.log(response.data.result)
-    orders.value = response.data.result
-        .sort((a, b) => new Date(b.createDate!).getTime() - new Date(a.createDate!).getTime());
-  }
+async function getOrder() {
+  getAllOrders(currUser.id!)
+      .then(res=>{
+        if (res.data.code !== '000') {
+          ElMessage.error('获取用户订单失败' + res.data.msg);
+        } else {
+          orders.value = res.data.result
+              .sort((a, b) => new Date(b.createDate!).getTime() - new Date(a.createDate!).getTime());
+        }
+      })
 }
 
 onMounted(async () => {
   // // 获取用户购物车列表
-  await _getOrder();
+  // await _getShoppingCart();
 
   // TODO: change to above
+  console.log("Component mounted");
+  //await getOrder();
   // orders.value = new Array(10)
   //     .fill(mockOrder)
   //     .sort((a, b) => b.date - a.date)
+  await getOrder();
 })
 
 async function removeOrder(cartItemId: number) {

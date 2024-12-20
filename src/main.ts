@@ -22,10 +22,11 @@ app.use(router)
 app.use(ElementPlus)
 
 const currUser: User = reactive({
-    id: 1,
-    role:UserRole.PARENT,
+    id: -1,
+    role:UserRole.CHILD,
     phone: '',
-    password: ''
+    password: '',
+    related_id:-1
 })
 
 export function updateUser(user: User) {
@@ -33,6 +34,11 @@ export function updateUser(user: User) {
     currUser.phone = user.phone
     currUser.password = user.password
     currUser.role = user.role
+    currUser.related_id = user.related_id
+}
+
+export function curUser_role(){
+    return currUser.role
 }
 
 app.provide('currUser', readonly(currUser))
