@@ -24,6 +24,7 @@ type LoginInfo = {
 type RegisterInfo ={
     phone:string,
     password:string,
+    role:UserRole,
 }
 
 export const userService = axios.create({

@@ -27,10 +27,12 @@ onMounted(async () => {
   // await _getShoppingCart();
 
   // TODO: change to above
-  await getOrder();
+  console.log("Component mounted");
+  //await getOrder();
   // orders.value = new Array(10)
   //     .fill(mockOrder)
   //     .sort((a, b) => b.date - a.date)
+  await getOrder();
 })
 
 async function removeOrder(cartItemId: number) {

@@ -15,6 +15,7 @@ import CreateOrderItem from "../components/CreateOrderItem.vue";
 import {formatPrice} from "../api/product.ts";
 import AddressBox from "../components/AddressBox.vue";
 import AddressDialog from "../components/AddressDialog.vue";
+import {createOrder} from "../api/order.ts";
 
 // 地址
 const currUser = inject('currUser') as User
@@ -110,6 +111,20 @@ onUnmounted(() => {
 function navBack() {
   history.back()
 }
+
+function submitOrder() {
+  createOrder(currUser.id!, productList.value, addressList.value[selectIdx.value].addressInfoId!)
+      .then(res=>{
+        if (res.data.code !== '000') {
+          ElMessage.error('下单失败' + res.data.msg)
+        } else {
+          ElMessage.success('下单成功')
+          productList.value = []
+          navBack()
+        }
+      })
+}
+
 </script>
 
 <template>
@@ -179,7 +194,7 @@ function navBack() {
         <!-- 提交按钮 -->
         <div class="summary-button-group">
           <el-button @click="navBack" class="back-button">返回</el-button>
-          <el-button class="submit-button">提交订单</el-button>
+          <el-button @click="submitOrder" class="submit-button">提交订单</el-button>
         </div>
       </div>
     </el-col>
