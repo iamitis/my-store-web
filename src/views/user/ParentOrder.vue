@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {formatPrice} from "../../api/product.ts";
 import {Order, mockOrder, getAllOrders} from "../../api/order.ts"
 import {inject, onMounted, onUnmounted, Ref, ref, watch} from "vue";
 import {User} from "../../api/user.ts";
@@ -10,10 +9,14 @@ const orders = ref<Order[]>([]);
 const currUser = inject("currUser") as User;
 const {navTo} = initRouter()
 
-async function _getOrder() {
-  getAllOrders(currUser.id!)
+async function getOrder() {
+  if(currUser.related_id === undefined || currUser.related_id <0){
+    ElMessage.error('获取用户订单失败' + "未绑定父母id");
+    return;
+  }
+  getAllOrders(currUser.related_id!)
       .then(res=>{
-        if (res.data.status !== 200) {
+        if (res.data.code !== '000') {
           ElMessage.error('获取用户订单失败' + res.data.msg);
         } else {
           orders.value = res.data.result
@@ -27,9 +30,12 @@ onMounted(async () => {
   // await _getShoppingCart();
 
   // TODO: change to above
-  orders.value = new Array(10)
-      .fill(mockOrder)
-      .sort((a, b) => b.date - a.date)
+  console.log("Component mounted");
+  //await getOrder();
+  // orders.value = new Array(10)
+  //     .fill(mockOrder)
+  //     .sort((a, b) => b.date - a.date)
+  await getOrder();
 })
 
 async function removeOrder(cartItemId: number) {

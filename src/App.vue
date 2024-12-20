@@ -2,8 +2,6 @@
 import Header from "./components/Header.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { Top } from "@element-plus/icons-vue";
-import { tsParticles } from "tsparticles";
-import { loadFull } from "tsparticles";
 
 // 返回顶部逻辑
 const showBackToTop = ref(false);
@@ -23,18 +21,6 @@ onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
 });
 
-onMounted(() => {
-  loadFull(tsParticles).then(() => {
-    tsParticles.load("tsparticles", {
-      particles: {
-        number: { value: 80 },
-        color: { value: "#dedede" },
-        links: { enable: true, distance: 150, color: "#dedede" },
-        move: { enable: true, speed: 2 },
-      },
-    });
-  });
-});
 
 </script>
 
@@ -43,7 +29,6 @@ onMounted(() => {
   <!-- 页面内容 -->
   <div id="app">
     <Header />
-
     <div class="home-body">
       <router-view />
     </div>
