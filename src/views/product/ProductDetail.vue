@@ -381,6 +381,7 @@ const currImgIndex = ref(0)
   font-size: 14px;
   --el-rate-icon-size: 30px;
   --el-rate-icon-margin: 0;
+  --el-rate-fill-color: #FFD000;
   cursor: pointer;
 }
 

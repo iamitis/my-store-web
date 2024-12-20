@@ -4,6 +4,7 @@ import {onMounted, PropType, ref, computed} from "vue";
 import {formatPrice} from "../api/product.ts";
 import {initRouter} from "../router";
 import {Delete} from "@element-plus/icons-vue";
+import {dayjs} from "element-plus";
 
 const order = defineModel(
     'order',
@@ -19,27 +20,20 @@ const statusText = computed(() => {
   const status = order.value.orderStatus;
   switch (status) {
     case OrderStatus.UNPAID:
-        return '待支付';
+      return '待支付';
     case OrderStatus.UNSEND:
-        return '未发货';
+      return '未发货';
     case OrderStatus.UNGET:
-        return '未取货';
+      return '未取货';
     case OrderStatus.DONE:
-        return '订单完成';
+      return '订单完成';
     default:
-        return '';
+      return '';
   }
 });
 
-function formatDate(date: Date) :string{
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+function formatDate(date: Date): string {
+  return dayjs(date).format('YYYY-MM-DD HH:mm'); // 格式化为 'YYYY-MM-DD HH:mm'
 }
 
 const formattedCreateTime = computed(() => {
@@ -47,38 +41,38 @@ const formattedCreateTime = computed(() => {
 })
 
 function navToDetail() {
-  navTo('OrderDetail', {orderId: order.value.orderId})
+  navTo('OrderDetail', {orderId: order.value.orderInfoId})
 }
 
 function handleRemove() {
-  emit('removeOrder', order.value.orderId)
+  emit('removeOrder', order.value.orderInfoId)
 }
 </script>
 
 <template>
   <el-row class="order-row">
     <el-col :span="4" class="order-row-item" style="justify-content: center">
-      <img :src="order.productList![0]!.product!.productImages![0]!" alt="商品图片"
+      <img :src="order.products![0]!.product!.productImages![0]!" alt="商品图片"
            title="查看订单详情" @click="navToDetail"
            class="order-product-cover">
     </el-col>
     <el-col :span="4" class="order-row-item"
             style="align-items: start;">
       <p class="order-id" title="查看订单详情" @click="navToDetail">
-        {{ order.orderId!}}
+        {{ order.orderInfoId! }}
       </p>
     </el-col>
 
     <!-- 订单创建时间列 -->
     <el-col :span="4" class="order-row-item" style="align-items: start;">
       <p class="order-create-time">
-        {{formattedCreateTime}} <!-- 假设 'createTime' 是订单的创建时间 -->
+        {{ formattedCreateTime }} <!-- 假设 'createTime' 是订单的创建时间 -->
       </p>
     </el-col>
 
     <el-col :span="4" class="order-row-item">
       <div :class="['order-status', order.orderStatus]">
-        {{statusText}}
+        {{ statusText }}
       </div>
     </el-col>
 
@@ -118,8 +112,8 @@ function handleRemove() {
 }
 
 .order-product-cover {
-  width: 160px;
-  height: 160px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: 10px;
   cursor: pointer;
@@ -159,7 +153,7 @@ function handleRemove() {
   background-color: #ffd700;
 }
 
-.order-status.UNGET{
+.order-status.UNGET {
   background-color: #87cefa;
 }
 

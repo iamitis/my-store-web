@@ -22,7 +22,7 @@ app.use(router)
 app.use(ElementPlus)
 
 const currUser: User = reactive({
-    id: 0,
+    id: 1,
     role:UserRole.PARENT,
     phone: '',
     password: ''

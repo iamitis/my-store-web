@@ -20,7 +20,7 @@ const categories: Category[] = [
 const {navTo} = initRouter()
 
 function navToCategoryDetail(backEndName: string) {
-  navTo('CategoryDetail', {backEndName})
+  navTo('CategoryDetail', {backEndName: backEndName})
 }
 
 
