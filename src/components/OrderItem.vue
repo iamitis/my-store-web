@@ -58,7 +58,7 @@ function handleRemove() {
 <template>
   <el-row class="order-row">
     <el-col :span="4" class="order-row-item" style="justify-content: center">
-      <img :src="order.productList![0]!.product!.productImages![0]!" alt="商品图片"
+      <img :src="order.products![0]!.product!.productImages![0]!" alt="商品图片"
            title="查看订单详情" @click="navToDetail"
            class="order-product-cover">
     </el-col>

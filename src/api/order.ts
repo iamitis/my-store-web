@@ -38,7 +38,11 @@ export async function createOrder(userId: number, productList: CartItem[], addre
         orderStatus: OrderStatus.UNSEND,
         createDate : new Date()
     }
-    return await userService.post(`/createOrder`, order);
+    return await userService.post(`/createOrder`, order,
+        {headers: {'Content-Type': 'application/json'}})
+        .then(res=>{
+            return res;
+        })
 }
 
 export const mockOrder: Order = {

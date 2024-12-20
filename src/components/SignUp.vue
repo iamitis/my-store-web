@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref,  defineEmits} from 'vue';
-import {register} from "../api/user.ts";
+import {register, UserRole} from "../api/user.ts";
 
 const emit = defineEmits(['update:visible', 'signUpCancel', 'signUpSuccess']);
 
@@ -8,6 +8,7 @@ const signUpForm = ref({
   phone: '',
   password: '',
   confirmPassword: '',
+  role: UserRole.PARENT,
 });
 
 const signUpRule = {
@@ -39,6 +40,7 @@ const submitSignUpForm = () => {
   register({
     phone: signUpForm.value.phone,
     password: signUpForm.value.password,
+    role: signUpForm.value.role
   })
       .then(res=>{
         const code = res.data.code
@@ -98,6 +100,13 @@ const visible = defineModel('visible', {
         <el-input v-model="signUpForm.confirmPassword" type="password" placeholder="请再次输入密码"></el-input>
       </el-form-item>
 
+      <!-- 角色选择 -->
+      <el-form-item label="您是" prop="role">
+        <el-select v-model="signUpForm.role" placeholder="请选择角色">
+          <el-option label="长辈" value="PARENT"></el-option>
+          <el-option label="子女" value="CHILD"></el-option>
+        </el-select>
+      </el-form-item>
       <!-- 按钮 -->
       <div style="text-align: right;">
         <el-button @click="handleCancel">取消</el-button>

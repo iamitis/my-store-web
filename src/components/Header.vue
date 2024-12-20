@@ -1,11 +1,11 @@
 <!-- TODO: 消息红点 -->
 
-<script setup lang="ts">
+<script setup lang="ts" xmlns:el-col="http://www.w3.org/1999/html">
 import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";
 import {initRouter} from "../router";
-import {User} from "../api/user.ts";
+import {User, UserRole} from "../api/user.ts";
 import LogInDialog from "./LogIn.vue";
-import {updateHeaderVisible} from "../main.ts";
+import {updateHeaderVisible, updateUser} from "../main.ts";
 import {UserFilled, Message, Search} from "@element-plus/icons-vue";
 
 const {currRouteName, navTo} = initRouter()
@@ -68,6 +68,17 @@ function handleScroll() {
     updateHeaderVisible(true); // Scrolling up
   }
   lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+}
+
+function logout() {
+  updateUser({
+    id: -1,
+    role:UserRole.CHILD,
+    phone: '',
+    password: '',
+    related_id:-1
+  })
+  navTo('Home');
 }
 
 onMounted(() => {
@@ -136,7 +147,18 @@ const somePage = ['CreateOrder']
                style="font-size: 18px; margin-top: 5px">
         个人主页
       </el-text>
+
     </el-col>
+
+    <el-col :span="1">
+
+      <el-button v-if="currUser.id !== -1"
+               @click="logout" title="退出登录"
+               style="font-size: 12px;margin-left: -25px ;margin-top: 40px; display: flex; align-items: center; cursor: pointer; text-decoration: none;">
+        退出登录
+      </el-button>
+    </el-col>
+
   </el-row>
 </template>
 
