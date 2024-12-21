@@ -2,12 +2,13 @@
 
 <script setup lang="ts">
 import {
+  addAddressInfo,
   AddressInfo,
   CartItem,
   copyAddressInfo,
   emptyAddressInfo,
   getAllAddressInfo,
-  mockAddressInfo,
+  mockAddressInfo, updateAddressInfo,
   User
 } from "../api/user.ts";
 import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";
@@ -15,7 +16,7 @@ import CreateOrderItem from "../components/CreateOrderItem.vue";
 import {formatPrice} from "../api/product.ts";
 import AddressBox from "../components/AddressBox.vue";
 import AddressDialog from "../components/AddressDialog.vue";
-import {createOrder} from "../api/order.ts";
+import {cartItemToOrder, createOrder} from "../api/order.ts";
 
 // 地址
 const currUser = inject('currUser') as User
@@ -25,16 +26,12 @@ const addressDialogVisible = ref(false)
 const originalAddressInfo = ref<AddressInfo>()
 
 onMounted(async () => {
-  // const response = await getAllAddressInfo(currUser.id!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('获取用户收货地址失败' + response.data.msg)
-  // } else {
-  //   addressList.value = response.data.result
-  // }
-
-  // TODO: change to above
-  addressList.value = new Array(3).fill(mockAddressInfo)
-  addressList.value.unshift({...mockAddressInfo, isDefault: true})
+  const response = await getAllAddressInfo(currUser.id!)
+  if (response.data.code !== '000') {
+    ElMessage.error('获取用户收货地址失败' + response.data.msg)
+  } else {
+    addressList.value = response.data.result
+  }
 })
 
 function handleAdd() {
@@ -54,27 +51,21 @@ function handleSelect(index: number) {
 }
 
 async function emitEdit() {
-  ElMessage.info('emitEdit')
-
-  // TODO: change to below
-  // const response = await updateAddressInfo(originalAddressInfo.value!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('更新地址失败' + response.data.msg)
-  // } else {
-  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
-  // }
+  const response = await updateAddressInfo(originalAddressInfo.value!)
+  if (response.data.code !== '000') {
+    ElMessage.error('更新地址失败' + response.data.msg)
+  } else {
+    addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  }
 }
 
 async function emitAdd() {
-  ElMessage.info('emitAdd')
-
-  // TODO: change to below
-  // const response = await updateAddressInfo(originalAddressInfo.value!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('添加地址失败' + response.data.msg)
-  // } else {
-  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
-  // }
+  const response = await addAddressInfo(originalAddressInfo.value!)
+  if (response.data.code !== '000') {
+    ElMessage.error('添加地址失败' + response.data.msg)
+  } else {
+    addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  }
 }
 
 const productList = ref<CartItem[]>([])
@@ -87,11 +78,6 @@ onMounted(() => {
   totalQuantity.value = productList.value.reduce((acc, item) => acc + item.quantity!, 0)
   totalPrice.value = productList.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
 })
-
-function updateQuantity() {
-  totalQuantity.value = productList.value.reduce((acc, item) => acc + item.quantity!, 0)
-  totalPrice.value = productList.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
-}
 
 // 处理 summary-box 的位置，使其在滚动时固定在页面顶部，但不遮挡header
 const isHeaderVisible = inject('isHeaderVisible') as Ref<boolean>;
@@ -112,17 +98,21 @@ function navBack() {
   history.back()
 }
 
-function submitOrder() {
-  createOrder(currUser.id!, productList.value, addressList.value[selectIdx.value].addressInfoId!)
-      .then(res=>{
-        if (res.data.code !== '000') {
-          ElMessage.error('下单失败' + res.data.msg)
-        } else {
-          ElMessage.success('下单成功')
-          productList.value = []
-          navBack()
-        }
-      })
+async function submitOrder() {
+  let res;
+  if (productList.value[0].cartItemId) {
+    // 从购物车下单
+    res = await cartItemToOrder(currUser.id!, addressList.value[selectIdx.value].addressInfoId!)
+  } else {
+    // 从商品详情页下单
+    res = await createOrder(currUser.id!, productList.value, addressList.value[selectIdx.value].addressInfoId!)
+  }
+  if (res.data.code !== '000') {
+    ElMessage.error('下单失败' + res.data.msg)
+  } else {
+    ElMessage.success('下单成功')
+    navBack()
+  }
 }
 
 </script>
@@ -167,7 +157,6 @@ function submitOrder() {
         <!-- 商品列表 -->
         <create-order-item v-for="(item, index) in productList"
                            v-model:item="productList[index]"
-                           v-on:update-quantity="updateQuantity"
                            style="margin-top: 10px"/>
       </div>
     </el-col>
@@ -290,6 +279,7 @@ function submitOrder() {
 
 .summary-digit {
   font-size: 20px;
+  color: #e34f4f;
   /* background-color: #d6f3ea; */
   margin-right: 0;
   margin-left: auto;

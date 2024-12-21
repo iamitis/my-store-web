@@ -44,17 +44,20 @@ function handleRateClick() {
            @mouseover="currImgIndex=1" @mouseleave="currImgIndex=0">
     </div>
     <div style="font-weight: bold; font-size: 19px; margin-top: 10px">{{ props.product.productName }}</div>
-    <span v-if="props.product.productOriginalPrice !== props.product.productNowPrice"
-          style="font-size: 18px; text-decoration: line-through; color: #858383;">
-      {{ formatPrice(props.product.productOriginalPrice!) }}
-    </span>
-    <span v-if="props.product.productOriginalPrice !== props.product.productNowPrice"
-          style="font-size: 18px; color: #ea0202;">
-      {{ formatPrice(props.product.productNowPrice!) }}
-    </span>
-    <span v-if="props.product.productOriginalPrice === props.product.productNowPrice"
-          style="font-size: 18px; color: #363636">{{ formatPrice(props.product.productNowPrice!) }}
-    </span>
+    <div style="margin-top: 4px">
+      <span v-if="props.product.productOriginalPrice !== props.product.productNowPrice"
+            class="product-item-price" style="text-decoration: line-through">
+        {{ formatPrice(props.product.productOriginalPrice!) }}
+      </span>
+      <span v-if="props.product.productOriginalPrice !== props.product.productNowPrice"
+            class="product-item-price" style="color: #ea0202;">
+        {{ formatPrice(props.product.productNowPrice!) }}
+      </span>
+      <span v-if="props.product.productOriginalPrice === props.product.productNowPrice"
+            class="product-item-price">
+        {{ formatPrice(props.product.productNowPrice!) }}
+      </span>
+    </div>
     <el-rate v-if="props.product.productScoreCount! > 0"
              v-model="props.product.productScore" disabled allow-half
              :texts="new Array(5).fill(`(${props.product.productScoreCount})`)"
@@ -85,9 +88,17 @@ function handleRateClick() {
   left: 0; /* 使图片重叠 */
 }
 
+.product-item-price {
+  font-size: 18px;
+  text-decoration: line-through;
+  color: #858383;
+}
+
 .product-item-rate {
+  width: 100%;
   height: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
+  justify-content: center;
 }
 
 :deep(.product-item-rate .el-rate__item) {

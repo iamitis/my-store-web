@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {CartItem, updateCartItem} from "../api/user.ts";
 import {computed, onMounted, PropType, ref} from "vue";
-import {formatPrice, getProductOptionValues, mockOptionMap, ProductOptionValue} from "../api/product.ts";
+import {formatPrice, getProductOptionValues, ProductOptionValue} from "../api/product.ts";
 import {initRouter} from "../router";
 import {Delete} from "@element-plus/icons-vue";
 
@@ -21,44 +21,40 @@ function navToDetail() {
 
 const optionMap = ref<Map<string, ProductOptionValue[]>>(new Map)
 onMounted(async () => {
-  // // 获取商品选项，用于重选
-  // const response = await getProductOptionValues(cartItem.value.product!.productId!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('获取商品选项失败' + response.data.msg)
-  // } else {
-  //   const optionValues = response.data.result
-  //   for (const optionValue of optionValues) {
-  //     if (!optionMap.value.has(optionValue.productOptionName!)) {
-  //       optionMap.value.set(optionValue.productOptionName!, [])
-  //     }
-  //     optionMap.value.get(optionValue.productOptionName!)!.push(optionValue)
-  //   }
-  // }
+  // 获取商品选项，用于重选
+  const response = await getProductOptionValues(cartItem.value.product!.productId!)
+  if (response.data.code !== '000') {
+    ElMessage.error('获取商品选项失败' + response.data.msg)
+  } else {
+    const optionValues = response.data.result
+    for (const optionValue of optionValues) {
+      if (!optionMap.value.has(optionValue.productOptionName!)) {
+        optionMap.value.set(optionValue.productOptionName!, [])
+      }
+      optionMap.value.get(optionValue.productOptionName!)!.push(optionValue)
+    }
+  }
 
-  // TODO: change to above
-  optionMap.value = mockOptionMap
+  console.log(cartItem)
 })
 
 async function handleChangeOption() {
-  // TODO: change to below
-  // const response = await updateCartItem(cartItem.value)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('更新购物车商品选项失败' + response.data.msg)
-  // } else {
-  //   ElMessage.success('更新购物车商品选项成功')
-  // }
+  const response = await updateCartItem(cartItem.value)
+  if (response.data.code !== '000') {
+    ElMessage.error('更新购物车商品选项失败' + response.data.msg)
+  } else {
+    ElMessage.success('更新购物车商品选项成功')
+  }
 }
 
 async function handleQuantityChange() {
-  ElMessage.info('quantity changed to: ' + cartItem.value.quantity + " 没写接口")
-
-  // // TODO: change to below
-  // const response = await updateCartItem(cartItem.value)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('更新购物车商品数量失败' + response.data.msg)
-  // } else {
-  emit('updateQuantity')
-  // }
+  ElMessage.info('change quantity: ' + cartItem.value.quantity)
+  const response = await updateCartItem(cartItem.value)
+  if (response.data.code !== '000') {
+    ElMessage.error('更新购物车商品数量失败' + response.data.msg)
+  } else {
+    emit('updateQuantity')
+  }
 }
 
 function handleRemove() {
@@ -103,7 +99,7 @@ function handleRemove() {
              class="cart-product-quantity"/>
     </el-col>
     <el-col :span="4" class="cart-row-item">
-      <p style="margin-top: 20px; font-size: 25px; color: #414040;">
+      <p style="margin-top: 20px; font-size: 25px; color: #84b9a8;">
         {{ formatPrice(cartItem.product!.productNowPrice!) }}
       </p>
     </el-col>
@@ -123,6 +119,7 @@ function handleRemove() {
   display: flex;
   align-items: center;
   border-radius: 10px;
+  border-top: 1px dashed #c9c8c8;
 }
 
 .cart-row:hover {
@@ -205,11 +202,12 @@ function handleRemove() {
   margin-top: 10px;
   padding-left: 5px;
   border-radius: 10px;
-  color: #414040;
+  color: #84b9a8;
 }
 
 .cart-product-quantity:focus {
   background-color: #d4ece4;
+  color: #414040;
 }
 
 .cart-product-quantity:hover {

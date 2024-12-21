@@ -53,7 +53,7 @@ export async function getShoppingCart(userId: number): Promise<AxiosResponseData
     return await userService.get(`/getShoppingCart/${userId}`)
 }
 
-export async function login(loginInfo : LoginInfo): Promise<AxiosResponseData<number>> {
+export async function login(loginInfo : LoginInfo): Promise<AxiosResponseData<User>> {
     return await userService.post('/login',loginInfo,
         {headers: {'Content-Type': 'application/json'}})
         .then(res=>{
@@ -70,7 +70,7 @@ export async function register(registerInfo:RegisterInfo): Promise<AxiosResponse
 }
 
 export async function addToShoppingCart(cartItem: CartItem): Promise<AxiosResponseData<CartItem>> {
-    return await userService.post(`/addToShoppingCart`, cartItem)
+    return await userService.post(`/addCartItem`, cartItem)
 }
 
 /**

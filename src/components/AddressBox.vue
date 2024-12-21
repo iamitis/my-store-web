@@ -34,7 +34,7 @@ const borderColor = computed(() => {
   <div class="a-box-container" title="点击选择" @click="handleSelect"
        @mouseover="mouseHover = true" @mouseleave="mouseHover = false">
     <span class="a-box-area">{{ addressInfo.areaAddress.join(' ') }}</span>
-    <span class="a-box-detail">{{ addressInfo.detailAddress }}aaaaaaaaaaaaaaaaaa</span>
+    <span class="a-box-detail">{{ addressInfo.detailAddress }}</span>
     <span class="a-box-private">{{ addressInfo.receiver }}&emsp;{{ addressInfo.phone }}</span>
     <div style="display: flex">
       <div v-if="selected" class="a-box-checked">已选中</div>

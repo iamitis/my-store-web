@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref,  defineEmits} from 'vue';
 import SignUpDialog from "./SignUp.vue";
-import {login} from "../api/user.ts";
+import {login, UserRole} from "../api/user.ts";
 import {updateUser} from "../main.ts";
 
 
@@ -51,7 +51,7 @@ const submitLoginForm = () => {
   })
       .then(res=>{
         const code = res.data.code;
-        const id = res.data.result;
+        const user = res.data.result;
         if(code == '000'){
           console.log('登录成功:', loginForm.value);
           ElMessage({
@@ -59,10 +59,8 @@ const submitLoginForm = () => {
             type: 'success',
             center: true,
           })
-          updateUser({
-            id:id,
-            phone:loginForm.value.phone
-          })
+          updateUser(user);
+          sessionStorage.setItem('currUser', JSON.stringify(user));
           emit('loginSuccess', loginForm.value);
           emit('update:visible', false); // 关闭弹窗
         }else{

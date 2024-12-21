@@ -50,7 +50,7 @@ function handleRemove() {
 </script>
 
 <template>
-  <el-row class="order-row">
+  <el-row class="order-row" v-if="order.products?.length! > 0">
     <el-col :span="4" class="order-row-item" style="justify-content: center">
       <img :src="order.products![0]!.product!.productImages![0]!" alt="商品图片"
            title="查看订单详情" @click="navToDetail"

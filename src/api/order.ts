@@ -26,23 +26,24 @@ export const orderService = axios.create({
 });
 
 
-export async function getAllOrders(userId: number):Promise<AxiosResponseData<Order[]>> {
+export async function getAllOrders(userId: number): Promise<AxiosResponseData<Order[]>> {
     return await userService.get(`/getAllOrders/${userId}`);
 }
 
-export async function createOrder(userId: number, productList: CartItem[], addressInfoId: number):Promise<AxiosResponseData<boolean>> {
-    const order : Order = {
+export async function createOrder(userId: number, productList: CartItem[], addressInfoId: number): Promise<AxiosResponseData<boolean>> {
+    const order: Order = {
         userId: userId,
         products: productList,
         addressInfoId: addressInfoId,
         orderStatus: OrderStatus.UNSEND,
-        createDate : new Date()
+        createDate: new Date()
     }
-    return await userService.post(`/createOrder`, order,
-        {headers: {'Content-Type': 'application/json'}})
-        .then(res=>{
-            return res;
-        })
+    order.totalPrice = productList.reduce((acc, cur) => acc + cur.product!.productNowPrice! * cur.quantity!, 0)
+    return await userService.post(`/createOrder`, order)
+}
+
+export async function cartItemToOrder(userId: number, addressInfoId: number): Promise<AxiosResponseData<Order>> {
+    return await userService.get(`/cartItemToOrder/${userId}/${addressInfoId}`)
 }
 
 export const mockOrder: Order = {
@@ -52,5 +53,5 @@ export const mockOrder: Order = {
     addressInfoId: 1,
     orderStatus: OrderStatus.UNSEND,
     totalPrice: 100000,
-    createDate : new Date()
+    createDate: new Date()
 }
