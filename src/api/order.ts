@@ -3,7 +3,7 @@ import axios from "axios";
 import {AxiosResponseData} from "../utils/request.ts";
 
 export interface Order {
-    orderId?: number,
+    orderInfoId?: number,
     userId?: number,
     products?: CartItem[],
     addressInfoId?: number,
@@ -46,7 +46,7 @@ export async function createOrder(userId: number, productList: CartItem[], addre
 }
 
 export const mockOrder: Order = {
-    orderId: 1,
+    orderInfoId: 1,
     userId: 1,
     products: [mockCartItem, mockCartItem],
     addressInfoId: 1,

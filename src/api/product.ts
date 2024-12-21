@@ -24,6 +24,18 @@ export interface ProductAttribute {
     productCategory?: string; // 所属类别, 属于食品还是服饰
 }
 
+export interface ProductAttributeValue {
+    productAttributeValueId?: number;
+    product?: Product;
+    productAttribute?: ProductAttribute;
+    value?: string; // 属性值，如"香辣", "春季"
+}
+
+export interface FilterInfo {
+    productCategory?: string;
+    attributeValues?: Map<string, string[]>;
+}
+
 export const productService = axios.create({
     baseURL: 'http://localhost:8080/api/newProducts',
     timeout: 30000,
@@ -31,17 +43,25 @@ export const productService = axios.create({
 
 export async function getAttributesByCategory(category: string): Promise<AxiosResponseData<ProductAttribute[]>> {
     return await productService.get(`/getAttributesByCategory/${category}`)
-        .then(res => {
-            return res.data.result
-        })
 }
 
-export async function filterProducts(category: string, filters: Record<string, string>): Promise<AxiosResponseData<Product>> {
-    const queryString = new URLSearchParams(filters).toString();
-    return await productService.get(`/filterProducts/${category}?${queryString}`)
-        .then(res => {
-            return res.data.result;
-        })
+export async function getAttributeValuesByCategory(category: string): Promise<AxiosResponseData<ProductAttributeValue[]>> {
+    return await productService.get(`/getAttributeValuesByCategory/${category}`)
+}
+
+export async function filterProducts(category: string, selectedAttrValMap: Map<string, ProductAttributeValue[]>): Promise<AxiosResponseData<Product[]>> {
+    const filterInfo: FilterInfo = {
+        productCategory: category,
+        attributeValues: new Map<string, string[]>(),
+    }
+    selectedAttrValMap.forEach((value, key) => {
+        filterInfo.attributeValues!.set(key, value.map(v => v.value!))
+    })
+
+    return await productService.post(`/filterProducts`, {
+        productCategory: filterInfo.productCategory,
+        attributeValues: Object.fromEntries(filterInfo.attributeValues!)
+    })
 }
 
 
@@ -145,13 +165,54 @@ categoryNameMap.set("HEALTH_PRODUCTS", "保健品")
 categoryNameMap.set("BATH_PRODUCTS", "洗浴用品")
 
 // 分类属性
-export const productAttributes = [
-    "品牌",
-    "产地",
-    "规格",
-    "颜色",
-    "价格",
-    "用途",
-    "价格",
-    "品牌",
-]
+export const mockProductAttributeFlavor: ProductAttribute = {
+    productAttributeName: "flavor",
+    displayName: "口味",
+    productCategory: "FOOD"
+}
+
+export const mockProductAttributeSeason: ProductAttribute = {
+    productAttributeName: "season",
+    displayName: "季节",
+    productCategory: "APPAREL"
+}
+
+export const mockProductAttributeValue1: ProductAttributeValue = {
+    product: mockProduct,
+    productAttribute: mockProductAttributeFlavor,
+    value: "香辣"
+}
+
+export const mockProductAttributeValue2: ProductAttributeValue = {
+    product: mockProduct,
+    productAttribute: mockProductAttributeFlavor,
+    value: "原味"
+}
+
+export const mockProductAttributeValue3: ProductAttributeValue = {
+    product: mockProduct,
+    productAttribute: mockProductAttributeSeason,
+    value: "春季"
+}
+
+export const mockProductAttributeValue4: ProductAttributeValue = {
+    product: mockProduct,
+    productAttribute: mockProductAttributeSeason,
+    value: "夏季"
+}
+
+export const mockProductAttributeValue5: ProductAttributeValue = {
+    product: mockProduct,
+    productAttribute: mockProductAttributeSeason,
+    value: "秋季"
+}
+
+export const mockProductAttributeValue6: ProductAttributeValue = {
+    product: mockProduct,
+    productAttribute: mockProductAttributeSeason,
+    value: "冬季"
+}
+
+export const mockProductAttributeMap: Map<string, ProductAttributeValue[]> = new Map()
+mockProductAttributeMap.set("flavor", [mockProductAttributeValue1, mockProductAttributeValue2])
+mockProductAttributeMap.set("season", [mockProductAttributeValue3, mockProductAttributeValue4, mockProductAttributeValue5, mockProductAttributeValue6])
