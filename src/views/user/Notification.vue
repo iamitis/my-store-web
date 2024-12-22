@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import {onMounted, ref} from "vue";
 import {createNotice, getNoticeByUserId, Notice, NoticeSource, NoticeStatus, readNotice} from "../../api/noteice.js";
 import {User} from "../../api/user.ts";
 import {currUser} from "../../main.ts";
+import {dayjs} from "element-plus";
 
 // 示例通知数据
 const notifications = ref<Notice[]>([]);
@@ -64,23 +65,18 @@ const noticeSourceMap = {
 
 // 格式化时间
 function formatDate(date: Date): string {
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  return `${month}-${day} ${hours}:${minutes}`;
+  return dayjs(date).format('YYYY-MM-DD HH:mm'); // 格式化为 'YYYY-MM-DD HH:mm'
 }
 
 async function getNotifications() {
-  getNoticeByUserId(currUser.id!)
-      .then(res=>{
-        if (res.data.code !== '000') {
-          ElMessage.error('获取用户通知失败' + res.data.msg);
-        } else {
-          notifications.value = res.data.result
-              .sort((a, b) => new Date(b.createTime!).getTime() - new Date(a.createTime!).getTime());
-        }
-      })
+  const res = await getNoticeByUserId(currUser.id!)
+  if (res.data.code !== '000') {
+    ElMessage.error('获取用户通知失败' + res.data.msg);
+  } else {
+    notifications.value = res.data.result
+        .sort((a, b) => new Date(b.createTime!).getTime() - new Date(a.createTime!).getTime());
+    console.log("获取通知成功", notifications.value);
+  }
 }
 
 onMounted(async () => {
@@ -96,7 +92,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="notification-container">
+  <div class="notification-container" v-if="notifications.length > 0">
     <!-- 左侧通知列表 -->
     <div class="notification-list">
       <h3>通知列表</h3>
