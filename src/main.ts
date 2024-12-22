@@ -23,7 +23,7 @@ app.use(ElementPlus)
 
 const storedUser = sessionStorage.getItem('currUser')
 
-const currUser: User = reactive({
+export const currUser: User = reactive({
     id: -1,
     role:UserRole.CHILD,
     phone: '',
