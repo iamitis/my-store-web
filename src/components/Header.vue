@@ -7,6 +7,7 @@ import {User, UserRole} from "../api/user.ts";
 import LogInDialog from "./LogIn.vue";
 import {updateHeaderVisible, updateUser} from "../main.ts";
 import {UserFilled, Message, Search} from "@element-plus/icons-vue";
+import eventBus from "../utils/eventBus.ts";
 
 const {currRouteName, navTo} = initRouter()
 const searchText = ref<string>('')
@@ -17,6 +18,14 @@ function clickSearch() {
 
 // 控制登录弹窗显示
 const showLogin = ref(false);
+onMounted(() => {
+  eventBus.on('showLogin', () => {
+    showLogin.value = true;
+  });
+})
+onUnmounted(() => {
+  eventBus.off('showLogin');
+})
 // 登录成功处理
 const handleLoginSuccess = (userInfo: { username: string; password: string }) => {
   console.log('登录成功:', userInfo);
@@ -35,7 +44,7 @@ function clickNotification() {
   console.log("click notification")
   if (currUser.id === -1) {
     // 说明未登录
-    ElMessage.info("请先登录")
+    ElMessage.warning("请先登录")
     showLogin.value = true
   } else {
     navTo('Notification')
@@ -132,7 +141,7 @@ const somePage = ['CreateOrder']
       </el-icon>
       <el-text v-if="currUser.id === -1"
                @click="clickUser" title="点击登录"
-               style="font-size: 18px">
+               style="font-size: 18px; margin-top: 5px">
         登录
       </el-text>
       <!-- 已登录状态： -->

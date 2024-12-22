@@ -9,6 +9,7 @@ import {useRoute} from "vue-router";
 import {addToShoppingCart, CartItem, User} from "../../api/user.ts";
 import {initRouter} from "../../router";
 import OptionItem from "../../components/OptionItem.vue";
+import eventBus from "../../utils/eventBus.ts";
 
 const currUser = inject('currUser') as User
 const {navTo} = initRouter()
@@ -99,7 +100,7 @@ const quantity = ref(1) // 购买数量
 async function handleAddCart() {
   if (currUser.id === -1) {
     ElMessage.info('请先登录');
-    // TODO: login dialog
+    eventBus.emit('showLogin');
     return;
   }
 
@@ -137,7 +138,7 @@ function handleBuy() {
   console.log(currUser)
   if (currUser.id === -1) {
     ElMessage.warning('请先登录');
-    // TODO: login dialog
+    eventBus.emit('showLogin')
     return;
   }
 

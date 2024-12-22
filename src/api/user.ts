@@ -162,8 +162,8 @@ export const emptyAddressInfo: AddressInfo = {
     isDefault: false,
 }
 
-export function addressToString(addressInfo: AddressInfo): string {
-    return addressInfo.areaAddress.join('') + addressInfo.detailAddress
+export function areaAddressToString(areaAddress: string[]): string {
+    return areaAddress.join(' ')
 }
 
 export function copyAddressInfo(addressInfo: AddressInfo): AddressInfo {
