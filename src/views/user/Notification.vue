@@ -209,5 +209,6 @@ onMounted(async () => {
   background-color: #f9f9f9;
   font-size: 14px;
   color: #333;
+  white-space: pre-wrap; /* 保留换行符并支持自动换行 */
 }
 </style>
