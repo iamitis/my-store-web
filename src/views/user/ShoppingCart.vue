@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {formatPrice, Product} from "../../api/product.ts";
 import {inject, onMounted, onUnmounted, Ref, ref, watch} from "vue";
-import {CartItem, deleteCartItem, getShoppingCart, mockCartItem, User} from "../../api/user.ts";
+import {CartItem, deleteCartItem, getShoppingCart, User} from "../../api/user.ts";
 import ShoppingCartItem from "../../components/ShoppingCartItem.vue";
 import {initRouter} from "../../router";
 
@@ -13,7 +13,7 @@ const {navTo} = initRouter()
 
 async function _getShoppingCart() {
   const response = await getShoppingCart(currUser.id!);
-  if (response.data.code !== '200') {
+  if (response.data.code !== '000') {
     ElMessage.error('获取用户购物车列表失败' + response.data.msg);
   } else {
     shoppingCart.value = response.data.result
@@ -24,15 +24,8 @@ async function _getShoppingCart() {
 }
 
 onMounted(async () => {
-  // // 获取用户购物车列表
-  // await _getShoppingCart();
-
-  // TODO: change to above
-  shoppingCart.value = new Array(10)
-      .fill(mockCartItem)
-      .sort((a, b) => b.date - a.date)
-  totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0)
-  totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
+  // 获取用户购物车列表
+  await _getShoppingCart();
 })
 
 function updateQuantity() {
@@ -43,15 +36,14 @@ function updateQuantity() {
 async function removeCartItem(cartItemId: number) {
   ElMessage.info('remove item: ' + cartItemId + " 没写接口")
 
-  // TODO: change to below
-  // const response = await deleteCartItem(cartItemId)
-  // if (response.data.code !== '200') {
-  //   ElMessage.error('删除购物车商品失败' + response.data.msg)
-  // } else {
+  const response = await deleteCartItem(cartItemId)
+  if (response.data.code !== '000') {
+    ElMessage.error('删除购物车商品失败' + response.data.msg)
+  } else {
     shoppingCart.value = shoppingCart.value.filter(item => item.cartItemId !== cartItemId)
     totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0)
     totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
-  // }
+  }
 }
 
 function handleSubmit() {
@@ -78,9 +70,9 @@ function updateSummaryBoxPosition() {
 
 <template>
   <div class="cart-list-container">
-    <el-row style="border-bottom: 1px dashed #c9c8c8; margin-bottom: 5px">
+    <el-row style="margin-bottom: 0px">
       <el-col :span="4">
-        <p style="font-size: 24px; color: #333232;">商品</p>
+        <p style="font-size: 24px; color: #333232; margin-left: 16px">商品</p>
       </el-col>
       <el-col :span="6" :offset="5">
         <p style="font-size: 24px; color: #333232;">属性</p>
@@ -89,7 +81,7 @@ function updateSummaryBoxPosition() {
         <p style="font-size: 24px; color: #343434; margin-left: 10px">数量</p>
       </el-col>
       <el-col :span="4" style="display: flex; color: #333232; justify-content: center">
-        <p style="font-size: 24px">价格</p>
+        <p style="font-size: 24px">单价</p>
       </el-col>
     </el-row>
 
@@ -157,6 +149,7 @@ function updateSummaryBoxPosition() {
 
 .summary-digit {
   font-size: 20px;
+  color: #e34f4f;
   /* background-color: #d6f3ea; */
   margin-right: 0;
   margin-left: auto;

@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import {computed, inject, onMounted, ref} from "vue";
+import {computed, inject, onMounted, ref, watch} from "vue";
 import {
   formatPrice,
-  getProductById, getProductOptions, getProductOptionValues, mockOptionColor, mockOptionMap, mockOptionSize,
-  mockOptionValue1, mockOptionValue4,
-  mockProduct,
-  Product,
+  getProductById, getProductOptions, getProductOptionValues, Product,
   ProductOption, ProductOptionValue
 } from "../../api/product.ts";
 import {useRoute} from "vue-router";
@@ -19,15 +16,12 @@ const productData = ref<Product>()
 const productId = Number(useRoute().params.productId)
 
 onMounted(async () => {
-  // const response = await getProductById(productId)
-  // if (response.data.code !== '200') {
-  //   ElMessage.error("获取商品信息失败 " + response.data.msg)
-  // } else {
-  //   productData.value = response.data.result
-  // }
-
-  // TODO: change to above
-  productData.value = mockProduct
+  const response = await getProductById(productId)
+  if (response.data.code !== '000') {
+    ElMessage.error("获取商品信息失败 " + response.data.msg)
+  } else {
+    productData.value = response.data.result
+  }
 })
 
 const scrollToComment = () => {
@@ -64,37 +58,30 @@ const productOptionList = ref<ProductOption[]>([])
 const optionMap = ref<Map<string, ProductOptionValue[]>>(new Map()) // 选项名 -> 选项值
 const selectedValues = ref<Map<string, ProductOptionValue>>(new Map()) // 每个类选中的值
 onMounted(async () => {
-      // // 获取商品的选项类
-      // const response = await getProductOptions(productId)
-      // if (response.data.code !== '000') {
-      //   ElMessage.error("获取商品选项失败 " + response.data.msg)
-      // } else {
-      //   productOptionList.value = response.data.result
-      //   // 初始化selectedValues
-      //   for (const option of productOptionList.value) {
-      //     selectedValues.value.set(option.productOptionName!, {})
-      //   }
-      //   // 获取商品的所有选项值
-      //   const optionValueResponse = await getProductOptionValues(productId)
-      //   if (optionValueResponse.data.code !== '000') {
-      //     ElMessage.error("获取商品选项值失败 " + optionValueResponse.data.msg)
-      //   } else {
-      //     // 将选项值按选项名存入map
-      //     for (const value of optionValueResponse.data.result) {
-      //       if (!optionMap.value.has(value.productOptionName!)) {
-      //         optionMap.value.set(value.productOptionName!, [])
-      //       }
-      //       optionMap.value.get(value.productOptionName!)!.push(value)
-      //     }
-      //   }
-      //
-      // }
+      // 获取商品的选项类
+      const response = await getProductOptions(productId)
+      if (response.data.code !== '000') {
+        ElMessage.error("获取商品选项失败 " + response.data.msg)
+      } else {
+        productOptionList.value = response.data.result
+        // 初始化selectedValues
+        for (const option of productOptionList.value) {
+          selectedValues.value.set(option.productOptionName!, {})
+        }
+        // 获取商品的所有选项值
+        const optionValueResponse = await getProductOptionValues(productId)
+        if (optionValueResponse.data.code !== '000') {
+          ElMessage.error("获取商品选项值失败 " + optionValueResponse.data.msg)
+        } else {
+          // 将选项值按选项名存入map
+          for (const value of optionValueResponse.data.result) {
+            if (!optionMap.value.has(value.productOptionName!)) {
+              optionMap.value.set(value.productOptionName!, [])
+            }
+            optionMap.value.get(value.productOptionName!)!.push(value)
+          }
+        }
 
-      // TODO: change to above
-      productOptionList.value = [mockOptionColor, mockOptionSize]
-      optionMap.value = mockOptionMap
-      for (const option of productOptionList.value) {
-        selectedValues.value.set(option.productOptionName!, {})
       }
     }
 )
@@ -128,28 +115,26 @@ async function handleAddCart() {
     return;
   }
 
-  ElMessage.info('加入购物车: ' + productData.value?.productName + '没接后端');
-
-  // TODO: change to below
-  // const cartItem: CartItem = {
-  //   userId: currUser.id!,
-  //   product: productData.value!,
-  //   productOptionValues: [],
-  //   quantity: quantity.value,
-  //   cartItemDate: new Date(),
-  // }
-  // for (const [key, value] of selectedValues.value) {
-  //   cartItem.productOptionValues!.push(value)
-  // }
-  // const response = await addToShoppingCart(cartItem)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error("加入购物车失败 " + response.data.msg)
-  // } else {
-  //   ElMessage.success("加入购物车成功")
-  // }
+  const cartItem: CartItem = {
+    userId: currUser.id!,
+    product: productData.value!,
+    productOptionValues: [],
+    quantity: quantity.value,
+    cartItemDate: new Date(),
+  }
+  for (const [key, value] of selectedValues.value) {
+    cartItem.productOptionValues!.push(value)
+  }
+  const response = await addToShoppingCart(cartItem)
+  if (response.data.code !== '000') {
+    ElMessage.error("加入购物车失败 " + response.data.msg)
+  } else {
+    ElMessage.success("加入购物车成功")
+  }
 }
 
 function handleBuy() {
+  console.log(currUser)
   if (currUser.id === -1) {
     ElMessage.warning('请先登录');
     // TODO: login dialog
@@ -179,8 +164,20 @@ function handleBuy() {
 
 const imgCount = computed(() => productData.value?.productImages?.length)
 const imgListWidth = computed(() => imgCount.value! * 130 + 'px')
-
 const currImgIndex = ref(0)
+const isActive = ref<boolean[]>([])
+watch(imgCount, () => {
+  for (let i = 0; i < imgCount.value!; i++) {
+    isActive.value.push(i === 0)
+  }
+})
+
+function clickSmallImg(index: number) {
+  currImgIndex.value = index
+  for (let i = 0; i < imgCount.value!; i++) {
+    isActive.value[i] = i === index
+  }
+}
 </script>
 
 <template>
@@ -194,11 +191,11 @@ const currImgIndex = ref(0)
           <img :src="productData.productImages![currImgIndex]" alt="商品图片"
                style="object-fit: cover; width: 100%; height: 100%; border-radius: inherit">
         </div>
-        <div class="product-detail-img-list-container">
+        <div v-if="imgCount && imgCount > 1" class="product-detail-img-list-container">
           <img v-for="(img, index) in productData.productImages"
                :src="img" alt="商品图片"
-                @click="currImgIndex = index"
-               class="p-d-img-list">
+               @click="clickSmallImg(index)"
+               class="p-d-img-list" :class="{active: isActive[index]}">
         </div>
       </div>
     </el-col>
@@ -270,9 +267,9 @@ const currImgIndex = ref(0)
 
   <!-- 商品详情 -->
   <div v-if="productData" class="product-detail-desc">
-    <p style="font-size: 20px; color: #252424">
-      商品详情
-    </p>
+    <div style="font-size: 20px; font-weight: bold; color: #494848;">
+      商品信息
+    </div>
     <p v-if="productData.productDescription"
        style="font-size: 18px; color: #444343">
       {{ productData!.productDescription }}
@@ -322,7 +319,7 @@ const currImgIndex = ref(0)
 .product-detail-img-list-container {
   width: v-bind(imgListWidth);
   padding: 8px 15px;
-  margin: -20px 80px auto auto;
+  margin-top: -20px;
   border-radius: 12px;
   display: flex;
   justify-content: center;
@@ -338,9 +335,9 @@ const currImgIndex = ref(0)
   cursor: pointer;
 }
 
-.p-d-img-list:hover {
+.p-d-img-list:hover, .p-d-img-list.active {
   /* 背景变暗 */
-  filter: brightness(0.8);
+  filter: brightness(0.6);
 }
 
 .modal {
@@ -440,20 +437,22 @@ const currImgIndex = ref(0)
 }
 
 .product-detail-desc {
-  width: calc(70% + 20px);
+  width: calc(70% - 80px);
   justify-self: center;
   border-radius: 20px;
-  border: 1px solid #dcdcdc;
-  padding: 20px;
+  border: 2px solid #efeeee;
+  padding: 20px 40px;
   margin-top: 40px;
+  white-space: pre-wrap;
+  line-height: 2;
 }
 
 .product-detail-comment {
-  width: calc(70% + 20px);
+  width: calc(60% - 80px);
   justify-self: center;
   border-radius: 20px;
-  border: 1px solid #dcdcdc;
-  padding: 20px;
+  border: 2px solid #efeeee;
+  padding: 40px;
   margin-top: 40px;
 }
 </style>

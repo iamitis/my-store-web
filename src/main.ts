@@ -21,6 +21,8 @@ const app = createApp(App)
 app.use(router)
 app.use(ElementPlus)
 
+const storedUser = sessionStorage.getItem('currUser')
+
 const currUser: User = reactive({
     id: -1,
     role:UserRole.CHILD,
@@ -28,6 +30,12 @@ const currUser: User = reactive({
     password: '',
     related_id:-1
 })
+
+if(storedUser){
+    const user = JSON.parse(storedUser);
+    updateUser(user);
+    console.log("curUserData: ", currUser);
+}
 
 export function updateUser(user: User) {
     currUser.id = user.id
