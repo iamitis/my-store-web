@@ -67,11 +67,6 @@ const router = createRouter({
                     name: 'Notification',
                     component: () => import('../views/user/Notification.vue'),
                 },
-                {
-                    path:'/parent-order',
-                    name:'ParentOrder',
-                    component:()=>import('../views/user/ParentOrder.vue'),
-                },
             ],
         },
         {

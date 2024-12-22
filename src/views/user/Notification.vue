@@ -92,7 +92,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="notification-container" v-if="notifications.length > 0">
+  <div class="notification-container" >
     <!-- 左侧通知列表 -->
     <div class="notification-list">
       <h3>通知列表</h3>

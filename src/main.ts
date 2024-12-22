@@ -28,7 +28,7 @@ export const currUser: User = reactive({
     role:UserRole.CHILD,
     phone: '',
     password: '',
-    related_id:-1
+    related_phone: '',
 })
 
 if(storedUser){
@@ -42,7 +42,7 @@ export function updateUser(user: User) {
     currUser.phone = user.phone
     currUser.password = user.password
     currUser.role = user.role
-    currUser.related_id = user.related_id
+    currUser.related_phone = user.related_phone
 }
 
 export function curUser_role(){

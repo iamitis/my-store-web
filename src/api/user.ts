@@ -7,7 +7,7 @@ export interface User {
     phone?: string,
     role?: UserRole,
     password?: string,
-    related_id?: number,
+    related_phone?: string,
 }
 
 
@@ -25,6 +25,7 @@ type RegisterInfo ={
     phone:string,
     password:string,
     role:UserRole,
+    related_phone:string,
 }
 
 export const userService = axios.create({
@@ -87,6 +88,10 @@ export async function deleteCartItem(cartItemId: number): Promise<AxiosResponseD
     return await userService.delete(`/deleteCartItem/${cartItemId}`)
 }
 
+export async function getIdByPhone(phone: string): Promise<AxiosResponseData<number> > {
+    return await userService.get(`/getIdByPhone/${phone}`)
+}
+
 export interface AddressInfo {
     addressInfoId?: number,
     userId: number,
@@ -128,14 +133,6 @@ export async function deleteAddressInfo(addressInfoId: number): Promise<AxiosRes
     return await userService.delete(`/deleteAddressInfo/${addressInfoId}`)
 }
 
-
-/**
- * 返回当前用户的关联id，如果当前用户是CHILD,则返回其PARENT的id,如果当前用户是PARENT,则返回其CHILD的id
- * @return 当前用户关联的id
- */
-export async function getRelatedId(userId: number): Promise<AxiosResponseData<number>> {
-    return await userService.get(`/getRelatedId/${userId}`)
-}
 
 export const mockCartItem: CartItem = {
     cartItemId: 1,
