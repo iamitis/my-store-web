@@ -52,7 +52,7 @@ const route = useRoute();
 
 /* 主内容区域 */
 .home-body {
-  margin-top: var(--header-height);
+  margin-top: calc(var(--header-height) + 30px);
 }
 
 /* 返回顶部按钮 */
