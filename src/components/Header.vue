@@ -82,10 +82,10 @@ function handleScroll() {
 function logout() {
   updateUser({
     id: -1,
-    role:UserRole.CHILD,
+    role: UserRole.CHILD,
     phone: '',
     password: '',
-    related_id:-1
+    related_phone: ''
   })
   navTo('Home');
 }
@@ -103,6 +103,10 @@ const isLogoOnly = computed(() => {
 })
 
 const somePage = ['CreateOrder']
+
+function navToCategoryDetail(backEndName: string) {
+  navTo('CategoryDetail', {backEndName: backEndName})
+}
 </script>
 
 <template>
@@ -111,7 +115,8 @@ const somePage = ['CreateOrder']
     <el-col :span="10"/>
     <el-col :span="4" class="header-item">
       <el-avatar @click="navTo('Home')" title="返回首页"
-                 style="background-color: #a1ccbf; cursor: pointer; height: 80px; width: 80px"/>
+                 src="src/assets/logo.png"
+                 style="background-color: #a1ccbf; cursor: pointer; height: 85px; width: 85px"/>
     </el-col>
     <el-col :span="5" class="header-item">
       <div class="header-input-container" v-if="!isLogoOnly">
@@ -162,12 +167,21 @@ const somePage = ['CreateOrder']
     <el-col :span="1">
 
       <el-button v-if="currUser.id !== -1"
-               @click="logout" title="退出登录"
-               style="font-size: 12px;margin-left: -25px ;margin-top: 40px; display: flex; align-items: center; cursor: pointer; text-decoration: none;">
+                 @click="logout" title="退出登录"
+                 style="font-size: 12px;margin-left: -25px ;margin-top: 40px; display: flex; align-items: center; cursor: pointer; text-decoration: none;">
         退出登录
       </el-button>
     </el-col>
 
+    <!-- 分类菜单区域 -->
+    <div class="menu-track" v-if="!isLogoOnly">
+      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('FOOD')">食品</span>
+      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('APPAREL')">服装</span>
+      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('ELECTRONICS')">电子产品</span>
+      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('PET_SUPPLIES')">宠物用品</span>
+      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('HEALTH_PRODUCTS')">保健品</span>
+      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('BATH_PRODUCTS')">洗浴用品</span>
+    </div>
   </el-row>
 </template>
 
@@ -180,16 +194,19 @@ const somePage = ['CreateOrder']
   transition: top 0.3s;
   z-index: 200; /* 保证在最上层 */
 
-  background-color: #ecebeb;
+  background-color: #f3f1f1;
   border-bottom: 1px dashed #d2d1d1;
+
+  display: flex;
+  justify-content: center;
 }
 
 .header-container.hidden {
-  top: calc(-1 * var(--header-height));
+  top: calc(-1.3 * var(--header-height));
 }
 
 .header-item {
-  height: 100%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -217,5 +234,30 @@ const somePage = ['CreateOrder']
 
 .header-input:focus {
   outline: none;
+}
+
+.menu-track {
+  height: 70px;
+  padding: 0 50px;
+  background: white;
+  border-bottom: 1px dashed #e8e8e8;
+  border-radius: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 45px;
+  margin-top: -10px;
+  z-index: 3;
+}
+
+.menu-item {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #5e5d5d;
+}
+
+.menu-item:hover {
+  color: #a1ccbf;
 }
 </style>
