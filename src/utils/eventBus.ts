@@ -2,6 +2,7 @@
 import mitt from "mitt";
 
 type Events = {
+    showLogin: void;
 };
 
 const eventBus = mitt<Events>();

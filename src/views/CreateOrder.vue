@@ -8,7 +8,7 @@ import {
   copyAddressInfo,
   emptyAddressInfo,
   getAllAddressInfo,
-  mockAddressInfo, updateAddressInfo,
+  updateAddressInfo,
   User
 } from "../api/user.ts";
 import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";

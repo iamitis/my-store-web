@@ -5,8 +5,7 @@ import {
   AddressInfo, copyAddressInfo,
   deleteAddressInfo,
   emptyAddressInfo,
-  getAllAddressInfo,
-  mockAddressInfo, updateAddressInfo,
+  getAllAddressInfo, updateAddressInfo,
   User
 } from "../../api/user.ts";
 import AddressDialog from "../../components/AddressDialog.vue";
@@ -16,33 +15,27 @@ const addressList = ref<AddressInfo[]>([])
 const originalAddressInfo = ref<AddressInfo>()
 
 onMounted(async () => {
-  // // 获取用户收货地址
-  // const response = await getAllAddressInfo(currUser.id!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('获取用户收货地址失败' + response.data.msg)
-  // } else {
-  //   addressList.value = response.data.result
-  //   // 确认第一个为默认收货地址
-  //   if (addressList.value.length > 0 && !addressList.value[0].isDefault) {
-  //     ElMessage.error('第一个不为默认地址！')
-  //   }
-  // }
-
-  // TODO: change to above
-  addressList.value = new Array(4).fill(mockAddressInfo)
-  addressList.value.unshift({...mockAddressInfo, isDefault: true})
+  // 获取用户收货地址
+  const response = await getAllAddressInfo(currUser.id!)
+  if (response.data.code !== '000') {
+    ElMessage.error('获取用户收货地址失败' + response.data.msg)
+  } else {
+    addressList.value = response.data.result
+    console.log('addressList', addressList.value)
+    // // 确认第一个为默认收货地址
+    // if (addressList.value.length > 0 && !addressList.value[0].isDefault) {
+    //   ElMessage.error('第一个不为默认地址！')
+    // }
+  }
 })
 
 async function handleRemove(index: number) {
-  ElMessage.info('删除地址' + index)
-
-  // TODO: change to below
-  // const response = await deleteAddressInfo(addressList.value[index].addressInfoId!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('删除地址失败' + response.data.msg)
-  // } else {
-  //   addressList.value.splice(index, 1)
-  // }
+  const response = await deleteAddressInfo(addressList.value[index].addressInfoId!)
+  if (response.data.code !== '000') {
+    ElMessage.error('删除地址失败' + response.data.msg)
+  } else {
+    addressList.value.splice(index, 1)
+  }
 }
 
 function handleEdit(index: number) {
@@ -52,8 +45,16 @@ function handleEdit(index: number) {
   addressDialogVisible.value = true
 }
 
-function handleSetDefault(index: number) {
-  ElMessage.info('设为默认地址' + index)
+async function handleSetDefault(index: number) {
+  let addressInfo = addressList.value[index]
+  addressInfo.isDefault = true
+  const response = await updateAddressInfo(addressInfo)
+  if (response.data.code !== '000') {
+    ElMessage.error('设置默认地址失败' + response.data.msg)
+  } else {
+    ElMessage.success('成功设置默认地址')
+    addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  }
 }
 
 const addressDialogVisible = ref(false)
@@ -66,27 +67,21 @@ function handleAdd() {
 }
 
 async function emitEdit() {
-  ElMessage.info('emitEdit')
-
-  // TODO: change to below
-  // const response = await updateAddressInfo(originalAddressInfo.value!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('更新地址失败' + response.data.msg)
-  // } else {
-  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
-  // }
+  const response = await updateAddressInfo(originalAddressInfo.value!)
+  if (response.data.code !== '000') {
+    ElMessage.error('更新地址失败' + response.data.msg)
+  } else {
+    addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  }
 }
 
 async function emitAdd() {
-  ElMessage.info('emitAdd')
-
-  // TODO: change to below
-  // const response = await updateAddressInfo(originalAddressInfo.value!)
-  // if (response.data.code !== '000') {
-  //   ElMessage.error('添加地址失败' + response.data.msg)
-  // } else {
-  //   addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
-  // }
+  const response = await updateAddressInfo(originalAddressInfo.value!)
+  if (response.data.code !== '000') {
+    ElMessage.error('添加地址失败' + response.data.msg)
+  } else {
+    addressList.value = (await getAllAddressInfo(currUser.id!)).data.result
+  }
 }
 </script>
 
@@ -94,9 +89,10 @@ async function emitAdd() {
   <div class="a-b-container">
     <!-- 标题行 -->
     <el-row style="border-bottom: 1px dashed #c9c8c8; height: 50px">
-      <el-col :span="4" class="a-b-title-col">收货人</el-col>
-      <el-col :span="6" class="a-b-title-col">电话</el-col>
-      <el-col :span="8" class="a-b-title-col">详细地址</el-col>
+      <el-col :span="3" class="a-b-title-col">收货人</el-col>
+      <el-col :span="4" class="a-b-title-col">电话</el-col>
+      <el-col :span="5" class="a-b-title-col">区域</el-col>
+      <el-col :span="6" class="a-b-title-col">详细地址</el-col>
       <el-col :span="6" class="a-b-title-col">操作</el-col>
     </el-row>
 

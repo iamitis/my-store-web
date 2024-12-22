@@ -92,7 +92,7 @@ function updateSummaryBoxPosition() {
   </div>
 
   <!-- 结算box -->
-  <div class="summary-box" :style="{ top: summaryBoxTop }">
+  <div class="summary-box" :style="{ top: summaryBoxTop }" v-if="shoppingCart.length > 0">
     <p style="font-size: 24px; color: #111111; margin: 0;">
       付款详情
     </p>
