@@ -5,16 +5,16 @@ import {initRouter} from "../router";
 interface Category {
   categoryName: string;
   categoryImg: string;
-  backEndName:string;
+  backEndName: string;
 }
 
 const categories: Category[] = [
-  {categoryName: "食品", categoryImg: "", backEndName: "FOOD"},
-  {categoryName: "服装", categoryImg: "", backEndName: "APPAREL"},
-  {categoryName: "电子产品", categoryImg: "", backEndName: "ELECTRONICS"},
-  {categoryName: "宠物用品", categoryImg: "", backEndName: "PET_SUPPLIES"},
-  {categoryName: "保健品", categoryImg: "", backEndName: "HEALTH_PRODUCTS"},
-  {categoryName: "洗浴用品", categoryImg: "", backEndName: "BATH_PRODUCTS"},
+  {categoryName: "食品", categoryImg: "src/assets/FOOD.jpg", backEndName: "FOOD"},
+  {categoryName: "服装", categoryImg: "src/assets/APPAREL.png", backEndName: "APPAREL"},
+  {categoryName: "电子产品", categoryImg: "src/assets/ELECTRONICS.jpg", backEndName: "ELECTRONICS"},
+  {categoryName: "宠物用品", categoryImg: "src/assets/PET_SUPPLIES.jpg", backEndName: "PET_SUPPLIES"},
+  {categoryName: "保健品", categoryImg: "src/assets/HEALTH_PRODUCTS.jpg", backEndName: "HEALTH_PRODUCTS"},
+  {categoryName: "洗浴用品", categoryImg: "src/assets/BATH_PRODUCTS.jpg", backEndName: "BATH_PRODUCTS"},
 ]
 
 const {navTo} = initRouter()
@@ -23,14 +23,20 @@ function navToCategoryDetail(backEndName: string) {
   navTo('CategoryDetail', {backEndName: backEndName})
 }
 
-
+function scrollDown() {
+  window.scrollTo({
+    top: window.innerHeight,
+    behavior: 'smooth'
+  });
+}
 </script>
 
 <template>
 
 
   <div class="home-image-container">
-    image
+    <img src="../assets/discount.png" alt="折扣" style="width: 100%; height: 100%; object-fit: cover"/>
+    <button class="scroll-down-btn" @click="scrollDown">往下⬇滑动</button>
   </div>
 
   <el-row class="home-category-container">
@@ -49,12 +55,31 @@ function navToCategoryDetail(backEndName: string) {
 <style scoped>
 .home-image-container {
   background-color: burlywood;
-  height: calc(100vh - var(--header-height) - 300px);
+  height: calc(100vh - var(--header-height));
+  position: relative;
 }
 
-.home-category-container {
-  background-color: darkgray;
-  height: 300px;
+.scroll-down-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  outline: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 30px;
+  letter-spacing: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scroll-down-btn:hover {
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .home-category-item {
@@ -63,17 +88,32 @@ function navToCategoryDetail(backEndName: string) {
   justify-content: center;
   align-items: center;
   gap: 20px;
+  cursor: pointer;
+}
+
+.home-category-item:hover .home-category-img {
+  scale: 1.1;
+}
+
+.home-category-item:hover .home-category-name {
+  color: #a1ccbf;
 }
 
 .home-category-img {
   height: 160px;
   width: 160px;
-  cursor: pointer;
+  border: 3px solid rgb(198, 174, 218);
+  transition: all 0.3s;
+}
+
+
+.home-category-container {
+  background-color: rgb(231, 223, 237);
+  height: 300px;
 }
 
 .home-category-name {
   font-size: 20px;
   font-weight: bold;
-  cursor: pointer;
 }
 </style>

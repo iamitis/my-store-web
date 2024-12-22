@@ -67,11 +67,6 @@ const router = createRouter({
                     name: 'Notification',
                     component: () => import('../views/user/Notification.vue'),
                 },
-                {
-                    path:'/parent-order',
-                    name:'ParentOrder',
-                    component:()=>import('../views/user/ParentOrder.vue'),
-                },
             ],
         },
         {
@@ -94,7 +89,7 @@ export function initRouter() {
     const currRouteName = computed(() => router.currentRoute.value.name)
 
     function navTo(routeName: string, params?: any) {
-        if (routeName === currRouteName.value) {
+        if (routeName === currRouteName.value && params === undefined) {
             return;
         }
         router.push({name: routeName, params: params})

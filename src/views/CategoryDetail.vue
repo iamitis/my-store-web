@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {inject, onMounted, onUnmounted, Ref, ref} from "vue";
+import {inject, onMounted, onUnmounted, Ref, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {
   categoryNameMap, filterProducts,
   getAttributesByCategory, getAttributeValuesByCategory,
-  mockProduct, mockProductAttributeFlavor, mockProductAttributeMap, mockProductAttributeSeason, Product,
+  Product,
   ProductAttribute,
   ProductAttributeValue
 } from "../api/product.ts";
@@ -22,9 +22,11 @@ onMounted(async () => {
     productList.value = response.data.result
     console.log(productList.value)
   }
+})
 
-  // TODO: change to above
-  // productList.value = new Array(10).fill(mockProduct)
+watch(() => route.params.backEndName,  () => {
+  // refresh
+  window.location.reload()
 })
 
 // 排序选项
@@ -81,13 +83,6 @@ onMounted(async () => {
       }
     }
   }
-
-  // // TODO: change to above
-  // attrList.value = [mockProductAttributeFlavor, mockProductAttributeSeason]
-  // attrValMap.value = mockProductAttributeMap
-  // for (const attr of attrList.value) {
-  //   selectedAttrValMap.value.set(attr.productAttributeName!, [])
-  // }
 })
 
 function clickAttrVal(attrValue: ProductAttributeValue) {
@@ -100,18 +95,10 @@ function clickAttrVal(attrValue: ProductAttributeValue) {
   } else {
     selectedAttrVal.splice(index, 1)
   }
+  handleFilter()
 }
 
 async function handleFilter() {
-  let values: string[] = []
-  for (const [key, value] of selectedAttrValMap.value) {
-    for (const attrValue of value) {
-      values.push(attrValue.value!)
-    }
-  }
-  ElMessage.success('已选择属性值：' + values.join(', '))
-
-  // TODO: change to below
   const response = await filterProducts(backEndName, selectedAttrValMap.value)
   if (response.data.code !== '000') {
     ElMessage.error('筛选失败' + response.data.msg)
@@ -128,14 +115,24 @@ onMounted(() => {
     isPopoverVisible.value.push(false)
   }
 })
+
+function hasSelectedAttr(attrName: string) {
+  return selectedAttrValMap.value.get(attrName)!.length > 0
+}
+
 function isSelected(attrValue: ProductAttributeValue) {
   const attrName = attrValue.productAttribute!.productAttributeName!
   return selectedAttrValMap.value.get(attrName)!.includes(attrValue)
 }
+
+function clearSelectedAttr(attrName: string) {
+  selectedAttrValMap.value.set(attrName, [])
+  handleFilter()
+}
 </script>
 
 <template>
-  <div style="padding: 40px 130px">
+  <div style="padding: 35px 130px">
     <!-- 分类标题 -->
     <div class="cate-name">{{ categoryName }}</div>
     <div class="cate-desc">
@@ -157,8 +154,15 @@ function isSelected(attrValue: ProductAttributeValue) {
                     v-on:before-enter="isPopoverVisible[index] = true">
           <!-- 属性类卡片 -->
           <template #reference>
-            <div class="attribute-card" :class="{active: isPopoverVisible[index]}">
+            <div class="attribute-card"
+                 :class="{'active': isPopoverVisible[index],
+                          'has-select': hasSelectedAttr(attribute.productAttributeName!)}">
               {{ attribute.displayName }}
+              <button v-if="hasSelectedAttr(attribute.productAttributeName!)"
+                      class="close-btn" title="清除选择"
+                      @click.stop="clearSelectedAttr(attribute.productAttributeName!)">
+                x
+              </button>
             </div>
           </template>
 
@@ -170,17 +174,16 @@ function isSelected(attrValue: ProductAttributeValue) {
               {{ attrValue.value }}
             </div>
           </div>
-
-          <!-- 确认 -->
-          <el-button @click="handleFilter"
-                     class="attr-button">
-            确认
-          </el-button>
         </el-popover>
       </el-col>
 
       <!-- 排序 -->
       <el-col :span="6" :offset="2" class="sort-container">
+        <div style="display: flex; gap: 10px">
+          <span style="font-size: 18px; color: #b2b2b2">找到</span>
+          <span style="font-size: 18px; color: #b2b2b2">{{ productList.length }}</span>
+          <span style="font-size: 18px; color: #b2b2b2">件商品</span>
+        </div>
         <select v-model="selectedSort" class="sort-select">
           <option v-for="item in sortOptions"
                   :value="item.value"
@@ -196,6 +199,11 @@ function isSelected(attrValue: ProductAttributeValue) {
         <product-item :product="product"/>
       </el-col>
     </el-row>
+
+    <el-empty v-if="productList.length === 0" description=" "
+              style="font-size: 20px; color: #727171; padding-top: 20px">
+      暂无相关商品
+    </el-empty>
   </div>
 </template>
 
@@ -249,7 +257,7 @@ function isSelected(attrValue: ProductAttributeValue) {
   cursor: pointer;
 }
 
-.attribute-card:hover, .attribute-card.active {
+.attribute-card:hover, .attribute-card.active, .attribute-card.has-select {
   transform: scale(1.05);
   background-color: #84b9a8;
   color: white;
@@ -263,7 +271,7 @@ function isSelected(attrValue: ProductAttributeValue) {
 }
 
 .attr-val-opt {
-  border: 1px solid #e2e2e2;
+  border: 2px solid #e2e2e2;
   border-radius: 5px;
   padding: 8px;
   font-size: 18px;
@@ -280,24 +288,27 @@ function isSelected(attrValue: ProductAttributeValue) {
   color: white;
 }
 
-.attr-button {
-  margin: 20px 0 auto auto;
-  width: 60px;
-  padding: 18px 0;
+.close-btn {
+  margin-left: 10px;
   font-size: 18px;
-  border: 1.5px solid #84b9a8;
-  color: #84b9a8;
+  color: #525252;
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  text-align: center;
 }
 
-.attr-button:hover {
-  background-color: #84b9a8;
-  color: white;
+.close-btn:hover {
+  scale: 1.1;
+  color: #84b9a8;
 }
 
 .sort-container {
   display: flex;
   justify-content: end;
   align-items: center;
+  gap: 20px;
 }
 
 .sort-select {

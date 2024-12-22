@@ -1,75 +1,126 @@
-<script setup>
-import { ref } from "vue";
-import {Notice,NoticeSource,NoticeStatus} from "../../api/noteice.js";
-
-
-const example_notice1 : Notice = {
-  noticeId :1,
-  noticeSource:NoticeSource.DISCOUNT_MESSAGE,
-  title:"新品上架",
-  content:"我们有新的商品上架了，快来看看吧！",
-  createDate:"2024-12-20",
-  noticeStatus:NoticeStatus.UNREAD,
-};
-
-const example_notice2 : Notice = {
-  id: 1,
-  source: "店家",
-  title: "新品上架",
-  content: "我们有新的商品上架了，快来看看吧！",
-  date: "2024-12-20",
-};
+<script setup lang="ts">
+import {onMounted, ref} from "vue";
+import {createNotice, getNoticeByUserId, Notice, NoticeSource, NoticeStatus, readNotice} from "../../api/noteice.js";
+import {User} from "../../api/user.ts";
+import {currUser} from "../../main.ts";
+import {dayjs} from "element-plus";
 
 // 示例通知数据
-const notifications = ref([
-  {
-    id: 2,
-    source: "订单状态",
-    title: "订单已发货",
-    content: "您的订单 #123456 已经发货，请注意查收。",
-    date: "2024-12-19",
-  },
-  {
-    id: 3,
-    source: "店家",
-    title: "优惠活动",
-    content: "本店大促销，所有商品享受八折优惠，限时两天！",
-    date: "2024-12-18",
-  },
-]);
+const notifications = ref<Notice[]>([]);
+
+const example_notice1: Notice = {
+  noticeId: 1,
+  userId: 1,
+  noticeSource: NoticeSource.DISCOUNT_MESSAGE,
+  title: "新品上架",
+  content: "我们有新的商品上架了，快来看看吧！",
+  createTime: new Date(),
+  noticeStatus: NoticeStatus.UNREAD,
+};
+
+const example_notice2: Notice = {
+  noticeId: 2,
+  userId: 1,
+  noticeSource: NoticeSource.ORDER_STATUS,
+  title: "订单已发货",
+  content: "您的订单已发货，请注意查收！",
+  createTime: new Date(),
+  noticeStatus: NoticeStatus.UNREAD,
+};
+
+const example_notice3: Notice = {
+  noticeId: 3,
+  userId: 1,
+  noticeSource: NoticeSource.ORDER_STATUS,
+  title: "订单已取消",
+  content: "您的订单已取消，如有疑问请联系客服。",
+  createTime: new Date(),
+  noticeStatus: NoticeStatus.READ,
+};
 
 // 当前选中的通知
-const selectedNotification = ref(notifications.value[0]);
+const selectedNotification = ref<Notice | null>(null);
 
-// 点击通知切换右侧内容
-function selectNotification(notification) {
-  selectedNotification.value = notification;
+// 更新通知状态为已读
+function updateNotificationStatus(notification: Notice) {
+  if (notification.noticeStatus === NoticeStatus.UNREAD) {
+    readNotice(notification.noticeId!);
+    getNotifications();
+  }
 }
+
+// 点击通知切换右侧内容并更新状态
+function selectNotification(notification: Notice) {
+  selectedNotification.value = notification;
+  updateNotificationStatus(notification); // 更新通知状态为已读
+}
+
+// 通知来源和状态映射
+const noticeSourceMap = {
+  ORDER_STATUS: "订单状态",
+  CONSUME_MESSAGE: "消费消息",
+  DISCOUNT_MESSAGE: "折扣消息",
+  PARENT_MESSAGE: "家长消息",
+};
+
+// 格式化时间
+function formatDate(date: Date): string {
+  return dayjs(date).format('YYYY-MM-DD HH:mm'); // 格式化为 'YYYY-MM-DD HH:mm'
+}
+
+async function getNotifications() {
+  const res = await getNoticeByUserId(currUser.id!)
+  if (res.data.code !== '000') {
+    ElMessage.error('获取用户通知失败' + res.data.msg);
+  } else {
+    notifications.value = res.data.result
+        .sort((a, b) => new Date(b.createTime!).getTime() - new Date(a.createTime!).getTime());
+    console.log("获取通知成功", notifications.value);
+  }
+}
+
+onMounted(async () => {
+  // await createNotice(example_notice1);
+  // await createNotice(example_notice2);
+  // await createNotice(example_notice3);
+  await getNotifications();
+  //notifications.value = [example_notice1, example_notice2, example_notice3];
+
+  console.log("加载后的通知:", notifications.value);
+});
+
 </script>
 
 <template>
-  <div class="notification-container">
+  <div class="notification-container" >
     <!-- 左侧通知列表 -->
     <div class="notification-list">
       <h3>通知列表</h3>
       <ul>
         <li
             v-for="notification in notifications"
-            :key="notification.id"
-            :class="{ selected: notification.id === selectedNotification.id }"
+            :key="notification.noticeId"
+            :class="{ selected: notification.noticeId === selectedNotification?.noticeId }"
             @click="selectNotification(notification)"
         >
-          <h4>{{ notification.title }}</h4>
-          <p>{{ notification.source }} - {{ notification.date }}</p>
+          <div style="display: flex; align-items: center;">
+            <!-- 红点 -->
+            <span
+                v-if="notification.noticeStatus === 'UNREAD'"
+                style="width: 8px; height: 8px; background-color: red; border-radius: 50%; margin-right: 5px;"
+            ></span>
+            <h4>{{ notification.title }}</h4>
+          </div>
+          <p>{{ noticeSourceMap[notification.noticeSource!] }} - {{ formatDate(notification.createTime!) }}</p>
         </li>
       </ul>
     </div>
 
     <!-- 右侧通知内容 -->
-    <div class="notification-detail">
+    <div class="notification-detail" v-if="selectedNotification">
       <h3>{{ selectedNotification.title }}</h3>
-      <p><strong>来源：</strong>{{ selectedNotification.source }}</p>
-      <p><strong>日期：</strong>{{ selectedNotification.date }}</p>
+      <p><strong>来源：</strong>{{ noticeSourceMap[selectedNotification.noticeSource!] }}</p>
+      <p><strong>日期：</strong>{{ formatDate(selectedNotification.createTime!) }}</p>
       <div class="content">{{ selectedNotification.content }}</div>
     </div>
   </div>
@@ -158,5 +209,6 @@ function selectNotification(notification) {
   background-color: #f9f9f9;
   font-size: 14px;
   color: #333;
+  white-space: pre-wrap; /* 保留换行符并支持自动换行 */
 }
 </style>

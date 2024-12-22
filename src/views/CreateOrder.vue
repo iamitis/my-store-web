@@ -7,16 +7,18 @@ import {
   CartItem,
   copyAddressInfo,
   emptyAddressInfo,
-  getAllAddressInfo,
-  mockAddressInfo, updateAddressInfo,
-  User
+  getAllAddressInfo, getIdByPhone,
+  updateAddressInfo,
+  User,
+  UserRole
 } from "../api/user.ts";
-import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";
+import {inject, onMounted, onUnmounted, Ref, ref} from "vue";
 import CreateOrderItem from "../components/CreateOrderItem.vue";
 import {formatPrice} from "../api/product.ts";
 import AddressBox from "../components/AddressBox.vue";
 import AddressDialog from "../components/AddressDialog.vue";
 import {cartItemToOrder, createOrder} from "../api/order.ts";
+import {createNotice, NoticeSource, NoticeStatus} from "../api/noteice.ts";
 
 // 地址
 const currUser = inject('currUser') as User
@@ -111,6 +113,24 @@ async function submitOrder() {
     ElMessage.error('下单失败' + res.data.msg)
   } else {
     ElMessage.success('下单成功')
+    if(currUser.role === UserRole.PARENT){
+      const notice_res = await getIdByPhone(currUser.related_phone!);
+      if(notice_res.data.code !== '000'){
+        ElMessage.error('获取用户id失败' + res.data.msg);
+      }else{
+        let content = `商品数量: ${totalQuantity.value}\n总价: ${formatPrice(totalPrice.value)}\n商品详情: ${productList.value.map(item => item.product!.productName).join(', ')}`;
+        const child_id = notice_res.data.result;
+        await createNotice({
+          noticeSource: NoticeSource.PARENT_MESSAGE,
+          title: "您的父母有新的订单",
+          content: content,
+          userId: child_id,
+          createTime: new Date(),
+          noticeStatus: NoticeStatus.UNREAD,
+        });
+
+      }
+    }
     navBack()
   }
 }
