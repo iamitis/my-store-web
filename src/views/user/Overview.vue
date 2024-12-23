@@ -2,8 +2,8 @@
 import {defineComponent, onMounted, ref} from "vue";
 import {getUnreadNotice, Notice} from "../../api/noteice.ts";
 import {currUser} from "../../main.ts";
+import {getAllOrders, Order} from "../../api/order.ts";
 
-const totalOrders = ref(15);
 const totalAmount = ref(120);
 const categoryPercentages = ref([
   { name: "电子产品", value: 40, color: "#4CAF50" },
@@ -24,7 +24,20 @@ defineExpose({
   calculateOffset,
 });
 
+const orders = ref<Order[]>([]);
 const unreadNotice = ref<Notice[]>([]);
+
+async function getOrder() {
+  getAllOrders(currUser.id!)
+      .then(res=>{
+        if (res.data.code !== '000') {
+          ElMessage.error('获取用户订单失败' + res.data.msg);
+        } else {
+          orders.value = res.data.result
+              .sort((a, b) => new Date(b.createDate!).getTime() - new Date(a.createDate!).getTime());
+        }
+      })
+}
 
 async function getNotice() {
   const res = await getUnreadNotice(currUser.id!);
@@ -37,6 +50,8 @@ async function getNotice() {
 
 onMounted(() => {
   getNotice();
+  getOrder();
+
 });
 
 
@@ -51,7 +66,7 @@ onMounted(() => {
         <!-- 订单数量 -->
         <div class="record-item">
           <h3>订单数量</h3>
-          <p>{{ totalOrders }}</p>
+          <p>{{ orders.length }}</p>
         </div>
         <!-- 总金额 -->
         <div class="record-item">
