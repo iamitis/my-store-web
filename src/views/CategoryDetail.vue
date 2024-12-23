@@ -24,7 +24,7 @@ onMounted(async () => {
   }
 })
 
-watch(() => route.params.backEndName,  () => {
+watch(() => route.params.backEndName, () => {
   // refresh
   window.location.reload()
 })
@@ -214,6 +214,11 @@ function handleSort() {
               style="font-size: 20px; color: #727171; padding-top: 20px">
       暂无相关商品
     </el-empty>
+
+    <div style="justify-self: center; margin-top: 30px;
+                color: gray; font-size: 18px; letter-spacing: 3px">
+      到底啦，看看别的吧~
+    </div>
   </div>
 </template>
 

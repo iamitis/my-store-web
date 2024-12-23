@@ -212,7 +212,7 @@ function clickSmallImg(index: number) {
                class="product-detail-rate"/>
 
       <!-- 商品名称 -->
-      <span style="font-size: 30px; font-weight: bold">
+      <span style="font-size: 28px; font-weight: bold; margin: 0 30px; text-align: center">
         {{ productData.productName }}
       </span>
 
