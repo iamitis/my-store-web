@@ -69,6 +69,7 @@ provide('userNavBoxBottom', userNavBoxBottom);
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;
 }
 
 .user-page-body {

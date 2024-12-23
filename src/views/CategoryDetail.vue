@@ -132,7 +132,7 @@ function clearSelectedAttr(attrName: string) {
 </script>
 
 <template>
-  <div style="padding: 35px 130px">
+  <div style="padding: 45px 130px">
     <!-- 分类标题 -->
     <div class="cate-name">{{ categoryName }}</div>
     <div class="cate-desc">

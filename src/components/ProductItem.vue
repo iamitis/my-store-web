@@ -90,7 +90,6 @@ function handleRateClick() {
 
 .product-item-price {
   font-size: 18px;
-  text-decoration: line-through;
   color: #858383;
 }
 

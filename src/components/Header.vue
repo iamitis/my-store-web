@@ -8,6 +8,7 @@ import LogInDialog from "./LogIn.vue";
 import {updateHeaderVisible, updateUser} from "../main.ts";
 import {UserFilled, Message, Search} from "@element-plus/icons-vue";
 import eventBus from "../utils/eventBus.ts";
+import {useRoute} from "vue-router";
 
 const {currRouteName, navTo} = initRouter()
 const searchText = ref<string>('')
@@ -107,6 +108,11 @@ const somePage = ['CreateOrder']
 function navToCategoryDetail(backEndName: string) {
   navTo('CategoryDetail', {backEndName: backEndName})
 }
+
+const route = useRoute()
+function isSelected(backEndName: string) {
+  return currRouteName.value === 'CategoryDetail' && route.params.backEndName === backEndName
+}
 </script>
 
 <template>
@@ -175,12 +181,19 @@ function navToCategoryDetail(backEndName: string) {
 
     <!-- 分类菜单区域 -->
     <div class="menu-track" v-if="!isLogoOnly">
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('FOOD')">食品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('APPAREL')">服装</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('ELECTRONICS')">电子产品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('PET_SUPPLIES')">宠物用品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('HEALTH_PRODUCTS')">保健品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('BATH_PRODUCTS')">洗浴用品</span>
+      <span class="menu-item-discount" title="查看折扣商品" @click="navTo('Discount')">折扣</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('FOOD')}" title="查看相关商品"
+            @click="navToCategoryDetail('FOOD')">食品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('APPAREL')}" title="查看相关商品"
+            @click="navToCategoryDetail('APPAREL')">服装</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('ELECTRONICS')}" title="查看相关商品"
+            @click="navToCategoryDetail('ELECTRONICS')">电子产品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('PET_SUPPLIES')}" title="查看相关商品"
+            @click="navToCategoryDetail('PET_SUPPLIES')">宠物用品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('HEALTH_PRODUCTS')}" title="查看相关商品"
+            @click="navToCategoryDetail('HEALTH_PRODUCTS')">保健品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('BATH_PRODUCTS')}" title="查看相关商品"
+            @click="navToCategoryDetail('BATH_PRODUCTS')">洗浴用品</span>
     </div>
   </el-row>
 </template>
@@ -237,7 +250,7 @@ function navToCategoryDetail(backEndName: string) {
 }
 
 .menu-track {
-  height: 70px;
+  height: 60px;
   padding: 0 50px;
   background: white;
   border-bottom: 1px dashed #e8e8e8;
@@ -257,7 +270,18 @@ function navToCategoryDetail(backEndName: string) {
   color: #5e5d5d;
 }
 
-.menu-item:hover {
+.menu-item:hover, .isSelected {
+  color: #a1ccbf;
+}
+
+.menu-item-discount {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #e3877d;
+}
+
+.menu-item-discount:hover {
   color: #a1ccbf;
 }
 </style>
