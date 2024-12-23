@@ -17,22 +17,11 @@ declare module 'vue' {
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElDialog: typeof import('element-plus/es')['ElDialog']
-<<<<<<< HEAD
-    ElEmpty: typeof import('element-plus/es')['ElEmpty']
-=======
->>>>>>> bb509164b5f6e5692a3084f3e972e398ed445e4c
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
-<<<<<<< HEAD
-    ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElOption: typeof import('element-plus/es')['ElOption']
-    ElPopover: typeof import('element-plus/es')['ElPopover']
-    ElRate: typeof import('element-plus/es')['ElRate']
-=======
-    ElOption: typeof import('element-plus/es')['ElOption']
->>>>>>> bb509164b5f6e5692a3084f3e972e398ed445e4c
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElText: typeof import('element-plus/es')['ElText']

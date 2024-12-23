@@ -3,13 +3,28 @@ import {defineComponent, onMounted, ref} from "vue";
 import {getUnreadNotice, Notice} from "../../api/noteice.ts";
 import {currUser} from "../../main.ts";
 import {getAllOrders, Order} from "../../api/order.ts";
+import {formatPrice} from "../../api/product.ts";
 
-const totalAmount = ref(120);
-const categoryPercentages = ref([
-  { name: "电子产品", value: 40, color: "#4CAF50" },
-  { name: "服饰", value: 35, color: "#2196F3" },
-  { name: "食品", value: 25, color: "#FFC107" },
+
+const categoryNames = ["食品", "服装", "电子产品", "宠物用品", "保健品", "洗浴用品"];
+const categoryEngToChineseMap = new Map<string, string>([
+  ["FOOD", "食品"],
+  ["APPAREL", "服装"],
+  ["ELECTRONICS", "电子产品"],
+  ["PET_SUPPLIES", "宠物用品"],
+  ["HEALTH_PRODUCTS", "保健品"],
+  ["BATH_PRODUCTS", "洗浴用品"],
 ]);
+const categoryColors = ["#FFD700", "#2196F3", "#4CAF50", "#FF5722", "#9C27B0", "#3F51B5"];
+
+// 初始类别比例（value 设置为 0，后续根据逻辑动态调整）
+const categoryPercentages = ref(
+    categoryNames.map((name, index) => ({
+      name,
+      value: 0, // 初始值为 0
+      color: categoryColors[index],
+    }))
+);
 
 // 计算圆弧的起始偏移值
 const calculateOffset = (index: number): number => {
@@ -26,6 +41,7 @@ defineExpose({
 
 const orders = ref<Order[]>([]);
 const unreadNotice = ref<Notice[]>([]);
+const totalAmount = ref<number>(0); // 总金额
 
 async function getOrder() {
   getAllOrders(currUser.id!)
@@ -35,7 +51,28 @@ async function getOrder() {
         } else {
           orders.value = res.data.result
               .sort((a, b) => new Date(b.createDate!).getTime() - new Date(a.createDate!).getTime());
+          // 计算总金额
+          totalAmount.value = 0;
+          totalAmount.value = orders.value.reduce((sum, order) => {
+            return sum + (order.totalPrice || 0); // 如果 totalPrice 为空，默认为 0
+          }, 0);
+
+          //圆形比例
+          let totalProductCount = 0;
+          for(let order of orders.value!) {
+            for(let item of order.products!) {
+              const index = categoryNames.indexOf(categoryEngToChineseMap.get(item!.product!.productCategory!)!);
+              categoryPercentages.value[index].value += item.quantity!;
+              totalProductCount += item.quantity!;
+            }
         }
+          // 将每种商品数量转换为百分比
+          categoryPercentages.value = categoryNames.map((name, index) => ({
+            name,
+            value: totalProductCount > 0 ? (categoryPercentages.value[index].value / totalProductCount) * 100 : 0,
+            color: categoryColors[index],
+          }));
+      }
       })
 }
 
@@ -51,8 +88,11 @@ async function getNotice() {
 onMounted(() => {
   getNotice();
   getOrder();
-
 });
+
+function processPercent(number){
+  return Math.trunc(number); // 去掉小数部分，仅保留整数
+}
 
 
 </script>
@@ -71,7 +111,7 @@ onMounted(() => {
         <!-- 总金额 -->
         <div class="record-item">
           <h3>购买金额</h3>
-          <p>{{ totalAmount }}</p>
+          <p>{{ formatPrice(totalAmount)  }}</p>
         </div>
         <!-- 商品比例 -->
         <div class="record-item">
@@ -95,7 +135,7 @@ onMounted(() => {
             <ul class="legend">
               <li v-for="(item, index) in categoryPercentages" :key="index">
                 <span :style="{ backgroundColor: item.color }"></span>
-                {{ item.name }}: {{ item.value }}%
+                {{ item.name }}: {{ processPercent(item.value) }}%
               </li>
             </ul>
           </div>
