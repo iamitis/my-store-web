@@ -1,7 +1,7 @@
 <!-- TODO: 消息红点 -->
 
 <script setup lang="ts" xmlns:el-col="http://www.w3.org/1999/html">
-import {computed, inject, onMounted, onUnmounted, Ref, ref} from "vue";
+import {computed, inject, onMounted, onUnmounted, Ref, ref,watch} from "vue";
 import {initRouter} from "../router";
 import {User, UserRole} from "../api/user.ts";
 import LogInDialog from "./LogIn.vue";
@@ -9,6 +9,7 @@ import {updateHeaderVisible, updateUser} from "../main.ts";
 import {UserFilled, Message, Search} from "@element-plus/icons-vue";
 import eventBus from "../utils/eventBus.ts";
 import {useRoute} from "vue-router";
+import {isHaveUnreadNotice, isThereUnreadNotice, isUnreadNotice} from "../api/noteice.ts";
 
 const {currRouteName, navTo} = initRouter()
 const searchText = ref<string>('')
@@ -132,6 +133,18 @@ function clickLLMInput() {
   llmInputText.value = ''; // 清空输入框内容
 }
 
+
+
+
+
+watch(
+    () => currUser.id, // 监听的变量
+    (newId, oldId) => {
+      console.log(`用户ID变化: 从 ${oldId} 到 ${newId}`);
+      isHaveUnreadNotice();
+    }
+);
+
 </script>
 
 <template>
@@ -168,14 +181,21 @@ function clickLLMInput() {
         </el-icon>
       </div>
     </el-col>
+
     <el-col :span="1" :offset="1" class="header-item" style="margin-top: 10px">
-      <el-icon @click="clickNotification" title="查看消息" v-if="!isLogoOnly"
-               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
-               width: 50px; height: 50px; border-radius: 50%">
-        <message style="width: 70%; height: 70%"/>
-      </el-icon>
+      <div class="notification-container" @click="clickNotification" title="查看消息" v-if="!isLogoOnly">
+        <el-icon
+            style="cursor: pointer; background-color: white; color: var(--scheme-color-deep); width: 50px; height: 50px; border-radius: 50%">
+          <message style="width: 70%; height: 70%"/>
+        </el-icon>
+        <!-- 红点 -->
+        <div v-if="isUnreadNotice" class="notification-badge"></div>
+      </div>
       <el-text v-if="!isLogoOnly" style="font-size: 18px; margin-top: 5px">消息</el-text>
     </el-col>
+
+
+
     <el-col :span="2" class="header-item" style="margin-top: 10px;" v-if="!isLogoOnly">
       <!-- 未登录状态： -->
       <el-icon v-if="currUser.id === -1"
@@ -339,5 +359,23 @@ function clickLLMInput() {
 .header-input:focus {
   outline: none;
 }
+
+.notification-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  border: 2px solid white; /* 添加一个白色边框，和背景分离 */
+  z-index: 10;
+}
+
 
 </style>

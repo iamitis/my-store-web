@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {createNotice, getNoticeByUserId, Notice, NoticeSource, NoticeStatus, readNotice} from "../../api/noteice.js";
+import {
+  createNotice,
+  getNoticeByUserId,
+  getUnreadNotice, isHaveUnreadNotice,
+  Notice,
+  NoticeSource,
+  NoticeStatus,
+  readNotice
+} from "../../api/noteice.js";
 import {currUser} from "../../main.ts";
 import {dayjs} from "element-plus";
 
@@ -52,6 +60,7 @@ function updateNotificationStatus(notification: Notice) {
 function selectNotification(notification: Notice) {
   selectedNotification.value = notification;
   updateNotificationStatus(notification); // 更新通知状态为已读
+  isHaveUnreadNotice();
 }
 
 // 通知来源和状态映射

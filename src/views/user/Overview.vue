@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { defineComponent, ref } from "vue";
+import {defineComponent, onMounted, ref} from "vue";
+import {getUnreadNotice, Notice} from "../../api/noteice.ts";
+import {currUser} from "../../main.ts";
 
 const totalOrders = ref(15);
 const totalAmount = ref(120);
@@ -21,6 +23,23 @@ const calculateOffset = (index: number): number => {
 defineExpose({
   calculateOffset,
 });
+
+const unreadNotice = ref<Notice[]>([]);
+
+async function getNotice() {
+  const res = await getUnreadNotice(currUser.id!);
+  if(res.data.code !== '000') {
+    console.error('获取未读消息失败' + res.data.msg);
+  } else {
+    unreadNotice.value = res.data.result;
+  }
+}
+
+onMounted(() => {
+  getNotice();
+});
+
+
 </script>
 
 <template>
@@ -85,9 +104,7 @@ defineExpose({
       <div class="todo-messages">
         <h3>待办消息</h3>
         <div class="messages-content">
-          <p>待办任务 1: 完成订单支付</p>
-          <p>待办任务 2: 更新个人信息</p>
-          <p>待办任务 3: 联系客服</p>
+          <p v-for="notice in unreadNotice" :key="notice.noticeId">未读消息：{{ notice.title }}</p>
         </div>
       </div>
     </div>

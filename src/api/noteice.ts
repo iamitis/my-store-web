@@ -1,6 +1,7 @@
 import axios from "axios";
 import {AxiosResponseData} from "../utils/request.ts";
-
+import {currUser} from "../main.ts"
+import {ref} from "vue";
 export interface Notice{
     noticeId?:number,
     noticeSource?:NoticeSource,
@@ -21,6 +22,20 @@ export enum NoticeSource{
 export enum NoticeStatus{
     UNREAD = "UNREAD",
     READ = "READ",
+}
+
+export const isUnreadNotice = ref<boolean>(false);
+
+export async function isHaveUnreadNotice(){
+    if(currUser.id === -1){
+        return;
+    }
+    const res = await isThereUnreadNotice(currUser.id!);
+    if(res.data.code!=='000'){
+        ElMessage.error('获取用户通知失败' + res.data.msg);
+    }else{
+        isUnreadNotice.value = res.data.result;
+    }
 }
 
 export const orderService = axios.create({
@@ -45,4 +60,12 @@ export async function createNotice(notice:Notice):Promise<AxiosResponseData<bool
 
 export async function getNoticeByUserId(userId: number):Promise<AxiosResponseData<Notice[]>> {
     return await orderService.get(`/getNotice/${userId}`)
+}
+
+export async function getUnreadNotice(userId: number):Promise<AxiosResponseData<Notice[]>> {
+    return await orderService.get(`/getUnreadNotice/${userId}`)
+}
+
+export async function isThereUnreadNotice(userId: number):Promise<AxiosResponseData<boolean>> {
+    return await orderService.get(`/isThereUnreadNotice/${userId}`)
 }
