@@ -75,9 +75,8 @@ defineExpose({
       <div class="personal-details">
         <h3>个人详情信息</h3>
         <div class="details-content">
-          <p>姓名: 张三</p>
-          <p>邮箱: zhangsan@example.com</p>
-          <p>电话: 123-456-7890</p>
+          <p>电话: 12345678901</p>
+          <p>地址: 江苏省 南京市 鼓楼区 南京大学鼓楼校区</p>
         </div>
       </div>
 
