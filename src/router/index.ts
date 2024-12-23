@@ -19,6 +19,11 @@ const router = createRouter({
             component: () => import('../views/CategoryDetail.vue'),
         },
         {
+            path: '/discount',
+            name: 'Discount',
+            component: () => import('../views/Discount.vue'),
+        },
+        {
             path: '/product-detail/:productId',
             name: 'ProductDetail',
             component: () => import('../views/product/ProductDetail.vue'),
@@ -89,7 +94,7 @@ export function initRouter() {
     const currRouteName = computed(() => router.currentRoute.value.name)
 
     function navTo(routeName: string, params?: any) {
-        if (routeName === currRouteName.value) {
+        if (routeName === currRouteName.value && params === undefined) {
             return;
         }
         router.push({name: routeName, params: params})

@@ -402,6 +402,7 @@ function clickSmallImg(index: number) {
 }
 
 .product-detail-button-group {
+  margin-top: 12px;
   width: 90%;
   height: 60px;
   border-radius: 30px;

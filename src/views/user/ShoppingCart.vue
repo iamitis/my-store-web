@@ -89,6 +89,13 @@ function updateSummaryBoxPosition() {
                         v-model:cart-item="shoppingCart[index]"
                         v-on:update-quantity="updateQuantity"
                         v-on:remove-cart-item="removeCartItem"/>
+
+
+    <!-- 空状态 -->
+    <div v-if="shoppingCart.length === 0"
+         style="font-size: 20px; color: #727171; padding-top: 20px">
+      暂无购物车商品
+    </div>
   </div>
 
   <!-- 结算box -->

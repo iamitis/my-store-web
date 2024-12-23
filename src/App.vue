@@ -2,6 +2,7 @@
 import Header from "./components/Header.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { Top } from "@element-plus/icons-vue";
+import {useRoute} from "vue-router";
 
 // 返回顶部逻辑
 const showBackToTop = ref(false);
@@ -21,7 +22,7 @@ onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
 });
 
-
+const route = useRoute();
 </script>
 
 <template>
@@ -35,7 +36,7 @@ onUnmounted(() => {
 
     <!-- 返回顶部按钮 -->
     <button
-        v-if="showBackToTop"
+        v-if="showBackToTop && route.name !== 'Home'"
         @click="scrollToTop"
         title="返回顶部"
         class="back-to-top"
@@ -66,12 +67,13 @@ onUnmounted(() => {
   align-items: center;
   cursor: pointer;
   border-radius: 50%;
-  border: 2px solid #8fc0af;
-  background-color: white;
-  color: #91c4b3;
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
 }
 
 .back-to-top:hover {
-  background-color: #c8e7dc;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 </style>
