@@ -43,7 +43,10 @@ function handleRateClick() {
            class="product-item-img"
            @mouseover="currImgIndex=1" @mouseleave="currImgIndex=0">
     </div>
-    <div style="font-weight: bold; font-size: 19px; margin-top: 10px">{{ props.product.productName }}</div>
+    <div style="font-weight: bold; font-size: 19px; margin-top: 10px;
+                white-space: nowrap; text-overflow: ellipsis; overflow: hidden">
+      {{ props.product.productName }}
+    </div>
     <div style="margin-top: 4px">
       <span v-if="props.product.productOriginalPrice !== props.product.productNowPrice"
             class="product-item-price" style="text-decoration: line-through">
@@ -86,11 +89,11 @@ function handleRateClick() {
   position: absolute; /* 使图片重叠 */
   top: 0; /* 使图片重叠 */
   left: 0; /* 使图片重叠 */
+  border: 1px solid #e0e0e0;
 }
 
 .product-item-price {
   font-size: 18px;
-  text-decoration: line-through;
   color: #858383;
 }
 

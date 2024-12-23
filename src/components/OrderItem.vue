@@ -5,6 +5,7 @@ import {formatPrice} from "../api/product.ts";
 import {initRouter} from "../router";
 import {Delete} from "@element-plus/icons-vue";
 import {dayjs} from "element-plus";
+import {CartItem} from "../api/user.ts";
 
 const order = defineModel(
     'order',
@@ -40,25 +41,45 @@ const formattedCreateTime = computed(() => {
   return formatDate(order.value.createDate!);
 })
 
-function navToDetail() {
-  navTo('OrderDetail', {orderId: order.value.orderInfoId})
-}
 
 function handleRemove() {
   emit('removeOrder', order.value.orderInfoId)
 }
+
+const isProductDropdownVisible = ref(false);
+
+function toggleProductDropdown() {
+  isProductDropdownVisible.value = !isProductDropdownVisible.value;
+}
+
+function navToDetail(cartItem: CartItem) {
+  navTo('ProductDetail', {productId: cartItem.product!.productId})
+}
+
 </script>
 
 <template>
   <el-row class="order-row" v-if="order.products?.length! > 0">
+    <el-col :span="1" class="order-row-item" style="justify-content: center;">
+      <el-button
+          circle
+          @click="toggleProductDropdown"
+          class="order-dropdown-button"
+      >
+        <el-icon>
+          <arrow-down />
+        </el-icon>
+      </el-button>
+    </el-col>
+
     <el-col :span="4" class="order-row-item" style="justify-content: center">
       <img :src="order.products![0]!.product!.productImages![0]!" alt="商品图片"
-           title="查看订单详情" @click="navToDetail"
+           title="查看订单详情" @click="toggleProductDropdown"
            class="order-product-cover">
     </el-col>
     <el-col :span="4" class="order-row-item"
             style="align-items: start;">
-      <p class="order-id" title="查看订单详情" @click="navToDetail">
+      <p class="order-id" title="查看订单详情" @click="toggleProductDropdown">
         {{ order.orderInfoId! }}
       </p>
     </el-col>
@@ -89,6 +110,42 @@ function handleRemove() {
       </el-button>
     </el-col>
   </el-row>
+
+  <el-col :span="24">
+    <div v-if="isProductDropdownVisible" class="product-dropdown">
+      <ul>
+        <li v-for="(cartItem, index) in order.products" :key="index">
+          <img
+              :src="cartItem.product!.productImages![0]"
+              alt="商品图片"
+              class="product-thumbnail"
+              @click="navToDetail(cartItem)"
+          />
+          <div class="product-info">
+            <!-- 商品名称 -->
+            <span class="product-name" @click="navToDetail(cartItem)">
+            {{ cartItem!.product!.productName }}
+          </span>
+            <!-- 商品属性 -->
+            <div class="product-attributes">
+            <span
+                v-for="(option, idx) in cartItem.productOptionValues"
+                :key="idx"
+                class="product-attribute"
+            >
+              {{ option.productOptionName }}: {{ option.value }}
+            </span>
+            </div>
+          </div>
+          <!-- 商品价格 -->
+          <span class="product-price">
+          {{ formatPrice(cartItem!.product!.productNowPrice!) }}
+        </span>
+        </li>
+      </ul>
+    </div>
+  </el-col>
+
 </template>
 
 <style scoped>
@@ -172,4 +229,108 @@ function handleRemove() {
   background-color: #d8e8e3;
   color: #87b9a8;
 }
+
+.order-dropdown-button {
+  width: 50px;
+  height: 50px;
+  margin-top: 15px;
+}
+
+.product-dropdown {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 更柔和的阴影 */
+  padding: 20px; /* 增加内边距 */
+  margin-top: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.product-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-dropdown li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 保持两端对齐 */
+  padding: 15px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease; /* 添加悬停过渡效果 */
+}
+
+.product-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.product-dropdown li:hover {
+  background-color: #f9f9f9; /* 添加悬停效果 */
+}
+
+.product-thumbnail {
+  width: 60px; /* 调整图片大小 */
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px; /* 更柔和的圆角 */
+  margin-right: 20px;
+  border: 1px solid #eee;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* 添加缩放与阴影动画 */
+}
+
+.product-thumbnail:hover {
+  transform: scale(1.05); /* 鼠标悬停时轻微放大 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* 占据剩余空间 */
+}
+
+.product-name {
+  font-size: 18px; /* 略微调整字体大小 */
+  color: #333;
+  font-weight: 600; /* 更加突出名称 */
+  margin-bottom: 8px;
+  cursor: pointer; /* 鼠标样式变为手型 */
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.product-name:hover {
+  color: #409eff;
+  text-decoration: underline;
+}
+
+.product-attributes {
+  display: flex;
+  flex-wrap: wrap; /* 自动换行 */
+  gap: 10px; /* 增加属性之间的间距 */
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.product-attribute {
+  background-color: #f5f5f5; /* 更浅的背景色 */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 3px 8px; /* 调整内边距 */
+  font-size: 13px;
+  color: #555;
+  white-space: nowrap; /* 防止换行 */
+}
+
+.product-price {
+  font-size: 18px; /* 增大字体大小 */
+  color: #84b9a8;
+  font-weight: bold;
+  margin-left: 15px;
+  align-self: flex-end; /* 调整价格位置 */
+}
+
+
 </style>

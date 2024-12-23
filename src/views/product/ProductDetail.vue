@@ -182,7 +182,7 @@ function clickSmallImg(index: number) {
 </script>
 
 <template>
-  <el-row v-if="productData">
+  <el-row v-if="productData" style="margin-top: 10px">
     <!-- 商品图片 -->
     <el-col :span="13">
       <div class="imgs-container">
@@ -212,7 +212,7 @@ function clickSmallImg(index: number) {
                class="product-detail-rate"/>
 
       <!-- 商品名称 -->
-      <span style="font-size: 30px; font-weight: bold">
+      <span style="font-size: 28px; font-weight: bold; margin: 0 30px; text-align: center">
         {{ productData.productName }}
       </span>
 
@@ -280,9 +280,9 @@ function clickSmallImg(index: number) {
   <!-- 商品评论 -->
   <div v-if="productData"
        class="product-detail-comment">
-    <p style="font-size: 20px; color: #252424">
+    <div style="font-size: 20px; font-weight: bold; color: #494848;">
       商品评论
-    </p>
+    </div>
     <p v-if="!productData.productCommentList"
        style="font-size: 20px; color: #252424">
       暂无评论
@@ -300,6 +300,7 @@ function clickSmallImg(index: number) {
 }
 
 .product-detail-img-container {
+  border: 1px solid #dcdcdc;
   height: 730px;
   width: 730px;
   border-radius: 20px;
@@ -321,6 +322,7 @@ function clickSmallImg(index: number) {
   width: v-bind(imgListWidth);
   padding: 8px 15px;
   margin-top: -20px;
+  border-top: 1px solid #dcdcdc;
   border-radius: 12px;
   display: flex;
   justify-content: center;

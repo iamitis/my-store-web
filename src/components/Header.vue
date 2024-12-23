@@ -8,6 +8,7 @@ import LogInDialog from "./LogIn.vue";
 import {updateHeaderVisible, updateUser} from "../main.ts";
 import {UserFilled, Message, Search} from "@element-plus/icons-vue";
 import eventBus from "../utils/eventBus.ts";
+import {useRoute} from "vue-router";
 
 const {currRouteName, navTo} = initRouter()
 const searchText = ref<string>('')
@@ -107,12 +108,51 @@ const somePage = ['CreateOrder']
 function navToCategoryDetail(backEndName: string) {
   navTo('CategoryDetail', {backEndName: backEndName})
 }
+
+const route = useRoute()
+function isSelected(backEndName: string) {
+  return currRouteName.value === 'CategoryDetail' && route.params.backEndName === backEndName
+}
+
+const llmInputText = ref<string>(''); // 绑定左侧输入框的内容
+
+function clickLLMInput() {
+  if (!llmInputText.value.trim()) {
+    ElMessage.warning("请输入内容后再发送");
+    return;
+  }
+
+  console.log("用户输入的问题:", llmInputText.value);
+  // 在这里调用你的 LLM 接口
+  // 例如：
+  // await fetchLLMResponse(llmInputText.value).then(response => {
+  //   console.log("LLM 响应:", response);
+  // });
+
+  llmInputText.value = ''; // 清空输入框内容
+}
+
 </script>
 
 <template>
   <LogInDialog v-model:visible="showLogin" @loginSuccess="handleLoginSuccess" @loginCancel="handleLoginCancel"/>
   <el-row class="header-container" :class="{'hidden': !isHeaderVisible}">
-    <el-col :span="10"/>
+    <el-col :span="5"/>
+
+
+    <el-col :span="5" class="header-item">
+      <div class="header-input-container">
+        <input v-model="llmInputText" placeholder="提问人工智能"
+               class="header-input"/>
+        <el-icon @click="clickLLMInput" title="发送问题"
+                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
+          <search style="width: 80%; height: 80%"/>
+        </el-icon>
+      </div>
+    </el-col>
+
+
+
     <el-col :span="4" class="header-item">
       <el-avatar @click="navTo('Home')" title="返回首页"
                  src="src/assets/logo.png"
@@ -123,14 +163,14 @@ function navToCategoryDetail(backEndName: string) {
         <input v-model="searchText" placeholder="搜索想要的商品"
                class="header-input"/>
         <el-icon @click="clickSearch" title="点击搜索"
-                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
+                 style="cursor: pointer; color: var(--scheme-color-deep); width: 30px; height: 30px">
           <search style="width: 80%; height: 80%"/>
         </el-icon>
       </div>
     </el-col>
     <el-col :span="1" :offset="1" class="header-item" style="margin-top: 10px">
       <el-icon @click="clickNotification" title="查看消息" v-if="!isLogoOnly"
-               style="cursor: pointer; background-color: white; color: #7fad9f;
+               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
         <message style="width: 70%; height: 70%"/>
       </el-icon>
@@ -140,7 +180,7 @@ function navToCategoryDetail(backEndName: string) {
       <!-- 未登录状态： -->
       <el-icon v-if="currUser.id === -1"
                @click="clickUser" title="点击登录"
-               style="cursor: pointer; background-color: white; color: #72a294;
+               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
         <user-filled style="width: 70%; height: 70%"/>
       </el-icon>
@@ -152,7 +192,7 @@ function navToCategoryDetail(backEndName: string) {
       <!-- 已登录状态： -->
       <el-icon v-if="currUser.id !== -1"
                @click="clickUser" title="查看个人主页"
-               style="cursor: pointer; background-color: white; color: #76a899;
+               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
         <user-filled style="width: 70%; height: 70%"/>
       </el-icon>
@@ -175,12 +215,19 @@ function navToCategoryDetail(backEndName: string) {
 
     <!-- 分类菜单区域 -->
     <div class="menu-track" v-if="!isLogoOnly">
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('FOOD')">食品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('APPAREL')">服装</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('ELECTRONICS')">电子产品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('PET_SUPPLIES')">宠物用品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('HEALTH_PRODUCTS')">保健品</span>
-      <span class="menu-item" title="查看相关商品" @click="navToCategoryDetail('BATH_PRODUCTS')">洗浴用品</span>
+      <span class="menu-item-discount" title="查看折扣商品" @click="navTo('Discount')">折扣</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('FOOD')}" title="查看相关商品"
+            @click="navToCategoryDetail('FOOD')">食品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('APPAREL')}" title="查看相关商品"
+            @click="navToCategoryDetail('APPAREL')">服装</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('ELECTRONICS')}" title="查看相关商品"
+            @click="navToCategoryDetail('ELECTRONICS')">电子产品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('PET_SUPPLIES')}" title="查看相关商品"
+            @click="navToCategoryDetail('PET_SUPPLIES')">宠物用品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('HEALTH_PRODUCTS')}" title="查看相关商品"
+            @click="navToCategoryDetail('HEALTH_PRODUCTS')">保健品</span>
+      <span class="menu-item" :class="{'isSelected': isSelected('BATH_PRODUCTS')}" title="查看相关商品"
+            @click="navToCategoryDetail('BATH_PRODUCTS')">洗浴用品</span>
     </div>
   </el-row>
 </template>
@@ -194,7 +241,7 @@ function navToCategoryDetail(backEndName: string) {
   transition: top 0.3s;
   z-index: 200; /* 保证在最上层 */
 
-  background-color: #f3f1f1;
+  background-color: #e7dfed;
   border-bottom: 1px dashed #d2d1d1;
 
   display: flex;
@@ -218,7 +265,6 @@ function navToCategoryDetail(backEndName: string) {
   width: 100%;
   border-radius: 25px;
   background-color: white;
-  border: solid #a1ccbf;
 
   display: flex;
   align-items: center;
@@ -237,7 +283,7 @@ function navToCategoryDetail(backEndName: string) {
 }
 
 .menu-track {
-  height: 70px;
+  height: 60px;
   padding: 0 50px;
   background: white;
   border-bottom: 1px dashed #e8e8e8;
@@ -257,7 +303,41 @@ function navToCategoryDetail(backEndName: string) {
   color: #5e5d5d;
 }
 
-.menu-item:hover {
-  color: #a1ccbf;
+.menu-item:hover, .isSelected {
+  color: var(--scheme-color-deep);
 }
+
+.menu-item-discount {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #e3877d;
+}
+
+.menu-item-discount:hover {
+  color: var(--scheme-color-deep);
+}
+
+.header-input-container {
+  height: 50px;
+  width: 100%;
+  border-radius: 25px;
+  background-color: white;
+  border: solid #a1ccbf;
+  display: flex;
+  align-items: center;
+}
+
+.header-input {
+  border: none;
+  height: 80%;
+  width: 85%;
+  margin-left: 16px;
+  font-size: 18px; /* 根据左侧区域调整字体大小 */
+}
+
+.header-input:focus {
+  outline: none;
+}
+
 </style>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {defineComponent, ref} from "vue";
+import { defineComponent, ref } from "vue";
 
 const totalOrders = ref(15);
 const totalAmount = ref(120);
 const categoryPercentages = ref([
-  {name: "电子产品", value: 40, color: "#4CAF50"},
-  {name: "服饰", value: 35, color: "#2196F3"},
-  {name: "食品", value: 25, color: "#FFC107"},
+  { name: "电子产品", value: 40, color: "#4CAF50" },
+  { name: "服饰", value: 35, color: "#2196F3" },
+  { name: "食品", value: 25, color: "#FFC107" },
 ]);
 
 // 计算圆弧的起始偏移值
@@ -15,7 +15,7 @@ const calculateOffset = (index: number): number => {
   for (let i = 0; i < index; i++) {
     offset += categoryPercentages.value[i].value; // 累加之前部分的值
   }
-  return (offset * 2 * Math.PI) / 100; // 将偏移量转换为弧度
+  return (offset / 100) * 100; // 将偏移量转换为百分比
 };
 
 defineExpose({
@@ -32,41 +32,40 @@ defineExpose({
         <!-- 订单数量 -->
         <div class="record-item">
           <h3>订单数量</h3>
-          <p>{{totalOrders}}</p>
+          <p>{{ totalOrders }}</p>
         </div>
         <!-- 总金额 -->
         <div class="record-item">
           <h3>购买金额</h3>
-          <p>{{totalAmount}}</p>
+          <p>{{ totalAmount }}</p>
         </div>
         <!-- 商品比例 -->
         <div class="record-item">
-          <h3>
-            <div class="pie-chart">
-              <!-- 比例圆 -->
-              <svg viewBox="0 0 32 32" class="circle-chart">
-                <circle
-                    v-for="(item, index) in categoryPercentages"
-                    :key="index"
-                    :r="16"
-                    :cx="16"
-                    :cy="16"
-                    :stroke="item.color"
-                    fill="none"
-                    :stroke-width="4"
-                    :stroke-dasharray="item.value + ' ' + (100 - item.value)"
-                    :stroke-dashoffset="calculateOffset(index)"
-                />
-              </svg>
-              <ul class="legend">
-                <li v-for="(item, index) in categoryPercentages" :key="index">
-                  <span :style="{backgroundColor: item.color}"></span> {{item.name}}: {{item.value}}%
-                </li>
-              </ul>
-            </div>
-          </h3>
+          <h3>商品比例</h3>
+          <div class="pie-chart">
+            <!-- 比例圆 -->
+            <svg viewBox="0 0 36 36" class="circle-chart">
+              <circle
+                  v-for="(item, index) in categoryPercentages"
+                  :key="index"
+                  cx="18"
+                  cy="18"
+                  r="15.915"
+                  fill="none"
+                  :stroke="item.color"
+                  stroke-width="3"
+                  :stroke-dasharray="item.value + ' ' + (100 - item.value)"
+                  :stroke-dashoffset="100 - calculateOffset(index)"
+              />
+            </svg>
+            <ul class="legend">
+              <li v-for="(item, index) in categoryPercentages" :key="index">
+                <span :style="{ backgroundColor: item.color }"></span>
+                {{ item.name }}: {{ item.value }}%
+              </li>
+            </ul>
+          </div>
         </div>
-
       </div>
     </div>
 
@@ -148,9 +147,13 @@ defineExpose({
 }
 
 .circle-chart {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   transform: rotate(-90deg); /* 将起点调整到顶部 */
+}
+
+.circle-chart circle {
+  transition: stroke-dasharray 0.3s ease, stroke-dashoffset 0.3s ease;
 }
 
 .legend {
@@ -164,6 +167,7 @@ defineExpose({
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 0.9rem;
 }
 
 .legend span {

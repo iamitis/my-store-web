@@ -32,18 +32,21 @@ function scrollDown() {
 </script>
 
 <template>
-
-
   <div class="home-image-container">
-    <img src="../assets/discount.png" alt="折扣" style="width: 100%; height: 100%; object-fit: cover"/>
+    <img src="../assets/discount.png" alt="折扣" @click="navTo('Discount')"
+         style="width: 100%; height: 100%; object-fit: cover; cursor: pointer"/>
     <button class="scroll-down-btn" @click="scrollDown">往下⬇滑动</button>
   </div>
 
   <el-row class="home-category-container">
     <el-col v-for="category in categories"
             :span="4" class="home-category-item">
-      <el-avatar @click="navToCategoryDetail(category.backEndName)" title="查看相关商品"
-                 class="home-category-img" :src="category.categoryImg"/>
+      <div style="position: relative">
+        <img @click="navToCategoryDetail(category.backEndName)" title="查看相关商品"
+             class="home-category-img"
+             :src="category.categoryImg" alt="分类图片"/>
+        <div class="home-cate-img-shadow" @click="navToCategoryDetail(category.backEndName)"/>
+      </div>
       <el-text @click="navToCategoryDetail(category.backEndName)" title="查看相关商品"
                class="home-category-name">
         {{ category.categoryName }}
@@ -99,13 +102,28 @@ function scrollDown() {
   color: #a1ccbf;
 }
 
+.home-category-item:hover .home-cate-img-shadow {
+  scale: 1.1;
+}
+
 .home-category-img {
   height: 160px;
   width: 160px;
-  border: 3px solid rgb(198, 174, 218);
+  border-radius: 50%;
   transition: all 0.3s;
+  box-shadow: inset 0 0 10px 5px rgba(0, 0, 0, 0.2);
 }
 
+.home-cate-img-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px 8px rgb(231, 223, 237);
+  transition: all 0.3s;
+}
 
 .home-category-container {
   background-color: rgb(231, 223, 237);

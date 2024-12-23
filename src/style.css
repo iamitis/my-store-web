@@ -6,6 +6,8 @@
     font-weight: 400;
 
     --header-height: 130px;
+    --scheme-color: #a1ccbf;
+    --scheme-color-deep: #84b9a8;
 }
 
 html, body {

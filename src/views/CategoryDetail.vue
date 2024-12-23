@@ -24,16 +24,16 @@ onMounted(async () => {
   }
 })
 
-watch(() => route.params.backEndName,  () => {
+watch(() => route.params.backEndName, () => {
   // refresh
   window.location.reload()
 })
 
 // 排序选项
 const sortOptions = [
-  {label: "销量从高到低", value: "bestSeller"},
-  {label: "价格从高到低", value: "price_desc"},
-  {label: "价格从低到高", value: "price_asc"},
+  {label: "价格从高到低 ↓", value: "priceDesc"},
+  {label: "价格从低到高 ↑", value: "priceAsc"},
+  {label: "评分从高到低 ↓", value: "ratingDesc"},
 ];
 
 // 初始化 `selectedSort`
@@ -129,20 +129,30 @@ function clearSelectedAttr(attrName: string) {
   selectedAttrValMap.value.set(attrName, [])
   handleFilter()
 }
+
+function handleSort() {
+  if (selectedSort.value === 'priceDesc') {
+    productList.value.sort((a, b) => b.productNowPrice! - a.productNowPrice!)
+  } else if (selectedSort.value === 'priceAsc') {
+    productList.value.sort((a, b) => a.productNowPrice! - b.productNowPrice!)
+  } else if (selectedSort.value === 'ratingDesc') {
+    productList.value.sort((a, b) => b.productScore! - a.productScore!)
+  }
+}
 </script>
 
 <template>
-  <div style="padding: 35px 130px">
+  <div style="padding: 45px 130px">
     <!-- 分类标题 -->
-    <div class="cate-name">{{ categoryName }}</div>
-    <div class="cate-desc">
-      我们的电子产品专为现代老年人设计，旨在提升他们的生活质量和便利性。
-      无论是简单易用的智能手机、带有大字体和清晰显示的平板电脑，还是健康监测设备，
-      这些产品都考虑到了老年人的需求和使用习惯。
-      我们还提供个性化的智能家居设备，帮助他们更轻松地管理日常生活，如智能语音助手和远程监控系统。
-      通过这些现代科技，老年人可以与家人保持联系，享受娱乐，同时提升生活的舒适度和安全性，
-      让他们的晚年生活更加丰富多彩。
-    </div>
+<!--    <div class="cate-name">{{ categoryName }}</div>-->
+<!--    <div class="cate-desc">-->
+<!--      我们的电子产品专为现代老年人设计，旨在提升他们的生活质量和便利性。-->
+<!--      无论是简单易用的智能手机、带有大字体和清晰显示的平板电脑，还是健康监测设备，-->
+<!--      这些产品都考虑到了老年人的需求和使用习惯。-->
+<!--      我们还提供个性化的智能家居设备，帮助他们更轻松地管理日常生活，如智能语音助手和远程监控系统。-->
+<!--      通过这些现代科技，老年人可以与家人保持联系，享受娱乐，同时提升生活的舒适度和安全性，-->
+<!--      让他们的晚年生活更加丰富多彩。-->
+<!--    </div>-->
 
     <el-row class="attr-sort-row" :style="{ top: attrSortRowTop }">
       <!-- 属性筛选 -->
@@ -159,7 +169,7 @@ function clearSelectedAttr(attrName: string) {
                           'has-select': hasSelectedAttr(attribute.productAttributeName!)}">
               {{ attribute.displayName }}
               <button v-if="hasSelectedAttr(attribute.productAttributeName!)"
-                      class="close-btn" title="清除选择"
+                      class="close-btn" title="清除全部选择"
                       @click.stop="clearSelectedAttr(attribute.productAttributeName!)">
                 x
               </button>
@@ -184,7 +194,7 @@ function clearSelectedAttr(attrName: string) {
           <span style="font-size: 18px; color: #b2b2b2">{{ productList.length }}</span>
           <span style="font-size: 18px; color: #b2b2b2">件商品</span>
         </div>
-        <select v-model="selectedSort" class="sort-select">
+        <select v-model="selectedSort" class="sort-select" @change="handleSort">
           <option v-for="item in sortOptions"
                   :value="item.value"
                   class="sort-option">
@@ -204,6 +214,11 @@ function clearSelectedAttr(attrName: string) {
               style="font-size: 20px; color: #727171; padding-top: 20px">
       暂无相关商品
     </el-empty>
+
+    <div style="justify-self: center; margin-top: 30px;
+                color: gray; font-size: 18px; letter-spacing: 3px">
+      到底啦，看看别的吧~
+    </div>
   </div>
 </template>
 
@@ -228,7 +243,7 @@ function clearSelectedAttr(attrName: string) {
 }
 
 .attr-sort-row {
-  padding: 25px 30px;
+  padding: 38px 30px 25px 30px;
   position: sticky;
   transition: top 0.3s;
   z-index: 2;
@@ -259,7 +274,7 @@ function clearSelectedAttr(attrName: string) {
 
 .attribute-card:hover, .attribute-card.active, .attribute-card.has-select {
   transform: scale(1.05);
-  background-color: #84b9a8;
+  background-color: var(--scheme-color);
   color: white;
 }
 
@@ -271,20 +286,21 @@ function clearSelectedAttr(attrName: string) {
 }
 
 .attr-val-opt {
-  border: 2px solid #e2e2e2;
   border-radius: 5px;
   padding: 8px;
   font-size: 18px;
   cursor: pointer;
+  background-color: #f1f1f1;
 }
 
 .attr-val-opt:hover {
-  border-color: #84b9a8;
-  color: #84b9a8;
+  border-color: var(--scheme-color);
+  color: var(--scheme-color);
+  scale: 1.1;
 }
 
 .attr-val-opt.selected {
-  background-color: #84b9a8;
+  background-color: var(--scheme-color);
   color: white;
 }
 
@@ -301,7 +317,7 @@ function clearSelectedAttr(attrName: string) {
 
 .close-btn:hover {
   scale: 1.1;
-  color: #84b9a8;
+  color: var(--scheme-color);
 }
 
 .sort-container {

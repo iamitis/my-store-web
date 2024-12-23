@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {createNotice, getNoticeByUserId, Notice, NoticeSource, NoticeStatus, readNotice} from "../../api/noteice.js";
-import {User} from "../../api/user.ts";
 import {currUser} from "../../main.ts";
 import {dayjs} from "element-plus";
 
@@ -39,7 +38,7 @@ const example_notice3: Notice = {
 };
 
 // 当前选中的通知
-const selectedNotification = ref<Notice | null>(null);
+const selectedNotification = ref<Notice>();
 
 // 更新通知状态为已读
 function updateNotificationStatus(notification: Notice) {
