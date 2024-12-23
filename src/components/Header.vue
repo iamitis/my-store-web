@@ -113,12 +113,46 @@ const route = useRoute()
 function isSelected(backEndName: string) {
   return currRouteName.value === 'CategoryDetail' && route.params.backEndName === backEndName
 }
+
+const llmInputText = ref<string>(''); // 绑定左侧输入框的内容
+
+function clickLLMInput() {
+  if (!llmInputText.value.trim()) {
+    ElMessage.warning("请输入内容后再发送");
+    return;
+  }
+
+  console.log("用户输入的问题:", llmInputText.value);
+  // 在这里调用你的 LLM 接口
+  // 例如：
+  // await fetchLLMResponse(llmInputText.value).then(response => {
+  //   console.log("LLM 响应:", response);
+  // });
+
+  llmInputText.value = ''; // 清空输入框内容
+}
+
 </script>
 
 <template>
   <LogInDialog v-model:visible="showLogin" @loginSuccess="handleLoginSuccess" @loginCancel="handleLoginCancel"/>
   <el-row class="header-container" :class="{'hidden': !isHeaderVisible}">
-    <el-col :span="10"/>
+    <el-col :span="5"/>
+
+
+    <el-col :span="5" class="header-item">
+      <div class="header-input-container">
+        <input v-model="llmInputText" placeholder="提问人工智能"
+               class="header-input"/>
+        <el-icon @click="clickLLMInput" title="发送问题"
+                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
+          <search style="width: 80%; height: 80%"/>
+        </el-icon>
+      </div>
+    </el-col>
+
+
+
     <el-col :span="4" class="header-item">
       <el-avatar @click="navTo('Home')" title="返回首页"
                  src="src/assets/logo.png"
@@ -283,4 +317,27 @@ function isSelected(backEndName: string) {
 .menu-item-discount:hover {
   color: var(--scheme-color-deep);
 }
+
+.header-input-container {
+  height: 50px;
+  width: 100%;
+  border-radius: 25px;
+  background-color: white;
+  border: solid #a1ccbf;
+  display: flex;
+  align-items: center;
+}
+
+.header-input {
+  border: none;
+  height: 80%;
+  width: 85%;
+  margin-left: 16px;
+  font-size: 18px; /* 根据左侧区域调整字体大小 */
+}
+
+.header-input:focus {
+  outline: none;
+}
+
 </style>
