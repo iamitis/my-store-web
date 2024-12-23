@@ -212,7 +212,7 @@ function clickSmallImg(index: number) {
                class="product-detail-rate"/>
 
       <!-- 商品名称 -->
-      <span style="font-size: 30px; font-weight: bold">
+      <span style="font-size: 28px; font-weight: bold; margin: 0 30px; text-align: center">
         {{ productData.productName }}
       </span>
 
@@ -322,6 +322,7 @@ function clickSmallImg(index: number) {
   width: v-bind(imgListWidth);
   padding: 8px 15px;
   margin-top: -20px;
+  border-top: 1px solid #dcdcdc;
   border-radius: 12px;
   display: flex;
   justify-content: center;
