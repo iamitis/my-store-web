@@ -163,14 +163,14 @@ function clickLLMInput() {
         <input v-model="searchText" placeholder="搜索想要的商品"
                class="header-input"/>
         <el-icon @click="clickSearch" title="点击搜索"
-                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
+                 style="cursor: pointer; color: var(--scheme-color-deep); width: 30px; height: 30px">
           <search style="width: 80%; height: 80%"/>
         </el-icon>
       </div>
     </el-col>
     <el-col :span="1" :offset="1" class="header-item" style="margin-top: 10px">
       <el-icon @click="clickNotification" title="查看消息" v-if="!isLogoOnly"
-               style="cursor: pointer; background-color: white; color: #7fad9f;
+               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
         <message style="width: 70%; height: 70%"/>
       </el-icon>
@@ -180,7 +180,7 @@ function clickLLMInput() {
       <!-- 未登录状态： -->
       <el-icon v-if="currUser.id === -1"
                @click="clickUser" title="点击登录"
-               style="cursor: pointer; background-color: white; color: #72a294;
+               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
         <user-filled style="width: 70%; height: 70%"/>
       </el-icon>
@@ -192,7 +192,7 @@ function clickLLMInput() {
       <!-- 已登录状态： -->
       <el-icon v-if="currUser.id !== -1"
                @click="clickUser" title="查看个人主页"
-               style="cursor: pointer; background-color: white; color: #76a899;
+               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
         <user-filled style="width: 70%; height: 70%"/>
       </el-icon>
@@ -241,7 +241,7 @@ function clickLLMInput() {
   transition: top 0.3s;
   z-index: 200; /* 保证在最上层 */
 
-  background-color: #f3f1f1;
+  background-color: #e7dfed;
   border-bottom: 1px dashed #d2d1d1;
 
   display: flex;
@@ -265,7 +265,6 @@ function clickLLMInput() {
   width: 100%;
   border-radius: 25px;
   background-color: white;
-  border: solid #a1ccbf;
 
   display: flex;
   align-items: center;
@@ -305,7 +304,7 @@ function clickLLMInput() {
 }
 
 .menu-item:hover, .isSelected {
-  color: #a1ccbf;
+  color: var(--scheme-color-deep);
 }
 
 .menu-item-discount {
@@ -316,7 +315,7 @@ function clickLLMInput() {
 }
 
 .menu-item-discount:hover {
-  color: #a1ccbf;
+  color: var(--scheme-color-deep);
 }
 
 .header-input-container {

@@ -29,11 +29,6 @@ const router = createRouter({
             component: () => import('../views/product/ProductDetail.vue'),
         },
         {
-            path: '/notification-page',
-            name: 'NotificationPage',
-            component: () => import('../views/user/Notification.vue'),
-        },
-        {
             path: '/create-order',
             name: 'CreateOrder',
             component: () => import('../views/CreateOrder.vue'),

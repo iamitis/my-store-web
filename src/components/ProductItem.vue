@@ -86,6 +86,7 @@ function handleRateClick() {
   position: absolute; /* 使图片重叠 */
   top: 0; /* 使图片重叠 */
   left: 0; /* 使图片重叠 */
+  border: 1px solid #e0e0e0;
 }
 
 .product-item-price {
