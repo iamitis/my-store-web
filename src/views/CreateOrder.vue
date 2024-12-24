@@ -19,6 +19,7 @@ import AddressBox from "../components/AddressBox.vue";
 import AddressDialog from "../components/AddressDialog.vue";
 import {cartItemToOrder, createOrder} from "../api/order.ts";
 import {createNotice, NoticeSource, NoticeStatus} from "../api/noteice.ts";
+import eventBus from "../utils/eventBus.ts";
 
 // 地址
 const currUser = inject('currUser') as User
@@ -105,6 +106,7 @@ async function submitOrder() {
   if (productList.value[0].cartItemId) {
     // 从购物车下单
     res = await cartItemToOrder(currUser.id!, addressList.value[selectIdx.value].addressInfoId!)
+    eventBus.emit('updateCartCount')
   } else {
     // 从商品详情页下单
     res = await createOrder(currUser.id!, productList.value, addressList.value[selectIdx.value].addressInfoId!)

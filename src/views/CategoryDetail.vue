@@ -143,17 +143,6 @@ function handleSort() {
 
 <template>
   <div style="padding: 45px 130px">
-    <!-- 分类标题 -->
-<!--    <div class="cate-name">{{ categoryName }}</div>-->
-<!--    <div class="cate-desc">-->
-<!--      我们的电子产品专为现代老年人设计，旨在提升他们的生活质量和便利性。-->
-<!--      无论是简单易用的智能手机、带有大字体和清晰显示的平板电脑，还是健康监测设备，-->
-<!--      这些产品都考虑到了老年人的需求和使用习惯。-->
-<!--      我们还提供个性化的智能家居设备，帮助他们更轻松地管理日常生活，如智能语音助手和远程监控系统。-->
-<!--      通过这些现代科技，老年人可以与家人保持联系，享受娱乐，同时提升生活的舒适度和安全性，-->
-<!--      让他们的晚年生活更加丰富多彩。-->
-<!--    </div>-->
-
     <el-row class="attr-sort-row" :style="{ top: attrSortRowTop }">
       <!-- 属性筛选 -->
       <el-col :span="16" class="cate-rol">
@@ -215,8 +204,7 @@ function handleSort() {
       暂无相关商品
     </el-empty>
 
-    <div style="justify-self: center; margin-top: 30px;
-                color: gray; font-size: 18px; letter-spacing: 3px">
+    <div class="cate-detail-bottom">
       到底啦，看看别的吧~
     </div>
   </div>
@@ -354,5 +342,14 @@ function handleSort() {
   justify-content: center;
   align-items: center;
   margin-top: 50px;
+}
+
+.cate-detail-bottom {
+  justify-self: center;
+  margin-top: 30px;
+  color: gray;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 3px;
 }
 </style>

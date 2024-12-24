@@ -125,7 +125,7 @@ async function emitAdd() {
 <style scoped>
 .a-b-container {
   padding: 15px 20px;
-  margin: 30px 20px;
+  margin: 0 20px 30px 20px;
   border-radius: 20px;
   border: #e7e5e5 2px dashed;
 }

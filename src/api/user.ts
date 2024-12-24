@@ -88,6 +88,10 @@ export async function deleteCartItem(cartItemId: number): Promise<AxiosResponseD
     return await userService.delete(`/deleteCartItem/${cartItemId}`)
 }
 
+export async function getCartCount(userId: number) {
+    return (await getShoppingCart(userId)).data.result.length
+}
+
 export async function getIdByPhone(phone: string): Promise<AxiosResponseData<number> > {
     return await userService.get(`/getIdByPhone/${phone}`)
 }

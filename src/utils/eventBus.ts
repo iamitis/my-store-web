@@ -3,6 +3,7 @@ import mitt from "mitt";
 
 type Events = {
     showLogin: void;
+    updateCartCount: void;
 };
 
 const eventBus = mitt<Events>();

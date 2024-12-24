@@ -78,7 +78,7 @@ async function removeOrder(cartItemId: number) {
 <style scoped>
 .order-list-container {
   padding: 10px 20px;
-  margin: 30px 20px;
+  margin: 0 20px 30px 20px;
   border-radius: 20px;
   border: #e7e5e5 2px dashed;
 }

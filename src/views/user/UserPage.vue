@@ -2,7 +2,7 @@
 import {computed, inject, onMounted, onUnmounted, provide, Ref, ref} from "vue";
 import {initRouter} from "../../router";
 import {userPageTitleMap, UserRole} from "../../api/user.ts";
-import {curUser_role} from "../../main.ts";
+import {curUser_role, updateUser} from "../../main.ts";
 
 const {currRouteName, navTo} = initRouter()
 const currTitle = computed(() => {
@@ -35,23 +35,59 @@ onUnmounted(() => {
 });
 
 provide('userNavBoxBottom', userNavBoxBottom);
+
+function isSelect(navName: string) {
+  return currRouteName.value === navName ? 'user-nav-selected' : '';
+}
+
+// logout
+const logoutDialogVisible = ref(false)
+
+function clickLogout() {
+  logoutDialogVisible.value = true
+}
+
+function confirmLogout() {
+  sessionStorage.removeItem('curUser')
+  updateUser({
+    id: -1,
+    role: UserRole.CHILD,
+    phone: '',
+    password: '',
+    related_phone: ''
+  })
+  logoutDialogVisible.value = false
+  navTo('Home')
+}
 </script>
 
 <template>
-  <!-- 用户页面标题 -->
-  <el-row class="user-page-title">
-    <span style="font-size: 40px; letter-spacing: 8px">{{ currTitle }}</span>
-  </el-row>
-
   <el-row class="user-page-body">
     <!-- 用户页面导航 -->
     <el-col :span="6" class="user-nav-col">
       <div class="user-nav-box" :style="{ top: userNavBoxTop }">
-        <span class="user-nav-text" @click="navTo('Overview')">总览</span>
-        <span class="user-nav-text" @click="navTo('Order')">我的订单</span>
-        <span class="user-nav-text" @click="navTo('ShoppingCart')">我的购物车</span>
-        <span class="user-nav-text" @click="navTo('AddressBook')">管理收货地址</span>
-        <span class="user-nav-text" @click="navTo('Notification')">我的消息</span>
+        <div class="user-nav-text" :class="isSelect('Overview')"
+             @click="navTo('Overview')">总览
+        </div>
+        <div class="user-nav-text" :class="isSelect('Order')"
+             @click="navTo('Order')">我的订单
+        </div>
+        <div class="user-nav-text" :class="isSelect('ShoppingCart')"
+             @click="navTo('ShoppingCart')">我的购物车
+        </div>
+        <div class="user-nav-text" :class="isSelect('History')"
+             @click="navTo('History')">浏览记录
+        </div>
+        <div class="user-nav-text" :class="isSelect('AddressBook')"
+             @click="navTo('AddressBook')">管理收货地址
+        </div>
+        <div class="user-nav-text" :class="isSelect('Notification')"
+             @click="navTo('Notification')">我的消息
+        </div>
+        <div class="user-nav-logout" @click="clickLogout">
+          <img src="../../assets/logout.svg" alt="logout" style="width: 24px; height: 24px">
+          退出登录
+        </div>
       </div>
     </el-col>
 
@@ -61,28 +97,28 @@ provide('userNavBoxBottom', userNavBoxBottom);
     </el-col>
   </el-row>
 
+  <!-- 退出登录确认框 -->
+  <el-dialog title="确定要退出登录吗？"
+             v-model="logoutDialogVisible"
+             width="300px"
+             center>
+    <div slot="footer" style="display: flex; justify-content: center">
+      <el-button class="logout-cancel-button" @click="logoutDialogVisible=false">取消</el-button>
+      <el-button class="logout-confirm-button" @click="confirmLogout">确定</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <style scoped>
-.user-page-title {
-  height: 130px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
 .user-page-body {
   height: calc(100vh - var(--header-height) - 130px);
+  margin-top: 30px;
   width: 90%;
   justify-self: center;
-  border-top: 1px dashed #d2d1d1;
-}
-
-.user-nav-col {
 }
 
 .user-content-col {
+  padding-top: 44px;
   background: white;
 }
 
@@ -114,5 +150,39 @@ provide('userNavBoxBottom', userNavBoxBottom);
 .user-nav-text:hover {
   color: #84b9a8;
   text-decoration-line: underline;
+}
+
+.user-nav-selected {
+  color: #84b9a8;
+}
+
+.user-nav-logout {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 18px;
+  color: var(--scheme-color-deep);
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.user-nav-logout:hover {
+  text-decoration-line: underline;
+}
+
+.logout-confirm-button {
+  background-color: var(--scheme-color-deep);
+  color: white;
+}
+
+.logout-confirm-button:hover {
+  background-color: var(--scheme-color);
+}
+
+.logout-cancel-button {
+  border: 1px solid var(--scheme-color);
+  color: var(--scheme-color);
 }
 </style>

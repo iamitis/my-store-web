@@ -3,11 +3,11 @@
 <script setup lang="ts" xmlns:el-col="http://www.w3.org/1999/html">
 import {computed, inject, onMounted, onUnmounted, Ref, ref, watch} from "vue";
 import {initRouter} from "../router";
-import {User, UserRole} from "../api/user.ts";
+import {getCartCount, User, UserRole} from "../api/user.ts";
 import LogInDialog from "./LogIn.vue";
 import LLMReplyDialog from "./LLM.vue";
 import {updateHeaderVisible, updateUser} from "../main.ts";
-import {UserFilled, Message, Search} from "@element-plus/icons-vue";
+import {UserFilled, Message, Search, ShoppingTrolley} from "@element-plus/icons-vue";
 import eventBus from "../utils/eventBus.ts";
 import {useRoute} from "vue-router";
 import {isHaveUnreadNotice, isThereUnreadNotice, isUnreadNotice} from "../api/noteice.ts";
@@ -156,6 +156,31 @@ watch(
     }
 );
 
+function clickCart() {
+  console.log("click cart")
+  if (currUser.id === -1) {
+    // 说明未登录
+    ElMessage.warning("请先登录")
+    showLogin.value = true
+  } else {
+    navTo('ShoppingCart')
+  }
+}
+
+const cartCount = ref(0)
+async function updateCartCount() {
+  if (currUser.id !== -1) {
+    cartCount.value = await getCartCount(currUser.id!)
+  }
+}
+
+onMounted(() => {
+  eventBus.on('updateCartCount', updateCartCount)
+  updateCartCount()
+})
+onUnmounted(() => {
+  eventBus.off('updateCartCount')
+})
 </script>
 
 <template>
@@ -181,7 +206,7 @@ watch(
                  src="src/assets/logo.png"
                  style="background-color: #a1ccbf; cursor: pointer; height: 85px; width: 85px"/>
     </el-col>
-    <el-col :span="5" class="header-item">
+    <el-col :span="4" class="header-item">
       <div class="header-input-container" v-if="!isLogoOnly">
         <input v-model="searchText" placeholder="搜索想要的商品"
                class="header-input"/>
@@ -192,54 +217,61 @@ watch(
       </div>
     </el-col>
 
-    <el-col :span="1" :offset="1" class="header-item" style="margin-top: 10px">
-      <div class="notification-container" @click="clickNotification" title="查看消息" v-if="!isLogoOnly">
-        <el-icon
-            style="cursor: pointer; background-color: white; color: var(--scheme-color-deep); width: 50px; height: 50px; border-radius: 50%">
-          <message style="width: 70%; height: 70%"/>
+    <el-col :span="4" :offset="1" class="header-icon-container" style="margin-top: 10px">
+      <!-- 购物车 -->
+      <div class="header-icon" style="position: relative">
+        <el-icon @click="clickCart" title="查看购物车"
+                 style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
+                 width: 50px; height: 50px; border-radius: 50%">
+          <shopping-trolley style="width: 85%; height: 85%"/>
         </el-icon>
-        <!-- 红点 -->
-        <div v-if="isUnreadNotice" class="notification-badge"></div>
+        <el-text @click="clickCart" title="查看购物车"
+                 style="font-size: 18px; margin-top: 5px">
+          购物车
+        </el-text>
+        <div v-if="currUser.id !== -1" class="cart-count">{{cartCount}}</div>
       </div>
-      <el-text v-if="!isLogoOnly" style="font-size: 18px; margin-top: 5px">消息</el-text>
-    </el-col>
 
+      <!-- 消息 -->
+      <div class="header-icon">
+        <div class="notification-container" @click="clickNotification" title="查看消息" v-if="!isLogoOnly">
+          <el-icon
+              style="cursor: pointer; background-color: white; color: var(--scheme-color-deep); width: 50px; height: 50px; border-radius: 50%">
+            <message style="width: 70%; height: 70%"/>
+          </el-icon>
+          <!-- 红点 -->
+          <div v-if="isUnreadNotice" class="notification-badge"></div>
+        </div>
+        <el-text v-if="!isLogoOnly" style="font-size: 18px; margin-top: 5px">消息</el-text>
+      </div>
 
-    <el-col :span="2" class="header-item" style="margin-top: 10px;" v-if="!isLogoOnly">
-      <!-- 未登录状态： -->
-      <el-icon v-if="currUser.id === -1"
-               @click="clickUser" title="点击登录"
-               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
+      <!-- 用户 -->
+      <div class="header-icon">
+        <!-- 未登录状态： -->
+        <el-icon v-if="currUser.id === -1"
+                 @click="clickUser" title="点击登录"
+                 style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
-        <user-filled style="width: 70%; height: 70%"/>
-      </el-icon>
-      <el-text v-if="currUser.id === -1"
-               @click="clickUser" title="点击登录"
-               style="font-size: 18px; margin-top: 5px">
-        登录
-      </el-text>
-      <!-- 已登录状态： -->
-      <el-icon v-if="currUser.id !== -1"
-               @click="clickUser" title="查看个人主页"
-               style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
+          <user-filled style="width: 70%; height: 70%"/>
+        </el-icon>
+        <el-text v-if="currUser.id === -1"
+                 @click="clickUser" title="点击登录"
+                 style="font-size: 18px; margin-top: 5px">
+          登录
+        </el-text>
+        <!-- 已登录状态： -->
+        <el-icon v-if="currUser.id !== -1"
+                 @click="clickUser" title="查看个人主页"
+                 style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                width: 50px; height: 50px; border-radius: 50%">
-        <user-filled style="width: 70%; height: 70%"/>
-      </el-icon>
-      <el-text v-if="currUser.id !== -1"
-               @click="clickUser" title="查看个人主页"
-               style="font-size: 18px; margin-top: 5px">
-        个人主页
-      </el-text>
-
-    </el-col>
-
-    <el-col :span="1">
-
-      <el-button v-if="currUser.id !== -1"
-                 @click="logout" title="退出登录"
-                 style="font-size: 12px;margin-left: -25px ;margin-top: 40px; display: flex; align-items: center; cursor: pointer; text-decoration: none;">
-        退出登录
-      </el-button>
+          <user-filled style="width: 70%; height: 70%"/>
+        </el-icon>
+        <el-text v-if="currUser.id !== -1"
+                 @click="clickUser" title="查看个人主页"
+                 style="font-size: 18px; margin-top: 5px">
+          个人主页
+        </el-text>
+      </div>
     </el-col>
 
     <!-- 分类菜单区域 -->
@@ -311,6 +343,36 @@ watch(
   outline: none;
 }
 
+.header-icon-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.header-icon {
+  width: 85px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cart-count {
+  position: absolute;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--scheme-color-deep);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .menu-track {
   height: 60px;
   padding: 0 50px;
@@ -321,7 +383,6 @@ watch(
   justify-content: center;
   align-items: center;
   gap: 45px;
-  margin-top: -10px;
   z-index: 3;
 }
 

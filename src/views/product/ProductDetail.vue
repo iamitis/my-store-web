@@ -132,6 +132,8 @@ async function handleAddCart() {
   } else {
     ElMessage.success("加入购物车成功")
   }
+
+  eventBus.emit('updateCartCount')
 }
 
 function handleBuy() {

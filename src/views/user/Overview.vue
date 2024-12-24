@@ -85,9 +85,9 @@ async function getNotice() {
   }
 }
 
-onMounted(() => {
-  getNotice();
-  getOrder();
+onMounted(async () => {
+  await getNotice();
+  await getOrder();
 });
 
 function processPercent(number){
@@ -171,7 +171,6 @@ function processPercent(number){
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 20px;
 }
 
 /* 购买记录 */

@@ -4,6 +4,7 @@ import {inject, onMounted, onUnmounted, Ref, ref, watch} from "vue";
 import {CartItem, deleteCartItem, getShoppingCart, User} from "../../api/user.ts";
 import ShoppingCartItem from "../../components/ShoppingCartItem.vue";
 import {initRouter} from "../../router";
+import eventBus from "../../utils/eventBus.ts";
 
 const shoppingCart = ref<CartItem[]>([]);
 const totalQuantity = ref(0);
@@ -44,6 +45,8 @@ async function removeCartItem(cartItemId: number) {
     totalQuantity.value = shoppingCart.value.reduce((acc, item) => acc + item.quantity!, 0)
     totalPrice.value = shoppingCart.value.reduce((acc, item) => acc + item.product!.productNowPrice! * item.quantity!, 0)
   }
+
+  eventBus.emit('updateCartCount')
 }
 
 function handleSubmit() {
@@ -124,7 +127,7 @@ function updateSummaryBoxPosition() {
 <style scoped>
 .cart-list-container {
   padding: 10px 20px;
-  margin: 30px 20px;
+  margin: 0 20px 30px 20px;
   border-radius: 20px;
   border: #e7e5e5 2px dashed;
 }
