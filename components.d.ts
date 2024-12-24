@@ -13,6 +13,7 @@ declare module 'vue' {
     CreateOrderItem: typeof import('./src/components/CreateOrderItem.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCard: typeof import('element-plus/es')['ElCard']
     ElCascader: typeof import('element-plus/es')['ElCascader']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCol: typeof import('element-plus/es')['ElCol']
@@ -20,12 +21,17 @@ declare module 'vue' {
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElIconLoading: typeof import('@element-plus/icons-vue')['Loading']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElLoading: typeof import('element-plus/es')['ElLoading']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSpinner: typeof import('element-plus/es')['ElSpinner']
+    ElTag: typeof import('element-plus/es')['ElTag']
     ElText: typeof import('element-plus/es')['ElText']
     Header: typeof import('./src/components/Header.vue')['default']
+    LLM: typeof import('./src/components/LLM.vue')['default']
     LogIn: typeof import('./src/components/LogIn.vue')['default']
     OptionItem: typeof import('./src/components/OptionItem.vue')['default']
     OrderItem: typeof import('./src/components/OrderItem.vue')['default']
@@ -34,5 +40,8 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ShoppingCartItem: typeof import('./src/components/ShoppingCartItem.vue')['default']
     SignUp: typeof import('./src/components/SignUp.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }
