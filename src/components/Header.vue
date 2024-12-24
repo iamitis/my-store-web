@@ -1,7 +1,7 @@
 <!-- TODO: 消息红点 -->
 
 <script setup lang="ts" xmlns:el-col="http://www.w3.org/1999/html">
-import {computed, inject, onMounted, onUnmounted, Ref, ref,watch} from "vue";
+import {computed, inject, onMounted, onUnmounted, Ref, ref, watch} from "vue";
 import {initRouter} from "../router";
 import {User, UserRole} from "../api/user.ts";
 import LogInDialog from "./LogIn.vue";
@@ -112,6 +112,7 @@ function navToCategoryDetail(backEndName: string) {
 }
 
 const route = useRoute()
+
 function isSelected(backEndName: string) {
   return currRouteName.value === 'CategoryDetail' && route.params.backEndName === backEndName
 }
@@ -141,7 +142,7 @@ function handleLLMReplyCancel() {
   dialogVisible.value = false;
 }
 
-function getLLMInput():string {
+function getLLMInput(): string {
   console.log('llmInputText:', llmInputText.value);
 
   return llmInputText.value;
@@ -159,22 +160,20 @@ watch(
 
 <template>
   <LogInDialog v-model:visible="showLogin" @loginSuccess="handleLoginSuccess" @loginCancel="handleLoginCancel"/>
-  <LLMReplyDialog v-model:visible="dialogVisible" :msg="getLLMInput()" />
+  <LLMReplyDialog v-model:visible="dialogVisible" :msg="getLLMInput()"/>
 
-  <el-col :span="5"/>
+  <el-row class="header-container" :class="{'hidden': !isHeaderVisible}">
+    <el-col :span="5"/>
 
-
-    <el-row class="header-container" :class="{'hidden': !isHeaderVisible}">
-      <el-col :span="5"/>
-
-      <el-col :span="5" class="header-item">
-        <div class="header-input-container">
-          <input v-model="llmInputText" placeholder="提问人工智能" class="header-input"/>
-          <el-icon @click="clickLLMInput" title="发送问题" style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
-            <search style="width: 80%; height: 80%"/>
-          </el-icon>
-        </div>
-      </el-col>
+    <el-col :span="5" class="header-item">
+      <div class="header-input-container">
+        <input v-model="llmInputText" placeholder="提问人工智能" class="header-input"/>
+        <el-icon @click="clickLLMInput" title="发送问题"
+                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
+          <search style="width: 80%; height: 80%"/>
+        </el-icon>
+      </div>
+    </el-col>
 
 
     <el-col :span="4" class="header-item">
@@ -204,7 +203,6 @@ watch(
       </div>
       <el-text v-if="!isLogoOnly" style="font-size: 18px; margin-top: 5px">消息</el-text>
     </el-col>
-
 
 
     <el-col :span="2" class="header-item" style="margin-top: 10px;" v-if="!isLogoOnly">
@@ -378,7 +376,7 @@ watch(
 
 .notification-badge {
   position: absolute;
-  top: 0px;
+  top: 0;
   right: 5px;
   width: 10px;
   height: 10px;
