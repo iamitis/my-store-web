@@ -6,13 +6,18 @@ import {getAllDiscountProduct, Product} from "../api/product.ts";
 import ProductItem from "../components/ProductItem.vue";
 
 const discountList = ref<Product[]>([])
+const isLoading = ref(false)
+const noProduct = ref(false)
 onMounted(async () => {
+  isLoading.value = true
   const response = await getAllDiscountProduct()
   if (response.data.code !== '000') {
     ElMessage.error('获取打折商品列表失败' + response.data.msg)
   } else {
     discountList.value = response.data.result
     displayList.value = discountList.value
+    noProduct.value = displayList.value.length === 0
+    isLoading.value = false
   }
 })
 const displayList = ref<Product[]>([])
@@ -63,18 +68,18 @@ function isSelected(cateName: string) {
       </div>
     </div>
 
-    <el-row>
-      <el-col :span="6" v-for="product in displayList" class="discount-item-container">
+    <div v-loading="isLoading" element-loading-text="正在为您寻找商品..." class="discount-list-container">
+      <div v-for="product in displayList" class="discount-item-container">
         <product-item :product="product"/>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
 
-    <el-empty v-if="displayList.length === 0" description=" "
+    <el-empty v-if="noProduct" description=" "
               style="font-size: 20px; color: #727171; padding-top: 20px">
       暂无相关商品
     </el-empty>
 
-    <div style="justify-self: center; margin-top: 30px;
+    <div v-if="displayList.length > 0" style="justify-self: center; margin-top: 30px;
     color: gray; font-size: 18px; letter-spacing: 3px">到底啦，看看别的吧~</div>
   </div>
 </template>
@@ -119,10 +124,16 @@ function isSelected(cateName: string) {
   color: white;
 }
 
+.discount-list-container {
+  margin-top: 20px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 40px 65px;
+}
+
 .discount-item-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
 }
 </style>

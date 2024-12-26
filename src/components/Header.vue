@@ -16,7 +16,13 @@ const {currRouteName, navTo} = initRouter()
 const searchText = ref<string>('')
 
 function clickSearch() {
-  console.log("click search")
+  if (!searchText.value.trim()) {
+    ElMessage.warning("请输入搜索内容");
+    return;
+  }
+  sessionStorage.setItem('searchText', searchText.value)
+  eventBus.emit('searchProduct')
+  navTo('SearchPage')
 }
 
 // 控制登录弹窗显示
@@ -209,7 +215,7 @@ onUnmounted(() => {
     <el-col :span="4" class="header-item">
       <div class="header-input-container" v-if="!isLogoOnly">
         <input v-model="searchText" placeholder="搜索想要的商品"
-               class="header-input"/>
+               class="header-input" @keyup.enter="clickSearch"/>
         <el-icon @click="clickSearch" title="点击搜索"
                  style="cursor: pointer; color: var(--scheme-color-deep); width: 30px; height: 30px">
           <search style="width: 80%; height: 80%"/>
@@ -337,6 +343,7 @@ onUnmounted(() => {
   width: 85%;
   margin-left: 16px;
   font-size: 20px;
+  color: #656464;
 }
 
 .header-input:focus {

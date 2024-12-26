@@ -99,6 +99,10 @@ export async function getAllDiscountProduct(): Promise<AxiosResponseData<Product
     return await productService.get(`/getAllDiscountProduct`)
 }
 
+export async function searchProduct(search: string): Promise<AxiosResponseData<Product[]>> {
+    return await productService.get(`/searchProduct/${search}`)
+}
+
 export function formatPrice(price: number) {
     return "￥" + price.toFixed(2)
 }

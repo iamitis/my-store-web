@@ -14,23 +14,31 @@ const route = useRoute();
 const backEndName = String(route.params.backEndName)
 const categoryName = categoryNameMap.get(backEndName)
 const productList = ref<Product[]>([])
+const noProduct = ref(false)
+const isLoading = ref(false)
 onMounted(async () => {
+  isLoading.value = true
   const response = await filterProducts(backEndName, new Map())
   if (response.data.code !== '000') {
     ElMessage.error('获取商品列表失败' + response.data.msg)
   } else {
+    noProduct.value = response.data.result.length === 0
     productList.value = response.data.result
-    console.log(productList.value)
+    handleSort()
+    isLoading.value = false
   }
 })
 
 watch(() => route.params.backEndName, () => {
   // refresh
+  isLoading.value = true
   window.location.reload()
+  isLoading.value = false
 })
 
 // 排序选项
 const sortOptions = [
+  {label: "销量从高到低 ↓", value: "salesDesc"},
   {label: "价格从高到低 ↓", value: "priceDesc"},
   {label: "价格从低到高 ↑", value: "priceAsc"},
   {label: "评分从高到低 ↓", value: "ratingDesc"},
@@ -85,7 +93,7 @@ onMounted(async () => {
   }
 })
 
-function clickAttrVal(attrValue: ProductAttributeValue) {
+async function clickAttrVal(attrValue: ProductAttributeValue) {
   console.log(attrValue)
   const attrName = attrValue.productAttribute!.productAttributeName!
   const selectedAttrVal = selectedAttrValMap.value.get(attrName)!
@@ -95,7 +103,9 @@ function clickAttrVal(attrValue: ProductAttributeValue) {
   } else {
     selectedAttrVal.splice(index, 1)
   }
-  handleFilter()
+  isLoading.value = true
+  await handleFilter()
+  isLoading.value = false
 }
 
 async function handleFilter() {
@@ -103,9 +113,11 @@ async function handleFilter() {
   if (response.data.code !== '000') {
     ElMessage.error('筛选失败' + response.data.msg)
   } else {
-    console.log(response.data.result)
+    isLoading.value = true
     productList.value = response.data.result
-    console.log(productList.value)
+    noProduct.value = response.data.result.length === 0
+    handleSort()
+    isLoading.value = false
   }
 }
 
@@ -125,9 +137,11 @@ function isSelected(attrValue: ProductAttributeValue) {
   return selectedAttrValMap.value.get(attrName)!.includes(attrValue)
 }
 
-function clearSelectedAttr(attrName: string) {
+async function clearSelectedAttr(attrName: string) {
+  isLoading.value = true
   selectedAttrValMap.value.set(attrName, [])
-  handleFilter()
+  await handleFilter()
+  isLoading.value = false
 }
 
 function handleSort() {
@@ -137,6 +151,8 @@ function handleSort() {
     productList.value.sort((a, b) => a.productNowPrice! - b.productNowPrice!)
   } else if (selectedSort.value === 'ratingDesc') {
     productList.value.sort((a, b) => b.productScore! - a.productScore!)
+  } else if (selectedSort.value === 'salesDesc') {
+    productList.value.sort((a, b) => b.productScoreCount! - a.productScoreCount!)
   }
 }
 </script>
@@ -193,49 +209,31 @@ function handleSort() {
       </el-col>
     </el-row>
 
-    <el-row>
-      <el-col :span="6" v-for="product in productList" class="product-item-container">
+    <div v-loading="isLoading" element-loading-text="正在为您寻找商品..." class="product-list-container">
+      <div v-for="product in productList" class="product-item-container">
         <product-item :product="product"/>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
 
-    <el-empty v-if="productList.length === 0" description=" "
+    <el-empty v-if="noProduct" description=" "
               style="font-size: 20px; color: #727171; padding-top: 20px">
       暂无相关商品
     </el-empty>
 
-    <div class="cate-detail-bottom">
+    <div v-if="productList.length > 0" class="cate-detail-bottom">
       到底啦，看看别的吧~
     </div>
   </div>
 </template>
 
 <style scoped>
-.cate-name {
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4f4e4e;
-  font-size: 40px;
-  font-weight: bold;
-  letter-spacing: 15px;
-  text-align: center;
-}
-
-.cate-desc {
-  padding: 30px 150px;
-  color: #6c6c6c;
-  font-size: 17px;
-  text-align: center;
-}
-
 .attr-sort-row {
   padding: 38px 30px 25px 30px;
   position: sticky;
   transition: top 0.3s;
   z-index: 2;
   background-color: white;
+  margin-top: -1px;
 }
 
 .cate-rol {
@@ -337,11 +335,17 @@ function handleSort() {
   background-color: white;
 }
 
+.product-list-container {
+  margin-top: 20px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 40px 65px;
+}
+
 .product-item-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
 }
 
 .cate-detail-bottom {

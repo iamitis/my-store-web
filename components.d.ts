@@ -23,13 +23,17 @@ declare module 'vue' {
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
+    ElMain: typeof import('element-plus/es')['ElMain']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRate: typeof import('element-plus/es')['ElRate']
+    ElResult: typeof import('element-plus/es')['ElResult']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElText: typeof import('element-plus/es')['ElText']
+    FootprintItem: typeof import('./src/components/FootprintItem.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
+    HistoryItem: typeof import('./src/components/FootprintItem.vue')['default']
     LLM: typeof import('./src/components/LLM.vue')['default']
     LogIn: typeof import('./src/components/LogIn.vue')['default']
     OptionItem: typeof import('./src/components/OptionItem.vue')['default']
@@ -39,5 +43,8 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ShoppingCartItem: typeof import('./src/components/ShoppingCartItem.vue')['default']
     SignUp: typeof import('./src/components/SignUp.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

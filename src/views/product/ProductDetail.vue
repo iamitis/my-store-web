@@ -10,6 +10,8 @@ import {addToShoppingCart, CartItem, User} from "../../api/user.ts";
 import {initRouter} from "../../router";
 import OptionItem from "../../components/OptionItem.vue";
 import eventBus from "../../utils/eventBus.ts";
+import {addFootprint} from "../../api/footprint.ts";
+import {dayjs} from "element-plus";
 
 const currUser = inject('currUser') as User
 const {navTo} = initRouter()
@@ -22,6 +24,14 @@ onMounted(async () => {
     ElMessage.error("获取商品信息失败 " + response.data.msg)
   } else {
     productData.value = response.data.result
+  }
+})
+
+// 增加历史记录
+onMounted(() => {
+  if (currUser.id !== -1) {
+    const dateStr = dayjs(new Date()).format('YYYY-MM-DD')
+    addFootprint(currUser.id!, productId, dateStr)
   }
 })
 

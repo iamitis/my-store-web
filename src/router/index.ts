@@ -24,6 +24,11 @@ const router = createRouter({
             component: () => import('../views/Discount.vue'),
         },
         {
+            path: '/search',
+            name: 'SearchPage',
+            component: () => import('../views/SearchPage.vue'),
+        },
+        {
             path: '/product-detail/:productId',
             name: 'ProductDetail',
             component: () => import('../views/product/ProductDetail.vue'),
@@ -70,7 +75,7 @@ const router = createRouter({
                 {
                     path: '/history',
                     name: 'History',
-                    component: () => import('../views/user/History.vue'),
+                    component: () => import('../views/user/Footprint.vue'),
                 },
             ],
         },

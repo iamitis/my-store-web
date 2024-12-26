@@ -43,8 +43,8 @@ function handleRateClick() {
            class="product-item-img"
            @mouseover="currImgIndex=1" @mouseleave="currImgIndex=0">
     </div>
-    <div style="font-weight: bold; font-size: 19px; margin-top: 10px;
-                white-space: nowrap; text-overflow: ellipsis; overflow: hidden">
+    <div class="product-item-name"
+         :title="props.product.productName">
       {{ props.product.productName }}
     </div>
     <div style="margin-top: 4px">
@@ -92,6 +92,20 @@ function handleRateClick() {
   border: 1px solid #e0e0e0;
 }
 
+.product-item-name {
+  font-weight: bold;
+  font-size: 19px;
+  margin-top: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.product-item-name:hover {
+  text-decoration: underline;
+  color: var(--scheme-color-deep);
+}
+
 .product-item-price {
   font-size: 18px;
   color: #858383;
@@ -102,6 +116,10 @@ function handleRateClick() {
   height: 8px;
   margin-top: 12px;
   justify-content: center;
+}
+
+.product-item-rate:hover {
+  scale: 1.1;
 }
 
 :deep(.product-item-rate .el-rate__item) {
