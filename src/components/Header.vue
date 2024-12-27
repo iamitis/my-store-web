@@ -136,7 +136,6 @@ function clickLLMInput() {
   dialogVisible.value = true; // 显示弹框
   console.log("用户输入的问题:", llmInputText.value);
 
-
 }
 
 function handleLLMReplySuccess() {
@@ -210,7 +209,8 @@ function expandInput() {
         <input v-model="llmInputText" placeholder="提问人工智能"
                class="llm-input" @keyup.enter="clickLLMInput"/>
         <el-icon title="提问人工智能"
-                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
+                 style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px"
+                  @click="clickLLMInput">
           <search style="width: 80%; height: 80%"/>
         </el-icon>
       </div>
