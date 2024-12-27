@@ -149,6 +149,7 @@ onMounted(async () => {
   background-color: #f9f9f9;
   border-right: 1px solid #ddd;
   padding: 10px;
+  overflow-y: auto;
 }
 
 .notification-list h3 {
