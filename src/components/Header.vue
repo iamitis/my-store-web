@@ -160,6 +160,13 @@ watch(
       isHaveUnreadNotice();
     }
 );
+let intervalId:number;
+onMounted(() => {
+  intervalId = setInterval(isHaveUnreadNotice, 1000); // Call every 10 seconds
+})
+onUnmounted(() => {
+  clearInterval(intervalId);
+})
 
 function clickCart() {
   console.log("click cart")
