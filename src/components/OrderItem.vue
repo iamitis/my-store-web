@@ -56,36 +56,39 @@ function navToDetail(cartItem: CartItem) {
   navTo('ProductDetail', {productId: cartItem.product!.productId})
 }
 
+async function hashOrderId(orderId: number) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(String(orderId));
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return await Array.from(new Uint8Array(hash)).map(b => b.toString(10).padStart(2, '0')).join('');
+}
+
+const displayOrderId = ref('');
+onMounted(async () => {
+  displayOrderId.value = "ORD" + (await hashOrderId(order.value.orderInfoId!)).slice(0, 8);
+})
+
+function copyOrderId() {
+  navigator.clipboard.writeText(displayOrderId.value);
+  ElMessage.success('订单号已复制到剪贴板');
+}
 </script>
 
 <template>
   <el-row class="order-row" v-if="order.products?.length! > 0">
-    <el-col :span="1" class="order-row-item" style="justify-content: center;">
-      <el-button
-          circle
-          @click="toggleProductDropdown"
-          class="order-dropdown-button"
-      >
-        <el-icon>
-          <arrow-down />
-        </el-icon>
-      </el-button>
-    </el-col>
-
-    <el-col :span="4" class="order-row-item" style="justify-content: center">
+    <el-col :span="3" class="order-row-item" style="align-items: center; justify-content: center">
       <img :src="order.products![0]!.product!.productImages![0]!" alt="商品图片"
            title="查看订单详情" @click="toggleProductDropdown"
            class="order-product-cover">
     </el-col>
-    <el-col :span="4" class="order-row-item"
-            style="align-items: start;">
-      <p class="order-id" title="查看订单详情" @click="toggleProductDropdown">
-        {{ order.orderInfoId! }}
+    <el-col :span="6" class="order-row-item">
+      <p class="order-id" title="复制订单号" @click="copyOrderId">
+        {{ displayOrderId }}
       </p>
     </el-col>
 
     <!-- 订单创建时间列 -->
-    <el-col :span="4" class="order-row-item" style="align-items: start;">
+    <el-col :span="7" class="order-row-item">
       <p class="order-create-time">
         {{ formattedCreateTime }} <!-- 假设 'createTime' 是订单的创建时间 -->
       </p>
@@ -97,17 +100,10 @@ function navToDetail(cartItem: CartItem) {
       </div>
     </el-col>
 
-    <el-col :span="4" class="order-row-item">
-      <p style="margin-top: 20px; font-size: 25px; color: #414040;">
+    <el-col :span="3" class="order-row-item">
+      <p style="margin-top: 20px; margin-left: 40px; text-align: center; font-size: 25px; color: #414040;">
         {{ formatPrice(order.totalPrice!) }}
       </p>
-    </el-col>
-    <el-col :span="2" class="order-row-item">
-      <el-button circle @click="handleRemove" class="order-remove-button">
-        <el-icon style="width: 100%; height: 100%">
-          <Delete style="width: 80%; height: 80%"/>
-        </el-icon>
-      </el-button>
     </el-col>
   </el-row>
 
@@ -150,10 +146,11 @@ function navToDetail(cartItem: CartItem) {
 
 <style scoped>
 .order-row {
-  height: 200px;
+  height: 150px;
   display: flex;
   align-items: center;
   border-radius: 10px;
+  border-top: 1px dashed #c9c8c8;
 }
 
 .order-row:hover {
@@ -164,7 +161,6 @@ function navToDetail(cartItem: CartItem) {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   text-overflow: ellipsis;
 }
 
@@ -181,7 +177,7 @@ function navToDetail(cartItem: CartItem) {
 }
 
 .order-id {
-  font-size: 25px;
+  font-size: 20px;
   color: #414040;
   margin-left: 20px;
 }
@@ -193,13 +189,15 @@ function navToDetail(cartItem: CartItem) {
 }
 
 .order-status {
-  width: 100%;
-  height: 20px;
+  width: 100px;
+  height: 40px;
+  margin-top: 20px;
   border-radius: 10px;
-  text-align: center;
-  line-height: 20px;
-  font-size: 14px;
+  font-size: 20px;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .order-status.UNPAID {
@@ -214,26 +212,13 @@ function navToDetail(cartItem: CartItem) {
   background-color: #87cefa;
 }
 
--order-status.DONE {
+.order-status.DONE {
   background-color: #98fb98;
 }
 
-.order-remove-button {
-  width: 50px;
-  height: 50px;
-  margin-top: 15px
-}
-
-.order-remove-button:hover {
-  border-color: #8abdab;
-  background-color: #d8e8e3;
-  color: #87b9a8;
-}
-
-.order-dropdown-button {
-  width: 50px;
-  height: 50px;
-  margin-top: 15px;
+.order-create-time {
+  font-size: 20px;
+  color: #414040;
 }
 
 .product-dropdown {

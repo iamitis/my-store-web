@@ -115,7 +115,6 @@ function processPercent(number){
         </div>
         <!-- 商品比例 -->
         <div class="record-item">
-          <h3>商品比例</h3>
           <div class="pie-chart">
             <!-- 比例圆 -->
             <svg viewBox="0 0 36 36" class="circle-chart">
@@ -131,6 +130,7 @@ function processPercent(number){
                   :stroke-dasharray="item.value + ' ' + (100 - item.value)"
                   :stroke-dashoffset="100 - calculateOffset(index)"
               />
+              <text x="18" y="20.35" class="circle-chart-text" transform="rotate(90 18 18)">购买比例</text>j
             </svg>
             <ul class="legend">
               <li v-for="(item, index) in categoryPercentages" :key="index">
@@ -197,6 +197,7 @@ function processPercent(number){
 
 .record-item {
   text-align: center;
+  font-size: 20px;
 }
 
 .record-item h3 {
@@ -212,8 +213,8 @@ function processPercent(number){
 /* 比例圆样式 */
 .pie-chart {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 20px;
 }
 
 .circle-chart {
@@ -224,6 +225,13 @@ function processPercent(number){
 
 .circle-chart circle {
   transition: stroke-dasharray 0.3s ease, stroke-dashoffset 0.3s ease;
+}
+
+.circle-chart-text {
+  font-size: 0.35rem;
+  font-weight: bold;
+  text-anchor: middle;
+  fill: #333;
 }
 
 .legend {

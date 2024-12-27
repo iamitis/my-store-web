@@ -174,6 +174,7 @@ function clickCart() {
 }
 
 const cartCount = ref(0)
+
 async function updateCartCount() {
   if (currUser.id !== -1) {
     cartCount.value = await getCartCount(currUser.id!)
@@ -187,6 +188,12 @@ onMounted(() => {
 onUnmounted(() => {
   eventBus.off('updateCartCount')
 })
+
+const isInputExpanded = ref(false);
+
+function expandInput() {
+  isInputExpanded.value = !isInputExpanded.value;
+}
 </script>
 
 <template>
@@ -194,12 +201,15 @@ onUnmounted(() => {
   <LLMReplyDialog v-model:visible="dialogVisible" :msg="getLLMInput()"/>
 
   <el-row class="header-container" :class="{'hidden': !isHeaderVisible}">
-    <el-col :span="5"/>
-
-    <el-col :span="5" class="header-item">
-      <div class="header-input-container">
-        <input v-model="llmInputText" placeholder="提问人工智能" class="header-input"/>
-        <el-icon @click="clickLLMInput" title="发送问题"
+    <el-col :span="9" class="header-item"
+            style="flex-direction: row; justify-content: start; gap: 10px">
+      <img src="../assets/robot.svg" @click="expandInput" alt="robot"
+           style="border-radius: 50%;
+           width: 38px; height: 38px; padding: 7px;">
+      <div class="llm-input-container" v-if="isInputExpanded">
+        <input v-model="llmInputText" placeholder="提问人工智能"
+               class="llm-input" @keyup.enter="clickLLMInput"/>
+        <el-icon title="提问人工智能"
                  style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px">
           <search style="width: 80%; height: 80%"/>
         </el-icon>
@@ -235,7 +245,7 @@ onUnmounted(() => {
                  style="font-size: 18px; margin-top: 5px">
           购物车
         </el-text>
-        <div v-if="currUser.id !== -1" class="cart-count">{{cartCount}}</div>
+        <div v-if="currUser.id !== -1" class="cart-count">{{ cartCount }}</div>
       </div>
 
       <!-- 消息 -->
@@ -327,17 +337,17 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.header-input-container {
+.llm-input-container {
   height: 50px;
-  width: 100%;
+  width: 35%;
   border-radius: 25px;
   background-color: white;
-
+  border: solid #a1ccbf;
   display: flex;
   align-items: center;
 }
 
-.header-input {
+.llm-input {
   border: none;
   height: 80%;
   width: 85%;
@@ -346,7 +356,7 @@ onUnmounted(() => {
   color: #656464;
 }
 
-.header-input:focus {
+.llm-input:focus {
   outline: none;
 }
 

@@ -115,7 +115,7 @@ function handleRemove() {
 
 <style scoped>
 .cart-row {
-  height: 200px;
+  height: 180px;
   display: flex;
   align-items: center;
   border-radius: 10px;
@@ -135,8 +135,8 @@ function handleRemove() {
 }
 
 .cart-product-cover {
-  width: 160px;
-  height: 160px;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
   border-radius: 10px;
   cursor: pointer;

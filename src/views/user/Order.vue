@@ -12,7 +12,7 @@ const {navTo} = initRouter()
 
 async function getOrder() {
   getAllOrders(currUser.id!)
-      .then(res=>{
+      .then(res => {
         if (res.data.code !== '000') {
           ElMessage.error('获取用户订单失败' + res.data.msg);
         } else {
@@ -49,29 +49,30 @@ async function removeOrder(cartItemId: number) {
 
 <template>
   <div class="order-list-container">
-    <el-row style="border-bottom: 1px dashed #c9c8c8; margin-bottom: 5px">
-      <el-col :span="4">
-        <p style="font-size: 24px; color: #333232;">订单</p>
+    <el-row class="order-title-row">
+      <el-col :span="3" class="order-title-col">
+        <p class="order-title-text"
+           style="margin-left: 30px">订单</p>
       </el-col>
       <!-- 订单号列 -->
-      <el-col :span="4">
-        <p style="font-size: 24px; color: #333232;">订单号</p>
+      <el-col :span="6" class="order-title-col">
+        <p class="order-title-text" style="margin-left: 25px">订单号</p>
       </el-col>
       <!-- 订单创建时间列 -->
-      <el-col :span="4">
-        <p style="font-size: 24px; color: #333232;">订单创建时间</p>
+      <el-col :span="7" class="order-title-col">
+        <p class="order-title-text">订单创建时间</p>
       </el-col>
-      <el-col :span="4" >
-        <p style="font-size: 24px; color: #343434; margin-left: 10px">订单状态</p>
+      <el-col :span="4" class="order-title-col">
+        <p class="order-title-text">订单状态</p>
       </el-col>
-      <el-col :span="4" style="display: flex; color: #333232; justify-content: center">
-        <p style="font-size: 24px">总价格</p>
+      <el-col :span="3" class="order-title-col">
+        <p class="order-title-text" style="margin-left: 50px">总价格</p>
       </el-col>
     </el-row>
 
     <order-item v-for="(item, index) in orders"
-                        v-model:order="orders[index]"
-                        v-on:remove-order-item="removeOrder"/>
+                v-model:order="orders[index]"
+                v-on:remove-order-item="removeOrder"/>
   </div>
 </template>
 
@@ -81,5 +82,21 @@ async function removeOrder(cartItemId: number) {
   margin: 0 20px 30px 20px;
   border-radius: 20px;
   border: #e7e5e5 2px dashed;
+}
+
+.order-title-row {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.order-title-col {
+  display: flex;
+  align-items: center;
+}
+
+.order-title-text {
+  font-size: 24px;
+  color: #333232;
 }
 </style>

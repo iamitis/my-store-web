@@ -16,8 +16,7 @@ onMounted(async () => {
     if (response.data.code !== '000') {
       ElMessage.error(response.data.msg)
     } else {
-      // resultList.value = response.data.result
-      resultList.value = new Array(10).fill(response.data.result[0])
+      resultList.value = response.data.result
       noProduct.value = response.data.result.length === 0
       handleSort()
       isLoading.value = false
