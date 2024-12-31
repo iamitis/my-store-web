@@ -85,9 +85,11 @@ async function removeOrder(cartItemId: number) {
 }
 
 .order-title-row {
-  margin-bottom: 5px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
+  background-color: #f5f4f4;
+  border-radius: 10px;
 }
 
 .order-title-col {

@@ -4,6 +4,7 @@ import {getUnreadNotice, Notice} from "../../api/noteice.ts";
 import {currUser} from "../../main.ts";
 import {getAllOrders, Order} from "../../api/order.ts";
 import {formatPrice} from "../../api/product.ts";
+import {roleMap} from "../../api/user.ts";
 
 
 const categoryNames = ["食品", "服装", "电子产品", "宠物用品", "保健品", "洗浴用品"];
@@ -23,6 +24,7 @@ const categoryPercentages = ref(
       name,
       value: 0, // 初始值为 0
       color: categoryColors[index],
+      num: 0,
     }))
 );
 
@@ -45,7 +47,7 @@ const totalAmount = ref<number>(0); // 总金额
 
 async function getOrder() {
   getAllOrders(currUser.id!)
-      .then(res=>{
+      .then(res => {
         if (res.data.code !== '000') {
           ElMessage.error('获取用户订单失败' + res.data.msg);
         } else {
@@ -59,26 +61,27 @@ async function getOrder() {
 
           //圆形比例
           let totalProductCount = 0;
-          for(let order of orders.value!) {
-            for(let item of order.products!) {
+          for (let order of orders.value!) {
+            for (let item of order.products!) {
               const index = categoryNames.indexOf(categoryEngToChineseMap.get(item!.product!.productCategory!)!);
               categoryPercentages.value[index].value += item.quantity!;
               totalProductCount += item.quantity!;
             }
-        }
+          }
           // 将每种商品数量转换为百分比
           categoryPercentages.value = categoryNames.map((name, index) => ({
             name,
+            num: categoryPercentages.value[index].value,
             value: totalProductCount > 0 ? (categoryPercentages.value[index].value / totalProductCount) * 100 : 0,
             color: categoryColors[index],
           }));
-      }
+        }
       })
 }
 
 async function getNotice() {
   const res = await getUnreadNotice(currUser.id!);
-  if(res.data.code !== '000') {
+  if (res.data.code !== '000') {
     console.error('获取未读消息失败' + res.data.msg);
   } else {
     unreadNotice.value = res.data.result;
@@ -90,7 +93,7 @@ onMounted(async () => {
   await getOrder();
 });
 
-function processPercent(number){
+function processPercent(number) {
   return Math.trunc(number); // 去掉小数部分，仅保留整数
 }
 
@@ -111,7 +114,7 @@ function processPercent(number){
         <!-- 总金额 -->
         <div class="record-item">
           <h3>购买金额</h3>
-          <p>{{ formatPrice(totalAmount)  }}</p>
+          <p>{{ formatPrice(totalAmount) }}</p>
         </div>
         <!-- 商品比例 -->
         <div class="record-item">
@@ -130,12 +133,21 @@ function processPercent(number){
                   :stroke-dasharray="item.value + ' ' + (100 - item.value)"
                   :stroke-dashoffset="100 - calculateOffset(index)"
               />
-              <text x="18" y="20.35" class="circle-chart-text" transform="rotate(90 18 18)">购买比例</text>j
+              <text x="18" y="20.35" class="circle-chart-text" transform="rotate(90 18 18)">购买比例</text>
+              j
             </svg>
             <ul class="legend">
               <li v-for="(item, index) in categoryPercentages" :key="index">
                 <span :style="{ backgroundColor: item.color }"></span>
-                {{ item.name }}: {{ processPercent(item.value) }}%
+                <div style="width: 65px; text-align: justify; text-align-last: justify">
+                  {{ item.name }}
+                </div>
+                <div style="width: 48px; text-align: justify; text-align-last: justify">
+                  : {{ processPercent(item.value) }}%
+                </div>
+                <div style="width: 45px; text-align: end; text-align-last: end">
+                  {{ item.num }} 件
+                </div>
               </li>
             </ul>
           </div>
@@ -147,10 +159,20 @@ function processPercent(number){
     <div class="bottom-section">
       <!-- 左侧：个人详情信息 -->
       <div class="personal-details">
-        <h3>个人详情信息</h3>
+        <h3>个人信息</h3>
         <div class="details-content">
-          <p>电话: 12345678901</p>
-          <p>地址: 江苏省 南京市 鼓楼区 南京大学鼓楼校区</p>
+          <div style="display: flex; gap: 15px">
+            <div style="width: 90px; text-align: justify; text-align-last: justify">用户名</div>
+            <div>{{currUser.phone}}</div>
+          </div>
+          <div style="display: flex; gap: 15px">
+            <div style="width: 90px; text-align: justify; text-align-last: justify">关联用户名</div>
+            <div>{{currUser.related_phone}}</div>
+          </div>
+          <div style="display: flex; gap: 15px">
+            <div style="width: 90px; text-align: justify; text-align-last: justify">角色</div>
+            <div>{{roleMap.get(currUser.role!)}}</div>
+          </div>
         </div>
       </div>
 
@@ -158,7 +180,9 @@ function processPercent(number){
       <div class="todo-messages">
         <h3>待办消息</h3>
         <div class="messages-content">
-          <p v-for="notice in unreadNotice" :key="notice.noticeId">未读消息：{{ notice.title }}</p>
+          <p v-if="unreadNotice.length > 0" v-for="notice in unreadNotice" :key="notice.noticeId">
+            未读消息：{{ notice.title }}</p>
+          <p v-else>暂无未读消息</p>
         </div>
       </div>
     </div>

@@ -150,11 +150,12 @@ function copyOrderId() {
   display: flex;
   align-items: center;
   border-radius: 10px;
-  border-top: 1px dashed #c9c8c8;
+  background-color: #f5f4f4;
+  margin-top: 10px;
 }
 
 .order-row:hover {
-  background-color: #f0f0f0;
+  background-color: #e7e6e6;
 }
 
 .order-row-item {

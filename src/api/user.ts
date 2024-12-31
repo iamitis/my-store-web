@@ -182,6 +182,10 @@ export function copyAddressInfo(addressInfo: AddressInfo): AddressInfo {
     }
 }
 
+export const roleMap: Map<UserRole, string> = new Map()
+roleMap.set(UserRole.PARENT, '长辈')
+roleMap.set(UserRole.CHILD, '子女')
+
 
 
 

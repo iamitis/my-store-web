@@ -11,6 +11,7 @@ import {UserFilled, Message, Search, ShoppingTrolley} from "@element-plus/icons-
 import eventBus from "../utils/eventBus.ts";
 import {useRoute} from "vue-router";
 import {isHaveUnreadNotice, isThereUnreadNotice, isUnreadNotice} from "../api/noteice.ts";
+import {ButtonInstance} from "element-plus";
 
 const {currRouteName, navTo} = initRouter()
 const searchText = ref<string>('')
@@ -75,7 +76,7 @@ let lastScrollTop = 0;
 const isHeaderVisible = inject('isHeaderVisible') as Ref<boolean>;
 
 function handleScroll() {
-  if (isLogoOnly.value) {
+  if (isLogoOnly.value || currRouteName.value === 'Home') {
     return
   }
   console.log("scroll")
@@ -160,7 +161,7 @@ watch(
       isHaveUnreadNotice();
     }
 );
-let intervalId:number;
+let intervalId: number;
 onMounted(() => {
   intervalId = setInterval(isHaveUnreadNotice, 1000); // Call every 10 seconds
 })
@@ -200,37 +201,74 @@ const isInputExpanded = ref(false);
 function expandInput() {
   isInputExpanded.value = !isInputExpanded.value;
 }
+
+const tourOpen = ref(false)
+const refRobot = ref<HTMLElement>()
+const refSearch = ref<HTMLElement>()
+const refCart = ref<HTMLElement>()
+const refNotification = ref<HTMLElement>()
+const refUser = ref<HTMLElement>()
 </script>
 
 <template>
+  <el-tour v-model="tourOpen">
+    <el-tour-step :target="refRobot"
+                  title="向人工智能提问"/>
+    <el-tour-step :target="refSearch"
+                  title="输入文字搜索商品"/>
+    <el-tour-step :target="refCart"
+                  title="查看购物车"
+                  description="图标中的数字为购物车物品数量（登录后显示）"/>
+    <el-tour-step :target="refNotification"
+                  title="查看消息"
+                  description="订单状态、关联账号的动态"/>
+    <el-tour-step :target="refUser"
+                  title="查看个人主页"
+                  description="购买情况、订单、购物车、地址管理等"/>
+    <template #indicators="{ current, total }">
+      <span>{{ current + 1 }} / {{ total }}</span>
+    </template>
+    <template #buttons="{ next, prev, done }">
+      <el-button @click="prev">上一步</el-button>
+      <el-button @click="next">下一步</el-button>
+      <el-button @click="done">完成</el-button>
+    </template>
+  </el-tour>
   <LogInDialog v-model:visible="showLogin" @loginSuccess="handleLoginSuccess" @loginCancel="handleLoginCancel"/>
   <LLMReplyDialog v-model:visible="dialogVisible" :msg="getLLMInput()"/>
 
   <el-row class="header-container" :class="{'hidden': !isHeaderVisible}">
     <el-col :span="9" class="header-item"
             style="flex-direction: row; justify-content: start; gap: 10px">
-      <img src="../assets/robot.svg" @click="expandInput" alt="robot"
-           style="border-radius: 50%;
-           width: 38px; height: 38px; padding: 7px;">
+      <!-- 引导 -->
+      <img src="../assets/question-circle.svg" @click="tourOpen=true"
+           alt="question" v-if="!isLogoOnly" title="查看引导"
+           style="border-radius: 50%; cursor: pointer;
+           width: 25px; height: 25px; padding: 7px;" class="robot">
+
+      <!-- ai提问 -->
+      <img src="../assets/robot.svg" @click="expandInput" alt="robot" v-if="!isLogoOnly"
+           style="border-radius: 50%; cursor: pointer;
+           width: 38px; height: 38px; padding: 7px;" class="robot" ref="refRobot">
       <div class="llm-input-container" v-if="isInputExpanded">
         <input v-model="llmInputText" placeholder="提问人工智能"
                class="llm-input" @keyup.enter="clickLLMInput"/>
         <el-icon title="提问人工智能"
                  style="cursor: pointer; color: #a1ccbf; width: 30px; height: 30px"
-                  @click="clickLLMInput">
+                 @click="clickLLMInput">
           <search style="width: 80%; height: 80%"/>
         </el-icon>
       </div>
     </el-col>
 
 
-    <el-col :span="4" class="header-item">
+    <el-col :span="4" class="header-item" v-if="!isLogoOnly">
       <el-avatar @click="navTo('Home')" title="返回首页"
                  src="src/assets/logo.png"
                  style="background-color: #a1ccbf; cursor: pointer; height: 85px; width: 85px"/>
     </el-col>
     <el-col :span="4" class="header-item">
-      <div class="header-input-container" v-if="!isLogoOnly">
+      <div class="header-input-container" v-if="!isLogoOnly" ref="refSearch">
         <input v-model="searchText" placeholder="搜索想要的商品"
                class="header-input" @keyup.enter="clickSearch"/>
         <el-icon @click="clickSearch" title="点击搜索"
@@ -240,9 +278,9 @@ function expandInput() {
       </div>
     </el-col>
 
-    <el-col :span="4" :offset="1" class="header-icon-container" style="margin-top: 10px">
+    <el-col :span="4" :offset="1" class="header-icon-container" style="margin-top: 10px" v-if="!isLogoOnly">
       <!-- 购物车 -->
-      <div class="header-icon" style="position: relative">
+      <div class="header-icon" style="position: relative" ref="refCart">
         <el-icon @click="clickCart" title="查看购物车"
                  style="cursor: pointer; background-color: white; color: var(--scheme-color-deep);
                  width: 50px; height: 50px; border-radius: 50%">
@@ -256,10 +294,11 @@ function expandInput() {
       </div>
 
       <!-- 消息 -->
-      <div class="header-icon">
-        <div class="notification-container" @click="clickNotification" title="查看消息" v-if="!isLogoOnly">
-          <el-icon
-              style="cursor: pointer; background-color: white; color: var(--scheme-color-deep); width: 50px; height: 50px; border-radius: 50%">
+      <div class="header-icon" ref="refNotification">
+        <div class="notification-container" @click="clickNotification"
+             title="查看消息" v-if="!isLogoOnly">
+          <el-icon style="cursor: pointer; background-color: white;
+                          color: var(--scheme-color-deep); width: 50px; height: 50px; border-radius: 50%">
             <message style="width: 70%; height: 70%"/>
           </el-icon>
           <!-- 红点 -->
@@ -269,7 +308,7 @@ function expandInput() {
       </div>
 
       <!-- 用户 -->
-      <div class="header-icon">
+      <div class="header-icon" ref="refUser">
         <!-- 未登录状态： -->
         <el-icon v-if="currUser.id === -1"
                  @click="clickUser" title="点击登录"
@@ -471,5 +510,7 @@ function expandInput() {
   z-index: 10;
 }
 
-
+.robot:hover {
+  scale: 1.1;
+}
 </style>

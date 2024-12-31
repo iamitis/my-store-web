@@ -49,18 +49,18 @@ const example_notice3: Notice = {
 const selectedNotification = ref<Notice>();
 
 // 更新通知状态为已读
-function updateNotificationStatus(notification: Notice) {
+async function updateNotificationStatus(notification: Notice) {
   if (notification.noticeStatus === NoticeStatus.UNREAD) {
-    readNotice(notification.noticeId!);
-    getNotifications();
+    await readNotice(notification.noticeId!);
+    await getNotifications();
   }
 }
 
 // 点击通知切换右侧内容并更新状态
-function selectNotification(notification: Notice) {
+async function selectNotification(notification: Notice) {
   selectedNotification.value = notification;
-  updateNotificationStatus(notification); // 更新通知状态为已读
-  isHaveUnreadNotice();
+  await updateNotificationStatus(notification); // 更新通知状态为已读
+  await isHaveUnreadNotice();
 }
 
 // 通知来源和状态映射

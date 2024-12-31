@@ -51,6 +51,12 @@ function navToDetail(productId: number) {
 </template>
 
 <style scoped>
+.f-i-container {
+  background-color: #f5f4f4;
+  border-radius: 10px;
+  padding: 5px 20px;
+}
+
 .f-i-date {
   display: flex;
   align-items: center;

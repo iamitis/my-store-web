@@ -73,7 +73,7 @@ function updateSummaryBoxPosition() {
 
 <template>
   <div class="cart-list-container">
-    <el-row style="margin-bottom: 0px">
+    <el-row class="cart-title-row">
       <el-col :span="4">
         <p style="font-size: 24px; color: #333232; margin-left: 16px">商品</p>
       </el-col>
@@ -130,6 +130,14 @@ function updateSummaryBoxPosition() {
   margin: 0 20px 30px 20px;
   border-radius: 20px;
   border: #e7e5e5 2px dashed;
+}
+
+.cart-title-row {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  background-color: #f5f4f4;
+  border-radius: 10px;
 }
 
 .summary-box {

@@ -119,11 +119,12 @@ function handleRemove() {
   display: flex;
   align-items: center;
   border-radius: 10px;
-  border-top: 1px dashed #c9c8c8;
+  margin-top: 10px;
+  background-color: #f5f4f4;
 }
 
 .cart-row:hover {
-  background-color: #f0f0f0;
+  background-color: #e7e6e6;
 }
 
 .cart-row-item {
